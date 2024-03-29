@@ -140,7 +140,7 @@ router.put('/gameLogicSet', async (req, res) => {
 
         console.log("req.body.game.gamename  1", req.body.game.gameName )
 
-        if (req.body.game.gameName == "Teenpatti") {
+        if (req.body.game.gameName == "poker") {
             GAMELOGICCONFIG.TEEANPATTI = req.body.gamelogic
 
             console.log("GAMELOGICCONFIG ", GAMELOGICCONFIG)
@@ -196,7 +196,7 @@ router.get('/getgamelogic', async (req, res) => {
 
         console.log("req.query.gameName", req.query.gamename )
 
-        if (req.query.gamename == "Teenpatti") {
+        if (req.query.gamename == "poker") {
           
             res.json({ logic: GAMELOGICCONFIG.TEEANPATTI });
 

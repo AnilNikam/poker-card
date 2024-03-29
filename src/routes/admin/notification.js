@@ -7,7 +7,7 @@ const commonHelper = require('../../helper/commonHelper');
 const mainCtrl = require('../../controller/adminController');
 const logger = require('../../../logger');
 
-const pushNotifications = require('../../teenpatti/pushnotification');
+const pushNotifications = require('../../poker/pushnotification');
 
 /**
 * @api {get} /admin/socialURLsList

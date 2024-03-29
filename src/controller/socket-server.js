@@ -8,11 +8,11 @@ const logger = (module.exports = require('../../logger'));
 const CONST = require('../../constant');
 const signupActions = require('../helper/signups/index');
 const commonHelper = require('../helper/commonHelper');
-const gamePlayActions = require('../teenpatti/');
+const gamePlayActions = require('../poker/');
 const { registerUser } = require('../helper/signups/signupValidation');
 const mainCtrl = require('./mainController');
 const { sendEvent, sendDirectEvent } = require('../helper/socketFunctions');
-const { userReconnect } = require('../teenpatti/reConnectFunction');
+const { userReconnect } = require('../poker/reConnectFunction');
 const { getBannerList } = require('./adminController');
 
 

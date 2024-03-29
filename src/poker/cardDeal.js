@@ -26,6 +26,7 @@ module.exports.cardDealStart = async (tbid) => {
         $set: {
             hukum: cardDetails.hukum,
             gameState: "CardDealing",
+            deckCards:cardDetails.deckCards
         }
     }
     const cardDealIndexs = await this.setUserCards(cardDetails, tb);
@@ -61,11 +62,27 @@ module.exports.setUserCards = async (cardsInfo, tb) => {
 
         for (let i = 0; i < playerInfo.length; i++)
             if (typeof playerInfo[i].seatIndex != "undefined" && playerInfo[i].status == "play") {
+
+                let userInfo = {
+                    si:playerInfo[i].seatIndex,
+                    smallblind:(playerInfo[i].seatIndex == tb.smallblindSeatIndex)?playerInfo[i].seatIndex:-1,
+                    bigblind:(playerInfo[i].seatIndex == tb.bigblindSeatIndex)?playerInfo[i].seatIndex:-1,
+                    bet:(playerInfo[i].seatIndex == tb.smallblindSeatIndex)?smallblind:(playerInfo[i].seatIndex == tb.bigblindSeatIndex)?bigblind:0,
+                    check:-1,
+                    allIn:-1,
+                    fold:-1,
+                    raise:-1
+                }
+
                 let update = {
                     $set: {
                         "playerInfo.$.cards": cardsInfo.cards[activePlayer],
+                    },
+                    $push:{
+                        contract:userInfo
                     }
                 }
+                
 
                 let uWh = { _id: MongoID(tb._id.toString()), "playerInfo.seatIndex": Number(playerInfo[i].seatIndex) }
                 logger.info("serUserCards uWh update ::", uWh, update)
@@ -118,7 +135,7 @@ module.exports.getCards  =  (playerInfo) => {
 
 
             if(typeof playerInfo[i].seatIndex != "undefined" && playerInfo[i].Iscom == 0){
-                for (let i = 0; i < 3; i++) {
+                for (let i = 0; i < 2; i++) {
                     let ran = parseInt(fortuna.random() * deckCards.length);
                     card.push(deckCards[ran])
                     deckCards.splice(ran, 1);
@@ -138,7 +155,8 @@ module.exports.getCards  =  (playerInfo) => {
     console.log("cards cards ",cards)
     return {
         hukum: hukum,
-        cards: cards
+        cards: cards,
+        deckCards:deckCards
     }
 }
 

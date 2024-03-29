@@ -11,7 +11,12 @@ const CONST = require("../../constant");
 const logger = require("../../logger");
 const botLogic = require("./botLogic");
 
+/*
+    playerId
+    betId
 
+
+*/
 module.exports.joinTable = async (requestData, client) => {
     try {
         if (typeof client.uid == "undefined") {
@@ -92,11 +97,12 @@ module.exports.createTable = async (betInfo) => {
             betId: betInfo._id,
             boot: betInfo.entryFee,
             rate: betInfo.rate,
-            chalLimit: betInfo.chalLimit,
-            potLimit: betInfo.potLimit,
             playerInfo: this.makeObjects(betInfo.maxPlayer),
             gameState: "",
             discardCard: '',
+            smallblind: betInfo.smallblind,
+            bigblind: betInfo.bigblind,
+            communitycard:[] 
         };
         logger.info("createTable insertobj : ", insertobj);
 
@@ -153,14 +159,20 @@ module.exports.findEmptySeatAndUserSeat = async (table, betInfo, client) => {
             status: "",
             playerStatus: "",
             chalValue: 0,
-            cards: [],
+           
             turnMissCounter: 0,
             turnCount: 0,
             sck: client.id,
             playerSocketId: client.id,
             playerLostChips: 0,
             isSee: false,
-            Iscom:userInfo.Iscom != undefined ? userInfo.Iscom:0
+            Iscom:userInfo.Iscom != undefined ? userInfo.Iscom:0,
+
+            cards: [],
+            playingstatus:"",
+            bet:0   
+
+            
         }
 
         logger.info("findEmptySeatAndUserSeat playerDetails : ", playerDetails);

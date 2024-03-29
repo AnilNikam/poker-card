@@ -17,6 +17,11 @@ const PlayingTablesSchema = new Schema({
 
     chalLimit: { type: Number, default: 0 },
     potLimit: { type: Number, default: 0 },
+    
+    smallblind: { type: Number, default: 0 },
+    bigblind:{ type: Number, default: 0 },
+    communitycard:[],
+    round:{ type: Number, default: 1 },   
 
     rate: { type: Number },
     hukum: { type: String, default: "" },
@@ -24,6 +29,11 @@ const PlayingTablesSchema = new Schema({
     gameState: { type: String, default: "" },
     turnStartTimer: { type: Date },
     dealerSeatIndex: { type: Number, default: -1 },
+    smallblindSeatIndex: { type: Number, default: -1 },
+    bigblindSeatIndex: { type: Number, default: -1 },
+    deckCards:[],
+    contract:[],
+
     turnSeatIndex: { type: Number, default: -1 },
     jobId: { type: String, default: "" },
     turnDone: { type: Boolean, default: false },
