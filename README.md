@@ -1,1 +1,1 @@
-# poker-card
+# sisu-rummy

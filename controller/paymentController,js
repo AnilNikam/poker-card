@@ -1,0 +1,392 @@
+const mongoose = require('mongoose');
+const MongoID = mongoose.Types.ObjectId;
+const Users = mongoose.model('users');
+const paymentin = mongoose.model('paymentin');
+const paymentout = mongoose.model('paymentout');
+const BankDetails = mongoose.model('bankDetails');
+const crypto = require('crypto');
+const axios = require('axios');
+const commandAcions = require('../helper/socketFunctions');
+const CONST = require('../constant');
+const logger = require('../logger');
+
+const PaymentInOrderCreate = {
+    url: 'https://api.wowpe.in/api/GOrders/generateorder',
+    token: "250066b4-3b16-4b6f-a76e-d5478f701ef5",
+    secret_key: '04d34b84-e065-42a7-bbef-795965535275',
+};
+
+const PaymentInDeepLink = {
+    url: 'https://api.wowpe.in/api/DeepLinks/intentinitiate',
+    token: "250066b4-3b16-4b6f-a76e-d5478f701ef5",
+    secret_key: '04d34b84-e065-42a7-bbef-795965535275',
+};
+
+async function initiatePayment(requestData, socket) {
+    try {
+        console.log("initiatePayment requestData ", requestData)
+        const paymentindata = await paymentin.create({
+            userId: requestData.playerId,
+            transactionId: "aaa",
+            name: requestData.customerName,
+            email: requestData.customerEmail,
+            phone: requestData.customerPhone,
+            amount: requestData.amount,
+            paymentStatus: "Pending"
+        });
+
+        if (paymentindata) {
+
+            console.log("paymentindata ", paymentindata)
+            const payload = {
+                "token": PaymentInOrderCreate.token,
+                "name": requestData.customerName,
+                "mobileNo": requestData.customerPhone,
+                "emailID": requestData.customerEmail,
+                "amount": requestData.amount,
+                "orderInfo": paymentindata._id.toString()
+            };
+
+            const response = await axios.post(PaymentInOrderCreate.url, payload);
+            console.log("response    ", response.data)
+            if (response.data.code == "OK") {
+                //add amount in coins
+
+                //await walletActions.addWallet(tableInfo.gameTracks[i]._id, Number(winnerTrack.winningAmount), 'Credit', 'Win', tableInfo);
+                if (response.data.body != undefined && response.data.body != null && response.data.body.orderID != undefined) {
+
+                    const Updatedata = await paymentin.findOneAndUpdate({ _id: MongoID(paymentindata._id.toString()) }, { $set: { "OrderID": response.data.body.orderID } }, {
+                        new: true,
+                    });
+                    console.log("Updatedata ", Updatedata)
+                    const payloaddeeplink = {
+                        "note": "rechargeMoney_103",
+                        "OrderID": response.data.body.orderID,
+                        "token": PaymentInOrderCreate.token
+                    }
+
+                    const responseDeep = await axios.post(PaymentInDeepLink.url, payloaddeeplink);
+                    console.log("response Deeplink ", responseDeep.data)
+                    commandAcions.sendEvent(socket, CONST.PAY_IN, responseDeep.data);
+
+                } else {
+                    commandAcions.sendEvent(socket, CONST.PAY_IN, {}, false, response.data.message);
+                }
+            } else {
+                commandAcions.sendEvent(socket, CONST.PAY_IN, {}, false, response.data.message);
+            }
+        } else {
+            console.log("Data Not Insert ")
+            commandAcions.sendEvent(socket, CONST.PAY_IN, {}, false, 'Something Went Wrong Please try again');
+        }
+
+    } catch (error) {
+        console.error('Error initiating payment:', error.response ? error.response.data : error.message);
+
+        commandAcions.sendEvent(socket, CONST.PAY_IN, {}, false, 'Something Went Wrong Please try again');
+
+        throw error; // Throw the error to be caught by the caller
+    }
+}
+
+
+async function newInitiatePayment(requestData, socket) {
+    try {
+        logger.info("initiatePayment requestData ", requestData)
+        const reference = generateReferenceNumber()
+        logger.info("reference ", reference)
+
+
+        const paymentindata = await paymentin.create({
+            userId: requestData.playerId,
+            transactionId: reference,
+            name: requestData.customerName,
+            email: requestData.customerEmail,
+            phone: requestData.customerPhone,
+            amount: requestData.amount,
+            paymentStatus: "Pending"
+        });
+
+        if (paymentindata) {
+
+            logger.info("paymentindata =>", paymentindata)
+
+            const payload = {
+                "AuthID": "M00006477",
+                "AuthKey": "bT2hi6oE4Tk4SX6pR3xC7QQ4rD3ci7XC",
+                "CustRefNum": reference,
+                "txn_Amount": requestData.amount,
+                "PaymentDate": new Date().toISOString(),
+                "ContactNo": requestData.customerPhone,
+                "EmailId": requestData.customerEmail,
+                "IntegrationType": "seamless",
+                "CallbackURL": "http://localhost:3000/api/PayinAPI/Payinnotify",
+                "adf1": "NA",
+                "adf2": "NA",
+                "adf3": "NA",
+                "MOP": "UPI",
+                "MOPType": "UPI",
+                "MOPDetails": "I"
+            };
+
+            // const stringifiedPayload = {};
+            // Object.entries(payload).forEach(([key, value]) => {
+            //     stringifiedPayload[key.toString()] = value;
+            // });
+            const stringifiedPayload = JSON.stringify(payload, null, 2)
+            logger.info("payload =>", stringifiedPayload);
+
+            const yourData = JSON.stringify(stringifiedPayload); // Convert object to string
+            const yourSecretKey = 'bT2hi6oE4Tk4SX6pR3xC7QQ4rD3ci7XC'; // Replace with your secret key
+            const yourInitializationVector = 'bT2hi6oE4Tk4SX6p'; // Replace with your IV
+
+            const encryptedData = encrypt(yourData, yourSecretKey, yourInitializationVector);
+            logger.info('Encrypted data:', encryptedData);
+
+            const response = await axios.post('https://uat.paylotus.in/pay/paymentinit', {
+                params: {
+                    AuthID: 'M00006477',
+                    encData: encryptedData
+                }
+            }).then((response) => {
+                logger.info('Response:', response);
+            }).catch((error) => {
+                logger.error('Error:', error);
+            });
+
+            logger.info("response ====>   ", response)
+            logger.info("response.respData ====>   ", response.respData)
+            // const receivedEncryptedData = encryptedData; // Replace with the actual encrypted data you received
+
+            // const decryptedData = decrypt(receivedEncryptedData, yourSecretKey, yourInitializationVector);
+            // console.log('Decrypted data:', decryptedData);
+
+            if (response.data.code == "OK") {
+                //add amount in coins
+
+                //await walletActions.addWallet(tableInfo.gameTracks[i]._id, Number(winnerTrack.winningAmount), 'Credit', 'Win', tableInfo);
+                if (response.data.body != undefined && response.data.body != null && response.data.body.orderID != undefined) {
+
+                    const Updatedata = await paymentin.findOneAndUpdate({ _id: MongoID(paymentindata._id.toString()) }, { $set: { "OrderID": response.data.body.orderID } }, {
+                        new: true,
+                    });
+                    console.log("Updatedata ", Updatedata)
+                    const payloaddeeplink = {
+                        "note": "rechargeMoney_103",
+                        "OrderID": response.data.body.orderID,
+                        "token": PaymentInOrderCreate.token
+                    }
+
+                    const responseDeep = await axios.post(PaymentInDeepLink.url, payloaddeeplink);
+                    console.log("response Deeplink ", responseDeep.data)
+                    commandAcions.sendEvent(socket, CONST.PAY_IN, responseDeep.data);
+
+                } else {
+                    commandAcions.sendEvent(socket, CONST.PAY_IN, {}, false, response.data.message);
+                }
+            } else {
+                commandAcions.sendEvent(socket, CONST.PAY_IN, {}, false, response.data.message);
+            }
+        } else {
+            console.log("Data Not Insert ")
+            commandAcions.sendEvent(socket, CONST.PAY_IN, {}, false, 'Something Went Wrong Please try again');
+        }
+
+    } catch (error) {
+        console.error('Error initiating payment:', error.response ? error.response.data : error.message);
+
+        commandAcions.sendEvent(socket, CONST.PAY_IN, {}, false, 'Something Went Wrong Please try again');
+
+        throw error; // Throw the error to be caught by the caller
+    }
+}
+
+
+const Account_WOWPE_PAYOUT = {
+    base_url: 'https://api.wowpe.in/api/PayoutAPI/paymenttransafer',
+    clientId: 'aa482292-1675-444d-91d0-57d68829f560',
+    secretKey: '5ccb3ea7-a7b1-4927-8fe6-a83bd6e5a330'
+};
+
+
+
+async function PayOutTransfer(requestData, socket) {
+    try {
+
+        // Valiation 
+        if (requestData.amount < 50 || requestData.amount > 1000) {
+            commandAcions.sendEvent(socket, CONST.CREATE_PAY_OUT, false, "Withdrawal Not Vaild Amount");
+
+            return false
+        }
+
+        requestData.amount = requestData.amount - ((requestData.amount * 2) / 100)
+
+        // %%% Admin Wallte addd 
+
+        //Insert Payout Table 
+        const paymentoutdata = await paymentout.create({
+            userId: requestData.playerId,
+            transactionId: "aaa",
+            name: requestData.customerName,
+            email: requestData.customerEmail,
+            phone: requestData.customerPhone,
+            amount: requestData.amount,
+            accountNo: requestData.accountNo,
+            ifscCode: requestData.ifscCode,
+            "beneficiaryName": requestData.BeneficiaryName.trim(),
+            "transferMode": requestData.transferMode,
+            paymentStatus: "Pending"
+        });
+
+        if (paymentoutdata) {
+
+            console.log("paymentoutdata ", paymentoutdata)
+            const Paylod = {
+                "clientId": Account_WOWPE_PAYOUT.clientId,
+                "secretKey": Account_WOWPE_PAYOUT.secretKey,
+                "number": requestData.customerPhone,
+                "transferMode": requestData.transferMode,
+                "amount": requestData.amount.toString(),
+                "accountNo": requestData.accountNo,
+                "ifscCode": requestData.ifscCode,
+                "BeneficiaryName": requestData.BeneficiaryName.trim(),
+                "vpa": "",
+                "orderID": paymentoutdata._id.toString()
+            }
+            console.log("Paylod ", Paylod)
+            const response = await axios.post(Account_WOWPE_PAYOUT.base_url, Paylod, {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'accept': 'application/json'
+                }
+            });
+            console.log("response ", response.data)
+
+
+
+            if (response.data.code == "OK") {
+                //add amount in coins
+                console.log("response ", response.data.body)
+                //await walletActions.addWallet(tableInfo.gameTracks[i]._id, Number(winnerTrack.winningAmount), 'Credit', 'Win', tableInfo);
+                if (response.data.body != undefined && response.data.body != null && response.data.body.orderID != undefined && response.data.body.orderID != null) {
+
+                    const Updatedata = await paymentout.findOneAndUpdate({ _id: MongoID(paymentoutdata._id.toString()) }, { $set: { "OrderID": response.data.body.orderID } }, {
+                        new: true,
+                    });
+                    console.log("Updatedata ", Updatedata)
+
+
+                    commandAcions.sendEvent(socket, CONST.CREATE_PAY_OUT, response.data.body);
+
+                } else {
+                    console.log("response elase 1 ", response.data)
+
+                    commandAcions.sendEvent(socket, CONST.CREATE_PAY_OUT, response.data.body, false, response.data.message);
+
+                }
+            } else {
+                console.log("response elase 2 ", response.data)
+
+                commandAcions.sendEvent(socket, CONST.CREATE_PAY_OUT, {}, false, response.data.message);
+
+            }
+        } else {
+            console.log("Data Not Insert ")
+
+            commandAcions.sendEvent(socket, CONST.CREATE_PAY_OUT, {}, false, 'Something Went Wrong Please try again');
+
+        }
+
+    } catch (error) {
+        console.log("error ::::::::::::", error)
+
+        throw error.response ? error.response.data : error.message;
+    }
+}
+
+
+const Account_WOWPE_VERIFICATION = {
+    base_url: 'https://api.wowpe.in/PayoutAPI/accountverification',
+    clientId: 'aa482292-1675-444d-91d0-57d68829f560',
+    secretKey: '5ccb3ea7-a7b1-4927-8fe6-a83bd6e5a330'
+};
+
+async function checkPayoutStatus(requestData, callback) {
+    try {
+        const Paylod = {
+            "clientId": Account_WOWPE_VERIFICATION.clientId,
+            "secretKey": Account_WOWPE_VERIFICATION.secretKey,
+            "number": requestData.customerPhone,
+            "accountNo": requestData.accountNo,
+            "ifscCode": requestData.ifscCode,
+            "orderID": requestData.orderID
+        }
+        console.log("PayOut ::::::::::::::::::::::", Paylod)
+        const response = await axios.post(Account_WOWPE_VERIFICATION.base_url, Paylod, {
+            headers: {
+                'Content-Type': 'application/json',
+                'accept': 'application/json'
+            }
+        });
+        console.log("checkPayoutStatus ", response)
+        return callback(response.data);
+    } catch (error) {
+        throw error.response ? error.response.data : error.message;
+    }
+}
+
+
+function generateReferenceNumber() {
+    // Create a string of all digits (0-9)
+    const digits = '0123456789';
+
+    // Generate a random string of 10 characters from the digits string
+    let referenceNumber = '';
+    for (let i = 0; i < 10; i++) {
+        const randomIndex = Math.floor(Math.random() * digits.length);
+        referenceNumber += digits[randomIndex];
+    }
+
+    return referenceNumber;
+}
+
+function encrypt(data, key, iv) {
+    try {
+        const cipher = crypto.createCipheriv('aes-256-cbc', Buffer.from(key), iv);
+        let encrypted = cipher.update(data, 'utf8', 'base64'); // Update with base64 encoding
+        encrypted += cipher.final('base64');
+        return encrypted;
+    } catch (error) {
+        console.error('Encryption error:', error);
+        throw error; // Re-throw for handling in caller
+    }
+}
+
+// Function to decrypt data using AES/CBC/PKCS5PADDING
+function decrypt(encryptedData, key, iv) {
+    try {
+        const decipher = crypto.createDecipheriv('aes-256-cbc', Buffer.from(key), iv);
+        let decrypted = decipher.update(encryptedData, 'base64', 'utf8');
+        decrypted += decipher.final('utf8');
+        return decrypted;
+    } catch (error) {
+        console.error('Decryption error:', error);
+        throw error; // Re-throw for handling in caller
+    }
+}
+
+module.exports = {
+    initiatePayment,
+    PayOutTransfer,
+    checkPayoutStatus,
+    newInitiatePayment,
+    generateReferenceNumber,
+    encrypt,
+    decrypt
+    // createPayout,
+    // checkPayoutStatus,
+    // getAccountBalance
+};
+
+

@@ -6,6 +6,13 @@ const CONST = {
     'S-1-0', 'S-2-0', 'S-3-0', 'S-4-0', 'S-5-0', 'S-6-0', 'S-7-0', 'S-8-0', 'S-9-0', 'S-10-0', 'S-11-0', 'S-12-0', 'S-13-0',
     'D-1-0', 'D-2-0', 'D-3-0', 'D-4-0', 'D-5-0', 'D-6-0', 'D-7-0', 'D-8-0', 'D-9-0', 'D-10-0', 'D-11-0', 'D-12-0', 'D-13-0',
     'C-1-0', 'C-2-0', 'C-3-0', 'C-4-0', 'C-5-0', 'C-6-0', 'C-7-0', 'C-8-0', 'C-9-0', 'C-10-0', 'C-11-0', 'C-12-0', 'C-13-0',
+    'J-0-0', 'J-1-0',
+    'C-1-1', 'C-2-1', 'C-3-1', 'C-4-1', 'C-5-1', 'C-6-1', 'C-7-1', 'C-8-1', 'C-9-1', 'C-10-1', 'C-11-1', 'C-12-1', 'C-13-1',
+    'S-1-1', 'S-2-1', 'S-3-1', 'S-4-1', 'S-5-1', 'S-6-1', 'S-7-1', 'S-8-1', 'S-9-1', 'S-10-1', 'S-11-1', 'S-12-1', 'S-13-1',
+    'D-1-1', 'D-2-1', 'D-3-1', 'D-4-1', 'D-5-1', 'D-6-1', 'D-7-1', 'D-8-1', 'D-9-1', 'D-10-1', 'D-11-1', 'D-12-1', 'D-13-1',
+    'J-0-1',
+    'H-1-1', 'H-2-1', 'H-3-1', 'H-4-1', 'H-5-1', 'H-6-1', 'H-7-1', 'H-8-1', 'H-9-1', 'H-10-1', 'H-11-1', 'H-12-1', 'H-13-1',
+    'J-1-1',
   ],
 
   // table status
@@ -41,26 +48,19 @@ const CONST = {
   RESEND_OTP: 'ROTP',
   CHECK_REFERAL_CODE: 'CRC',
   CHECK_MOBILE_NUMBER: 'CMN',
+  CHECK_KYC_ADHARA_NUMBER: 'CKAN',
+  VERIFY_KYC_ADHARA_NUMBER: 'VKAN',
+  VERIFY_KYC_PAN_CARD: 'VKPC',
+
+
+
   OLD_SESSION_RELEASE: 'OSR',
   DASHBOARD: 'DASHBOARD',
   WALLET_UPDATE: 'WU',
-  BANNER: 'BANNER',
 
   // Socket events names
-
-  JOIN_TABLE: "JT",
-  USER_JOIN_IN_TABLE: "UJIT",
-  COLLECT_BOOT: "CB",
-  USER_CARD: "UC",
-  TABLE_CARD_DEAL: "TCD",
-  PACK: "PACK",
-  WINNER: "WINNER",
-  SEE_CARD_INFO: "SCI",
-  SEE_CARD: "SC",
-  CHAL: "CHAL",
-  SHOW: "SHOW",
-  TABLE_USER_WALLET_UPDATE: "TUWU",
   JOIN: 'JOIN',
+  JOIN_TABLE: 'JT',
   JOIN_SIGN_UP: 'SP',
   GAME_TABLE_INFO: 'GTI',
   PING: 'PING',
@@ -90,6 +90,7 @@ const CONST = {
   GAME_REPORT_PROBLEM: 'GRP',
   STAND_UP: 'STANDUP',
   LAST_GAME_SCORE_BOARD: 'LGSB',
+  DEMO_LAST_GAME_SCORE_BOARD: 'DLGSB',
   PLAYER_INFORMATION: 'PI',
   UPDATE_GAME_COIN: 'UGC',
   REGISTER_USER: 'RU',
@@ -102,10 +103,6 @@ const CONST = {
   CREATE_PRIVATE_TABLE_ID: 'CPTI',
   JOIN_PRIVATE_TABLE: 'JPT',
   PRIVATE_TABLE_NOT_FOUND: 'PTNF',
-  TOURNAMENT_LIST: 'TL',
-  TOURNAMENT_INFORMATION: 'TI',
-  TOURNAMENT_END: 'TE',
-  REGISTRATION_TOURNAMENT: 'RT',
   FRIEND_REQUEST_RESULT: 'FRR',
   RECEIVE_FRIEND_REQUEST: 'RFR',
   UNFRIEND_REQUEST: 'UFR',
@@ -122,6 +119,7 @@ const CONST = {
   POOL_GET_BET_LIST: 'PGBL',
   RECONNECT: 'RE',
   PLAYER_BALANCE: 'PB',
+  MYWALLET: "MYWALLET",
   DEPOSITE_AMOUNT: 'DA',
   INVALID_EVENT: 'IE',
   COUNTER: 'COUNTER',
@@ -133,7 +131,7 @@ const CONST = {
   SPENN_NOTIFICATION: 'SN',
   BORROW_USER_CHIPS: 'BUC',
   DECLARE_TIMER_SET: 'DTS',
-  RESTART_GAME_TABLE: 'RT',
+  RESTART_GAME_TABLE: 'RGT',
   PLAYER_FINISH_DECLARE_TIMER: 'PFDT',
   // new
   GET_TEEN_PATTI_ROOM_LIST: 'GTPRL',
@@ -142,6 +140,7 @@ const CONST = {
   GAME_START_TIMER: 'GST',
   COLLECT_BOOT: 'CB',
   LEAVE_TABLE: 'LT',
+  USER_CARD: 'UC',
   TABLE_CARD_DEAL: 'TCD',
   TURN_START: 'TS',
   PACK: 'PACK',
@@ -154,7 +153,13 @@ const CONST = {
   DEMO_LAST_POOL_POINT: 'DEMOLPP',
   RE_JOIN: 'RE_JOIN',
   DISCONNECT: 'DISCONNECT',
-  GET_MY_TOURNAMENT: 'MT',
+  ALREADY_PLAYER_AXIST: 'APA',
+  TAKE_SEAT: 'TS',
+  RE_BUY: 'RB',
+  EDIT_MOBILE: 'EM',
+  ADD_BANK_ACCOUNT: 'ADDBANK',
+  GET_BANK_DETAILS: 'GBD',
+  USER_MESSAGE: "UM",
 
   // Player Status
   WATCHING: 'WATCHING',
@@ -184,13 +189,16 @@ const CONST = {
   FLUTTERWAVE_MOBILE_ADD_MONEY: 'FMAM',
   RE_JOIN_UPDATE_SCORE: 'RJUS',
   REMOVE_USERSOCKET_FROM_TABLE: 'RUFT',
-  REGISTER_TOURNAMENT: 'TR',
-  JOIN_TOURNAMENT: 'JTR',
-  WITHDRAW_TOURNAMENT: 'WTR',
+  DEAL_BET_LIST: 'DBT',
+  KYC: 'KYC',
+  REFFERAL: 'REFFERAL',
+  WALLET_TRANSACTION_HISTORY: 'TRAN_HISTORY',
+  EXIST_SOCKET_ID: 'EXISTSOCKET',
+  BANK_ACCOUNT_VERIFY: 'BANKVERIFY',
 
   // Timer
-  userTurnTimer: 30,
-  gameStartTime: 10,
+  userTurnTimer: 29,
+  gameStartTime: 15,
   gameCardDistributeDelayTime: 1,
   finishTimer: 20,
   rsbTimer: 4,
@@ -200,15 +208,13 @@ const CONST = {
   commission: 10,
   POOL_COMMISSION: 15,
 
-  // TOURNAMENT COIN
-  TOURNAMENT_COIN: 500,
 
   // player score
   PLAYER_SCORE: 80,
   GAME_PLAY_COST: 3,
   PLAYER_LEAVE_SCORE: 20,
-  FIRST_DROP: 16,
-  SECOND_DROP: 30,
+  FIRST_DROP: 20,
+  SECOND_DROP: 40,
   TIME_TURN_OUT_COUNTER: 3,
   COMPUTER_TIME_TURN_OUT_COUNTER: 3,
 
@@ -240,6 +246,11 @@ const CONST = {
     GAME_LEAVE: 'Leave Game',
   },
 
+  //Payment Getway
+  PAY_IN: 'PAYIN',
+  CREATE_PAY_OUT: 'PAYOUT',
+  CHECK_PAY_OUT_STATUS: 'PAYOUT_STATUS',
+
   // friendship status
   // 1 for pending 2 for approved,3 for decline
 
@@ -250,25 +261,18 @@ const CONST = {
   },
 
   LOGIN_TYPE: {
-    LOGIN: 'login',
-    SIGNUP: 'signup',
+    LOGIN: 'Login',
+    SIGNUP: 'SignUp',
   },
 
+  GAME_TYPE: {
+    POINT_RUMMY: 'pointrummy',
+    POOL_RUMMY: 'poolrummy',
+    DEAL_RUMMY: 'dealrummy',
+  },
   COUNTRY_CODE: process.env.COUNTRY_CODE || '+91',
 
   MONTHS: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
-
-    // HTTP Status Codes
-    STATUS: {
-      OK: 200,
-      BAD_REQUEST: 400,
-      UNAUTHORIZED: 401,
-      NOT_FOUND: 404,
-      MEDIA_ERROR_STATUS: 415,
-      VALIDATION_FAILURE_STATUS: 417,
-      DATABASE_ERROR_STATUS: 422,
-      INTERNAL_SERVER_ERROR: 500,
-    },
 };
 
 module.exports = CONST;

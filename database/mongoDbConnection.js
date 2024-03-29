@@ -7,6 +7,7 @@ const logger = require('../logger');
 const mongoDB = config.DATABASE;
 
 mongoose.connect(mongoDB, {
+  dbName: 'pokerdb',
   useNewUrlParser: true,
   useUnifiedTopology: true,
   useCreateIndex: true,
@@ -17,7 +18,7 @@ mongoose.connect(mongoDB, {
 const db = mongoose.connection;
 //mongoose.set('debug', process.env.MONGOOSE_SET);
 
-
+// CONNECTION EVENTS
 // When successfully connected
 db.on('connected', function () {
   logger.info('Mongoose connection open');
