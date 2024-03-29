@@ -117,8 +117,8 @@ const userSignup = async (requestData_, socket) => {
   return true;
 };
 
-const verifyOTP = async (requestData_, socket) => {
-  let requestData = requestData_;
+const verifyOTP = async (requestData, socket) => {
+  console.log("verifyOTP ",requestData)
   if (requestData.mobileNumber.length !== 10) {
     commandAcions.sendEvent(socket, CONST.VERIFY_OTP, requestData, false, 'Please check mobile Number!');
     return false;
@@ -148,6 +148,9 @@ const verifyOTP = async (requestData_, socket) => {
       {}
     );
     requestData['codeVerify'] = true;
+  console.log("verifyOTP 11111111111111",requestData)
+
+
     commandAcions.sendEvent(socket, CONST.VERIFY_OTP, requestData);
   } else {
     commandAcions.sendEvent(socket, CONST.VERIFY_OTP, requestData, false, 'Incorrect OTP');

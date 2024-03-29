@@ -126,26 +126,26 @@ async function otpSend(requestBody) {
   const { mobileNumber, otpType } = requestBody;
    console.log('mobileNumber => ', mobileNumber + '  || Type =>' + otpType);
   try {
-    const otpCode = Math.floor(Math.random() * 100000 + 1);
+    const otpCode = 75757 // Math.floor(Math.random() * 100000 + 1);
 
-    var req = unirest("POST", "https://www.fast2sms.com/dev/bulkV2");
+    // var req = unirest("POST", "https://www.fast2sms.com/dev/bulkV2");
 
-    req.headers({
-      "authorization": "1b2WvGrnuhPoSiXfRTs3lHAMUO4mLNEZ8qKcQdj6I9etVFJYgzNmRDWoX0Zvnj6iF2GhfuEHC1pPrSyV",
-      "Content-Type":"application/json"
-    });
+    // req.headers({
+    //   "authorization": "1b2WvGrnuhPoSiXfRTs3lHAMUO4mLNEZ8qKcQdj6I9etVFJYgzNmRDWoX0Zvnj6iF2GhfuEHC1pPrSyV",
+    //   "Content-Type":"application/json"
+    // });
 
-    req.form({
-      "variables_values": otpCode.toString(),
-      "route": "otp",
-      "numbers": mobileNumber.toString(),
-    });
+    // req.form({
+    //   "variables_values": otpCode.toString(),
+    //   "route": "otp",
+    //   "numbers": mobileNumber.toString(),
+    // });
 
-    req.end(async (res) => {
-      //console.log("res",res)
-      if (res.error) throw new Error(res.error);
+    // req.end(async (res) => {
+    //   //console.log("res",res)
+    //   if (res.error) throw new Error(res.error);
 
-      //console.log(res.body);
+    //   //console.log(res.body);
 
 
       const otpData = new OtpMobile({
@@ -162,7 +162,7 @@ async function otpSend(requestBody) {
       } else {
         return { status: 0, message: 'data Not save' };
       }
-    })
+    //})
   } catch (error) {
     logger.error('mainController.js otpSend error=> ', error, requestBody);
     return { status: 0, message: 'Send Otp No data found' };
