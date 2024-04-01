@@ -851,30 +851,30 @@ async function verifyOTP(payload) {
 
       return { status: true, message: 'OTP Verified', data: response.data };
     } else {
-      return { status: false, message: 'OTP Not Verified' };
+      // return { status: false, message: 'OTP Not Verified' };
 
-      // const key = 12345;
+      const key = 75757;
 
-      // const query = {
-      //   mobileNumber: payload.mobileNumber,
-      // };
+      const query = {
+        mobileNumber: payload.mobileNumber,
+      };
 
-      // //logger.info('Check Validation ->', parseInt(payload.otp) === key);
-      // if (parseInt(payload.otp) === key) {
-      //   const response = await OtpMobile.findOneAndUpdate(
-      //     query,
-      //     {
-      //       verified: true,
-      //     },
-      //     { new: true }
-      //   );
+      //logger.info('Check Validation ->', parseInt(payload.otp) === key);
+      if (parseInt(payload.otp) === key) {
+        const response = await OtpMobile.findOneAndUpdate(
+          query,
+          {
+            verified: true,
+          },
+          { new: true }
+        );
 
-      //   //logger.info('verify Result Otp Data => ', response);
-      //   return { status: true, message: 'OTP Verified', data: response };
-      // } else {
-      //   return { status: false, message: 'OTP Not Verified' };
+        //logger.info('verify Result Otp Data => ', response);
+        return { status: true, message: 'OTP Verified', data: response };
+      } else {
+        return { status: false, message: 'OTP Not Verified' };
 
-      // }
+      }
     }
   } catch (error) {
     logger.info('mainController.js verifyOTP error => ', error);

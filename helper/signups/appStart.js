@@ -139,7 +139,7 @@ module.exports.getUserDefaultFields = async (data, client) => {
   const setUserDetail = {
     id: 0,
     deviceId: data.deviceId ? data.deviceId : 'botDevice',
-    username: data.username ? data.username : '',
+    username: data.username ? data.username : 'guestUser',
     name: data.name ? data.name : '',
     status: data.status ? data.status : '',
     mobileNumber: data.mobileNumber ? data.mobileNumber : '',

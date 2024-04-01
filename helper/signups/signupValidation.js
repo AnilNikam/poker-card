@@ -125,7 +125,7 @@ const userSignup = async (requestData_, socket) => {
   //  logger.info('userSignup wh :', wh);
 
   let resp = await Users.findOne(wh, { username: 1, _id: 1 });
-  //  logger.info('userSignup resp :', resp);
+   logger.info('userSignup resp :', resp);
 
   if (resp === null) {
     requestData.new_user = true;
@@ -250,6 +250,7 @@ const registerUser = async (requestBody, socket) => {
     if (loginType === 'Mobile') {
       const query = { mobileNumber: mobileNumber };
       let result = await Users.findOne(query, {});
+      logger.info("result =>",result)
       if (!result) {
 
 

@@ -6,7 +6,7 @@ const collectionName = 'users';
 const GameUserSchema = new Schema(
   {
     id: { type: Number },
-    name: { type: String, required: true },
+    name: { type: String, default:'' },
     username: { type: String },
     deviceId: { type: String, required: true },
     mobileNumber: { type: String },
