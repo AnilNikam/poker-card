@@ -125,6 +125,8 @@ myIo.init = function (server) {
                   await signupActions.userLogin(payload.data, socket);
                 } else if (payload.data.otpType === 'EDIT_MOBILE_NUMBER') {
                   await signupActions.updateMobileNumber(payload.data, socket);
+                } else if(payload.data.otpType === "VERIFY_NUMBER_FOR_SIGNUP"){
+                  await signupActions.userSignup(payload.data, socket);
                 }
               } else {
                 sendEvent(socket, CONST.VERIFY_OTP, { verified: false });
