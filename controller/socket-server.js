@@ -175,6 +175,20 @@ myIo.init = function (server) {
             break;
           }
 
+          
+
+          case CONST.TAKEACTION: {
+            try {
+             
+              await gamePlayActions.TAKEACTION(payload.data, socket);
+          
+            } catch (error) {
+              logger.error('socketServer.js TAKEACTION error => ', error);
+              sendEvent(socket, CONST.ERROR, error);
+            }
+            break;
+          }
+
           case CONST.FORGOT_PASWORD: {
             const newData = {
               number: payload.data.number,

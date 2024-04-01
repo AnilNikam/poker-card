@@ -71,7 +71,8 @@ module.exports.setUserCards = async (cardsInfo, tb) => {
                     check:-1,
                     allIn:-1,
                     fold:-1,
-                    raise:-1
+                    raise:-1,
+                    type:""
                 }
 
                 let update = {

@@ -16,19 +16,18 @@ const walletActions = require("./updateWallet");
 
 
 /*
-        Take Contract coinche
+        TAKEACTION Contract
         Data:{
-            bet : "",
-            check : "" ,
-            
+            type : "", "call" || raise || All In
+            bet:10
         }
 
-        All Tac bet same and  round finish 
+        TAKEACTION  same and  round finish 
 
     */
-module.exports.Bet = async (data, client) => {
+module.exports.TAKEACTION = async (requestData, client) => {
 
-    if (typeof client.tbid == 'undefined' || typeof data.suit == 'undefined' || data.suit == false) {
+    if (typeof client.tbid == 'undefined' || Data.type == undefined || Data.bet == undefined ) {
         commandAcions.sendDirectEvent(client.sck, CONST.TAC, requestData, false, "User session not set, please restart game!");
         return false;
     }
@@ -66,43 +65,50 @@ module.exports.Bet = async (data, client) => {
         return false;
     }
 
-    var maxcontract;
-    if (tabInfo.contractdetail.length > 0) {
-        maxcontract = _.max(tabInfo.contractdetail, function (o) { return parseInt(o.contract) });
-    }
+    // var maxcontract;
+    // if (tabInfo.contract.length > 0) {
+    //     maxcontract = _.max(tabInfo.contract, function (o) { return parseInt(o.contract) });
+    // }
+
+    // si:playerInfo[i].seatIndex,
+    // smallblind:(playerInfo[i].seatIndex == tb.smallblindSeatIndex)?playerInfo[i].seatIndex:-1,
+    // bigblind:(playerInfo[i].seatIndex == tb.bigblindSeatIndex)?playerInfo[i].seatIndex:-1,
+    // bet:(playerInfo[i].seatIndex == tb.smallblindSeatIndex)?smallblind:(playerInfo[i].seatIndex == tb.bigblindSeatIndex)?bigblind:0,
+    // check:-1,
+    // allIn:-1,
+    // fold:-1,
+    // raise:-1
 
     var Set = {
         $set: {
-            trumpsuit: data.suit,
-            ttcsi: client.si,
-            asktrumpcardcount: 1
+            
         }
     }
-    if (tabInfo.contractdetail.length > 0) {
-        _.map(tabInfo.contractdetail, function (el) { return el.islastcontract = false; });
-        var foundIndex = tabInfo.contractdetail.findIndex(x => x.si == client.si);
+    if (tabInfo.contract.length > 0) {
+        //_.map(tabInfo.contract, function (el) { return el.islastcontract = false; });
+        var foundIndex = tabInfo.contract.findIndex(x => x.si == client.si);
     } else {
         var foundIndex = -1
     }
     if (foundIndex != -1) {
-        tabInfo.contractdetail[foundIndex].contract = data.contract
-        tabInfo.contractdetail[foundIndex].suit = data.suit
-        tabInfo.contractdetail[foundIndex].status = "TAKE"
-        tabInfo.contractdetail[foundIndex].islastcontract = true
-        Set["$set"]["contractdetail"] = tabInfo.contractdetail;
-        Set["$set"]["pi." + client.si + ".turn_miss_cont"] = 0;
+        tabInfo.contract[foundIndex].bet = requestData.bet
+        tabInfo.contract[foundIndex].type = requestData.type
+
+        Set["$set"]["contract"] = tabInfo.contract;
+        Set["$set"]["pi." + client.si + ".turnMissCounter"] = 0;
     } else {
-        var jdt = {
-            "suit": data.suit,
-            "contract": data.contract,
-            "status": "TAKE",
-            "uid": tabInfo.pi[client.si].ui.uid,
-            "si": parseInt(client.si),
-            "islastcontract": true
-        }
-        tabInfo.contractdetail.push(jdt)
-        Set["$set"]["contractdetail"] = tabInfo.contractdetail;
-        Set["$set"]["pi." + client.si + ".turn_miss_cont"] = 0;
+       console.log("ddddddddddddddddddddddddddddddddddd ELSE KKKKKKKKKKKKK")
+        // var jdt = {
+        //     "suit": data.suit,
+        //     "contract": data.contract,
+        //     "status": "TAKE",
+        //     "uid": tabInfo.pi[client.si].ui.uid,
+        //     "si": parseInt(client.si),
+        //     "islastcontract": true
+        // }
+        // tabInfo.contract.push(jdt)
+        // Set["$set"]["contract"] = tabInfo.contract;
+        // Set["$set"]["pi." + client.si + ".turn_miss_cont"] = 0;
     }
 
     var WH = { _id: MongoId(client.tbid.toString()) };
@@ -113,26 +119,39 @@ module.exports.Bet = async (data, client) => {
 
 
     if (updated == null) {
-        trackClass.trackingplayingerror(client, 'TAC', { data: data, tb: updated }, 'error:TAC003');
+        trackClass.trackingplayingerror(client, 'TAC', { data: requestData, tb: updated }, 'error:TAC003');
         return false;
     }
     
 
     commandAcions.clearJob(tabInfo.job_id);
     commandAcions.sendEventInTable(updated._id.toString(), CONST.TAC, {
-        contract: data.contract,
-        suit: data.suit,
+        contract: updated.contract,
+        type: requestData.type,
+        bet: requestData.bet,
         si: client.si
     });
 
+    //All User Bet same and Check After Round Change 
+    // Check also same bet and 
 
-    mechanismClass.ChangeContractTurn(updated._id, {
-        pt: updated.ti
+    let allusersamebet =  updated.contract.filter((e)=>{
+       return e.bet == requestData.bet || e.fold == 1
     })
 
+    console.log("allusersamebet ",allusersamebet)
+    
+    if(allusersamebet.length == updated.contract.length){
+        
+        //Round change 
+    }else{
+
+    }
+
+
+    // If not same after start again 
+ 
 }
-
-
 
 module.exports.chal = async (requestData, client) => {
     try {
