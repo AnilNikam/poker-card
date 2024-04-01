@@ -27,9 +27,9 @@ module.exports.getBetList = async (requestData, client) => {
         }
         client.uid = requestData.user_id;
         client.sck = client.id;
-        commandAcions.sendEvent(client, CONST.GET_TEEN_PATTI_ROOM_LIST, response);
+        commandAcions.sendEvent(client, CONST.GET_BET_LIST, response);
 
     } catch (error) {
-        logger.info("GET_TEEN_PATTI_ROOM_LIST", error);
+        logger.info("GET_BET_LIST", error);
     }
 }

@@ -162,24 +162,6 @@ myIo.init = function (server) {
             break;
           }
 
-          case CONST.POOL_GET_BET_LIST: {
-            try {
-              await gamePlayActions.poolBetList(payload.data, socket);
-            } catch (error) {
-              logger.error('socketServer.js GET_BET_LIST error => ', error);
-            }
-            break;
-          }
-
-          case CONST.DEAL_BET_LIST: {
-            try {
-              await gamePlayActions.dealBetList(payload.data, socket);
-            } catch (error) {
-              logger.error('socketServer.js GET_BET_LIST error => ', error);
-            }
-            break;
-          }
-
           case CONST.JOIN_SIGN_UP: {
             try {
               socket.uid = payload.data.playerId;
