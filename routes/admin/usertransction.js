@@ -8,7 +8,7 @@ const mainCtrl = require('../../controller/adminController');
 const logger = require('../../logger');
 // const Userdeposit = mongoose.model('userdeposit');
 // const Userpayout = mongoose.model('userpayout');
-const UserWalletTracks = mongoose.model('walletTrackTransaction');
+const UserWalletTracks = mongoose.model('userWalletTracks');
 const PaymentOut = mongoose.model('paymentout');
 
 

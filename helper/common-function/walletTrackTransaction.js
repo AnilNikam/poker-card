@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const UserWalletTracks = mongoose.model('walletTrackTransaction');
+const UserWalletTracks = mongoose.model('userWalletTracks');
 const UserReferTracks = mongoose.model('userReferTracks');
 const GameUser = mongoose.model('users');
 const CONST = require('../../constant');

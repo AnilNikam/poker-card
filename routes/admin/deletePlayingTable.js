@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const PlayingTable = mongoose.model('playingTable');
+const PlayingTable = mongoose.model('playingTables');
 const Users = mongoose.model('users');
 
 const express = require('express');

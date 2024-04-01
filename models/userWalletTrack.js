@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 const GameUser = require('./users');
-const collectionName = 'walletTrackTransaction';
+const collectionName = 'userWalletTracks';
 
 const UserWalletTracksSchema = new Schema(
   {

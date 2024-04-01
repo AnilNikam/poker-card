@@ -2,14 +2,14 @@ const express = require('express');
 const router = express.Router();
 const mongoose = require('mongoose');
 const Transaction = mongoose.model('Transaction');
-const playingTables = mongoose.model('playingTable');
+const playingTables = mongoose.model('playingTables');
 const GamePlayTrack = mongoose.model('gamePlayTracks');
 const TableHistory = mongoose.model('tableHistory');
 const Users = mongoose.model('users');
 const config = require('../../config');
 const commonHelper = require('../../helper/commonHelper');
 const logger = require('../../logger');
-const UserWalletTracks = mongoose.model("walletTrackTransaction");
+const UserWalletTracks = mongoose.model("userWalletTracks");
 const otpAdharkyc = mongoose.model('otpAdharkyc');
 /**
  * @api {get} /admin/dashboard

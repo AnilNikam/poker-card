@@ -1,10 +1,9 @@
 const mongoose = require('mongoose');
 const MongoID = mongoose.Types.ObjectId;
-const PlayingTables = mongoose.model('playingTable');
+const PlayingTables = mongoose.model('playingTables');
 const logger = require('../logger');
 const CONST = require('../constant');
-const leaveTableActions = require('./rummy/leaveTable');
-const poolLeaveTableActions = require('./pool-rummy/leaveTable');
+const leaveTableActions = require('./poker/leaveTable');
 //const { AddTime, setDelay } = require('./socketFunctions');
 
 module.exports.disconnectTableHandle = async (client) => {

@@ -4,7 +4,7 @@ const GameUser = mongoose.model('users');
 const PlayingTables = mongoose.model("playingTables");
 const IdCounter = mongoose.model("idCounter")
 
-const commandAcions = require("../helper/socketFunctions");
+const commandAcions = require("../socketFunctions");
 const CONST = require("../../constant");
 const logger = require("../../logger");
 const cardDealActions = require("./cardDeal");

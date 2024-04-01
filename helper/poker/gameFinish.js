@@ -5,7 +5,7 @@ const MongoID = mongoose.Types.ObjectId;
 const PlayingTables = mongoose.model("playingTables");
 
 const gameTrackActions = require("./gameTrack");
-const commandAcions = require("../helper/socketFunctions");
+const commandAcions = require("../socketFunctions");
 
 
 const CONST = require("../../constant");

@@ -8,7 +8,7 @@ const config = require('../../config');
 const commonHelper = require('../../helper/commonHelper');
 const mainCtrl = require('../../controller/adminController');
 const logger = require('../../logger');
-const UserWalletTracks = mongoose.model("walletTrackTransaction");
+const UserWalletTracks = mongoose.model("userWalletTracks");
 const GameHistory = mongoose.model("tableHistory");
 
 /**

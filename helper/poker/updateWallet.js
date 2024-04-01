@@ -4,7 +4,7 @@ const PlayingTables = mongoose.model("playingTables");
 const UserWalletTracks = mongoose.model("userWalletTracks");
 const GameUser = mongoose.model("users");
 
-const commandAcions = require("../helper/socketFunctions");
+const commandAcions = require("../socketFunctions");
 const CONST = require("../../constant");
 const logger = require("../../logger");
 

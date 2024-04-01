@@ -7,11 +7,16 @@ io = module.exports = require('socket.io')(server, { allowEIO3: true });
 const logger = (module.exports = require('../logger'));
 const CONST = require('../constant');
 const mainCtrl = require('./mainController');
-const gamePlayActions = require('../helper/rummy');
+//const gamePlayActions = require('../helper/rummy');
+//const dealGamePlayActions = require('../helper/deal-rummy');
+//const poolGamePlayActions = require('../helper/pool-rummy');
+
+const gamePlayActions = require('../helper/poker');
+
 const signupActions = require('../helper/signups');
 const commonHelper = require('../helper/commonHelper');
-const dealGamePlayActions = require('../helper/deal-rummy');
-const poolGamePlayActions = require('../helper/pool-rummy');
+
+
 const { sendEvent, sendDirectEvent } = require('../helper/socketFunctions');
 const { getPaymentHistory, updateWallet } = require('../helper/walletFunction');
 const { registerUser, addBankAccount } = require('../helper/signups/signupValidation');
@@ -179,20 +184,8 @@ myIo.init = function (server) {
             try {
               socket.uid = payload.data.playerId;
               socket.sck = socket.id;
-
-              switch (payload.data.gamePlayType) {
-                case CONST.GAME_TYPE.POINT_RUMMY:
-                  await gamePlayActions.joinTable(payload.data, socket);
-                  break;
-
-                case CONST.GAME_TYPE.POOL_RUMMY:
-                  await poolGamePlayActions.joinTable(payload.data, socket);
-                  break;
-
-                case CONST.GAME_TYPE.DEAL_RUMMY:
-                  await dealGamePlayActions.joinTable(payload.data, socket);
-                  break;
-              }
+              await gamePlayActions.joinTable(payload.data, socket);
+          
             } catch (error) {
               logger.error('socketServer.js JOIN_SIGN_UP error => ', error);
               sendEvent(socket, CONST.ERROR, error);

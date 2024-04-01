@@ -1,11 +1,11 @@
 const mongoose = require('mongoose');
 const MongoID = mongoose.Types.ObjectId;
 const GameUser = mongoose.model('users');
-const PlayingTables = mongoose.model("playingTable");
+const PlayingTables = mongoose.model("playingTables");
 
-const pointTableAction = require("./rummy/joinTable");
-const poolTableAction = require("./pool-rummy/joinTable");
-const dealTableAction = require("./deal-rummy/joinTable");
+// const pointTableAction = require("./rummy/joinTable");
+// const poolTableAction = require("./pool-rummy/joinTable");
+// const dealTableAction = require("./deal-rummy/joinTable");
 const commandAcions = require('./socketFunctions');
 
 const logger = require("../logger");
@@ -15,12 +15,12 @@ const _ = require("underscore");
 let io = require('socket.io-client')
 const schedule = require('node-schedule');
 const { getRandomNumber } = require("./helperFunction");
-const roundStartActions = require('./rummy/roundStart');
-const checkWinnerActions = require('./rummy/checkWinner');
+// const roundStartActions = require('./rummy/roundStart');
+// const checkWinnerActions = require('./rummy/checkWinner');
 
-const gamePlayActions = require('./rummy/gamePlay');
-const dealGamePlayActions = require('./deal-rummy/gamePlay');
-const poolGamePlayActions = require('./pool-rummy/gamePlay');
+// const gamePlayActions = require('./rummy/gamePlay');
+// const dealGamePlayActions = require('./deal-rummy/gamePlay');
+// const poolGamePlayActions = require('./pool-rummy/gamePlay');
 
 let socket = io.connect(config.SOCKET_CONNECT, { reconnect: true });
 

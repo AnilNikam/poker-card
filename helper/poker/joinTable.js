@@ -2,9 +2,9 @@ const mongoose = require("mongoose")
 const MongoID = mongoose.Types.ObjectId;
 const GameUser = mongoose.model('users');
 const PlayingTables = mongoose.model("playingTables");
-const BetLists = mongoose.model("betList")
+const BetLists = mongoose.model("betLists")
 
-const { sendEvent, sendDirectEvent, AddTime, setDelay, clearJob } = require('../helper/socketFunctions');
+const { sendEvent, sendDirectEvent, AddTime, setDelay, clearJob } = require('../socketFunctions');
 
 const gameStartActions = require("./gameStart");
 const CONST = require("../../constant");

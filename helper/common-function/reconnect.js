@@ -8,7 +8,7 @@ const { sendDirectEvent } = require('../socketFunctions');
 const { getPlayingUserInRoundWaiting, winnerViewResponseFilter } = require('./manageUserFunction');
 
 const Users = mongoose.model('users');
-const PlayingTables = mongoose.model('playingTable');
+const PlayingTables = mongoose.model('playingTables');
 const MongoID = mongoose.Types.ObjectId;
 
 module.exports.reconnect = async (requestData, client) => {

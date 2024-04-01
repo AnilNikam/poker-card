@@ -14,7 +14,7 @@ const OtpMobile = mongoose.model('otpMobile');
 const Friend = mongoose.model('friends');
 const otpAdharkyc = mongoose.model('otpAdharkyc');
 const BankDetails = mongoose.model('bankDetails');
-const WalletTrackTransaction = mongoose.model('walletTrackTransaction');
+const WalletTrackTransaction = mongoose.model('userWalletTracks');
 
 
 const config = require('../config');

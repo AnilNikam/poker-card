@@ -5,7 +5,6 @@ const collectionName = 'betLists';
 
 const BetListSchema = new Schema(
   {
-    gamePlayType: { type: String, required: true, default: 'pointrummy' },
     tableName: { type: String, default: '' },
     entryFee: { type: String },//bet
     commission: { type: Number, default: 10 },
@@ -14,6 +13,8 @@ const BetListSchema = new Schema(
     expireIn: { type: Number },
     createdAt: { type: Date, default: Date.now },
     modifiedAt: { type: Date, default: Date.now },
+    smallblind: { type: Number, default: 0 },
+    bigblind:{ type: Number, default: 0 },
   },
   {
     versionKey: false,

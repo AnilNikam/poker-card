@@ -5,7 +5,7 @@ const fortuna = require('javascript-fortuna');
 fortuna.init();
 const CONST = require('../../constant');
 const logger = require("../../logger");
-const commandAcions = require("../helper/socketFunctions");
+const commandAcions = require("../socketFunctions");
 const roundStartActions = require("./roundStart");
 const PlayingTables = mongoose.model("playingTables");
 const _ = require("underscore")

@@ -6,7 +6,7 @@ const GameUser = mongoose.model("users");
 
 const CONST = require("../../constant");
 const logger = require("../../logger");
-const commandAcions = require("../helper/socketFunctions");
+const commandAcions = require("../socketFunctions");
 const roundStartActions = require("./roundStart");
 const gameFinishActions = require("./gameFinish");
 const checkWinnerActions = require("./checkWinner");
