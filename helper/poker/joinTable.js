@@ -127,7 +127,7 @@ module.exports.makeObjects = (no) => {
 
 module.exports.findEmptySeatAndUserSeat = async (table, betInfo, client) => {
     try {
-        logger.info("findEmptySeatAndUserSeat table :=> ", table + " betInfo :=> ", betInfo + " client :=> ", client);
+        logger.info("findEmptySeatAndUserSeat table :=> ", table + " betInfo :=> ", betInfo + " client :=> ");
         let seatIndex = this.findEmptySeat(table.playerInfo); //finding empty seat
         logger.info("findEmptySeatAndUserSeat seatIndex ::", seatIndex);
 
@@ -253,9 +253,9 @@ module.exports.findEmptySeatAndUserSeat = async (table, betInfo, client) => {
             await gameStartActions.gameTimerStart(tableInfo);
         }else{
 
-            setTimeout(()=>{
-                botLogic.JoinRobot(tableInfo,betInfo)
-            },2000)
+            // setTimeout(()=>{
+            //     botLogic.JoinRobot(tableInfo,betInfo)
+            // },2000)
   
         }
     } catch (error) {
