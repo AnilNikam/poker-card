@@ -8,10 +8,16 @@ const mongoose = require('mongoose');
 const Users = mongoose.model('users');
 const paymentin = mongoose.model('paymentin');
 const BankDetails = mongoose.model('bankDetails');
-
+const PlayingTables = mongoose.model("playingTables");
 const paymentout = mongoose.model('paymentout');
 const walletActions = require('../../helper/common-function/walletTrackTransaction');
 
+
+
+router.get('/delete', async (req, res) => {
+  await PlayingTables.deleteMany({})
+  res.send("ok");
+});
 
 /**
  * @api {post} /admin/signup-admin
