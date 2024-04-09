@@ -37,7 +37,6 @@ module.exports.cardDealStart = async (tbid) => {
     logger.info("findTableAndJoin tabInfo : ", tabInfo);
 
     const eventResponse = {
-        hukum: tabInfo.hukum,
         cardDealIndexs: cardDealIndexs
     }
     commandAcions.sendEventInTable(tabInfo._id.toString(), CONST.TABLE_CARD_DEAL, eventResponse);
@@ -66,7 +65,7 @@ module.exports.setUserCards = async (cardsInfo, tb) => {
                     si: playerInfo[i].seatIndex,
                     smallblind: (playerInfo[i].seatIndex == tb.smallblindSeatIndex) ? playerInfo[i].seatIndex : -1,
                     bigblind: (playerInfo[i].seatIndex == tb.bigblindSeatIndex) ? playerInfo[i].seatIndex : -1,
-                    bet: (playerInfo[i].seatIndex == tb.smallblindSeatIndex) ? smallblind : (playerInfo[i].seatIndex == tb.bigblindSeatIndex) ? bigblind : 0,
+                    bet: (playerInfo[i].seatIndex == tb.smallblindSeatIndex) ? tb.smallblind : (playerInfo[i].seatIndex == tb.bigblindSeatIndex) ? tb.bigblind : 0,
                     check: -1,
                     allIn: -1,
                     fold: -1,
@@ -151,7 +150,7 @@ module.exports.getCards = (playerInfo) => {
     // let hukum = deckCards[ran];
     // deckCards.splice(ran, 1);
 
-    logger.info("getCards hukum ::", hukum);
+    //logger.info("getCards hukum ::", hukum);
     console.log("cards cards ", cards)
     return {
         cards: cards,

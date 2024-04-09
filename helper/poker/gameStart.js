@@ -76,7 +76,7 @@ module.exports.collectBoot = async (tbId) => {
 
 
         let dealerSeatIndex = await roundStartActions.getUserTurnSeatIndex(tb, tb.dealerSeatIndex, 0);
-        let smallblindSeatIndex = await roundStartActions.getUserTurnSeatIndex(tb, nextTurnIndex, 0);
+        let smallblindSeatIndex = await roundStartActions.getUserTurnSeatIndex(tb, dealerSeatIndex, 0);
         let bigblindSeatIndex = await roundStartActions.getUserTurnSeatIndex(tb, smallblindSeatIndex, 0);
 
 
