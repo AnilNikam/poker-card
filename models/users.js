@@ -14,6 +14,8 @@ const GameUserSchema = new Schema(
     uniqueId: { type: String },
     email: { type: String, default: '' },
     panNo: { type: String, default: '' },
+    facebookid:{type: String, default: ''},
+    googleid:{type: String, default: ''},
     location: { type: String, default: '' },
     state: { type: String, default: '' },
     password: { type: String, default: '' },
@@ -29,7 +31,7 @@ const GameUserSchema = new Schema(
     referredBy: { type: String },
     avatar: { type: String },
     deviceType: { type: String, default: 'Android' },
-    loginType: { type: String, enum: ['Mobile', 'Guest', 'email', 'Google'], require: true, default: 'Guest' },
+    loginType: { type: String, enum: ['Mobile', 'Guest', 'email', 'Google','Facebook'], require: true, default: 'Guest' },
     flags: {
       isOnline: { type: Number, default: 0 },
     },

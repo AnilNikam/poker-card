@@ -13,7 +13,7 @@ const checkWinnerActions = require("./checkWinner");
 const checkUserCardActions = require("./checkUserCard");
 
 const walletActions = require("./updateWallet");
-
+const cardDealActions = require("./cardDeal");
 
 /*
         TAKEACTION Contract
@@ -144,14 +144,92 @@ module.exports.TAKEACTION = async (requestData, client) => {
     if(allusersamebet.length == updated.contract.length){
         
         //Round change 
-    }else{
+        //Open One Card and change turn 
+        //If 5 Card and Won Game 
+        if(updated.communitycard.length >= 5){
+            // Go To Win 
+        }else{
+             this.OpenNextcard(updated)   
+        }
 
+    }else{
+        await roundStartActions.nextUserTurnstart(updated);
     }
 
 
     // If not same after start again 
  
 }
+
+module.exports.OpenNextcard = async(tb)=>{
+
+    //
+    if(tb.round == 1){
+        let Communitycard = cardDealActions.getCards_communitycard(3,tb)
+
+        if(Communitycard.cards != undefined && Communitycard.deckCards){
+
+            var WH = { _id: MongoId(tb._id.toString()) };
+            var Set={
+                $set:{
+                    communitycard:Communitycard.cards,
+                    deckCards:Communitycard.deckCards,
+                }
+            }
+
+            const updated = await PlayingTables.findOneAndUpdate(WH, Set, { new: true });
+            logger.info("updated  updated  : ", updated);
+
+            commandAcions.sendEventInTable(updated._id.toString(), CONST.OPENCARD, {
+                contract: updated.contract,
+                communitycard:updated.communitycard,
+                opencard:Communitycard.cards 
+            });
+
+        }else{
+            console.log("undefined  ",Communitycard)
+        }
+
+    }else{
+        let Communitycard = cardDealActions.getCards_communitycard(1,tb)
+
+        if(Communitycard.cards != undefined && Communitycard.deckCards){
+
+            var WH = { _id: MongoId(tb._id.toString()) };
+            var Set={
+                $set:{
+                    communitycard:Communitycard.cards,
+                    deckCards:Communitycard.deckCards,
+                }
+            }
+
+            const updated = await PlayingTables.findOneAndUpdate(WH, Set, { new: true });
+            logger.info("updated  updated  : ", updated);
+
+            commandAcions.sendEventInTable(updated._id.toString(), CONST.OPENCARD, {
+                contract: updated.contract,
+                communitycard:updated.communitycard,
+                opencard:Communitycard.cards 
+            });
+
+        }else{
+            console.log("undefined  ",Communitycard)
+        }
+    }
+
+
+
+}
+
+module.exports.winnerround = async(tb)=>{
+
+    //
+    
+
+
+
+}
+
 
 module.exports.chal = async (requestData, client) => {
     try {

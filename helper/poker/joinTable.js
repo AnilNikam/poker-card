@@ -159,7 +159,6 @@ module.exports.findEmptySeatAndUserSeat = async (table, betInfo, client) => {
             status: "",
             playerStatus: "",
             chalValue: 0,
-           
             turnMissCounter: 0,
             turnCount: 0,
             sck: client.id,
@@ -167,7 +166,6 @@ module.exports.findEmptySeatAndUserSeat = async (table, betInfo, client) => {
             playerLostChips: 0,
             isSee: false,
             Iscom:userInfo.Iscom != undefined ? userInfo.Iscom:0,
-
             cards: [],
             playingstatus:"",
             bet:0   

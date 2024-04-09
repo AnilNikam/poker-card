@@ -24,9 +24,8 @@ module.exports.cardDealStart = async (tbid) => {
 
     const update = {
         $set: {
-            hukum: cardDetails.hukum,
             gameState: "CardDealing",
-            deckCards:cardDetails.deckCards
+            deckCards: cardDetails.deckCards
         }
     }
     const cardDealIndexs = await this.setUserCards(cardDetails, tb);
@@ -64,26 +63,26 @@ module.exports.setUserCards = async (cardsInfo, tb) => {
             if (typeof playerInfo[i].seatIndex != "undefined" && playerInfo[i].status == "play") {
 
                 let userInfo = {
-                    si:playerInfo[i].seatIndex,
-                    smallblind:(playerInfo[i].seatIndex == tb.smallblindSeatIndex)?playerInfo[i].seatIndex:-1,
-                    bigblind:(playerInfo[i].seatIndex == tb.bigblindSeatIndex)?playerInfo[i].seatIndex:-1,
-                    bet:(playerInfo[i].seatIndex == tb.smallblindSeatIndex)?smallblind:(playerInfo[i].seatIndex == tb.bigblindSeatIndex)?bigblind:0,
-                    check:-1,
-                    allIn:-1,
-                    fold:-1,
-                    raise:-1,
-                    type:""
+                    si: playerInfo[i].seatIndex,
+                    smallblind: (playerInfo[i].seatIndex == tb.smallblindSeatIndex) ? playerInfo[i].seatIndex : -1,
+                    bigblind: (playerInfo[i].seatIndex == tb.bigblindSeatIndex) ? playerInfo[i].seatIndex : -1,
+                    bet: (playerInfo[i].seatIndex == tb.smallblindSeatIndex) ? smallblind : (playerInfo[i].seatIndex == tb.bigblindSeatIndex) ? bigblind : 0,
+                    check: -1,
+                    allIn: -1,
+                    fold: -1,
+                    raise: -1,
+                    type: ""
                 }
 
                 let update = {
                     $set: {
                         "playerInfo.$.cards": cardsInfo.cards[activePlayer],
                     },
-                    $push:{
-                        contract:userInfo
+                    $push: {
+                        contract: userInfo
                     }
                 }
-                
+
 
                 let uWh = { _id: MongoID(tb._id.toString()), "playerInfo.seatIndex": Number(playerInfo[i].seatIndex) }
                 logger.info("serUserCards uWh update ::", uWh, update)
@@ -101,63 +100,86 @@ module.exports.setUserCards = async (cardsInfo, tb) => {
     }
 }
 
-module.exports.getCards  =  (playerInfo) => {
+module.exports.getCards = (playerInfo) => {
     let deckCards = Object.assign([], CONST.deckOne);
-    
+
     //deckCards = deckCards.slice(0, deckCards.length);
 
     logger.info("getCards deckCards ::", deckCards);
 
     let cards = [];
-    
+
     let color = ['H', 'S', 'D', 'C'];
     let number = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
 
 
-    
 
-    for (let i = 0; i < playerInfo.length; i++) {
-        if (typeof playerInfo[i].seatIndex != "undefined" && playerInfo[i].status == "play" && playerInfo[i].Iscom == 1) {
-            let card = [];
-            
-            console.log(playerInfo[i].Iscom)
 
-            card =  this.HighCard(deckCards,color,number)
-            
-            cards[playerInfo[i].seatIndex]= card;
-        }
-    }
+    // for (let i = 0; i < playerInfo.length; i++) {
+    //     if (typeof playerInfo[i].seatIndex != "undefined" && playerInfo[i].status == "play" && playerInfo[i].Iscom == 1) {
+    //         let card = [];
+
+    //         console.log(playerInfo[i].Iscom)
+
+    //         card =  this.HighCard(deckCards,color,number)
+
+    //         cards[playerInfo[i].seatIndex]= card;
+    //     }
+    // }
 
     for (let i = 0; i < playerInfo.length; i++) {
         if (typeof playerInfo[i].seatIndex != "undefined" && playerInfo[i].status == "play") {
             let card = [];
-            
+
             console.log(playerInfo[i].Iscom)
 
 
-            if(typeof playerInfo[i].seatIndex != "undefined" && playerInfo[i].Iscom == 0){
+            if (typeof playerInfo[i].seatIndex != "undefined" && playerInfo[i].Iscom == 0) {
                 for (let i = 0; i < 2; i++) {
                     let ran = parseInt(fortuna.random() * deckCards.length);
                     card.push(deckCards[ran])
                     deckCards.splice(ran, 1);
                 }
 
-                cards[playerInfo[i].seatIndex]= card;
+                cards[playerInfo[i].seatIndex] = card;
             }
-           
+
         }
     }
 
     let ran = parseInt(fortuna.random() * deckCards.length);
-    let hukum = deckCards[ran];
-    deckCards.splice(ran, 1);
+    // let hukum = deckCards[ran];
+    // deckCards.splice(ran, 1);
 
     logger.info("getCards hukum ::", hukum);
-    console.log("cards cards ",cards)
+    console.log("cards cards ", cards)
     return {
-        hukum: hukum,
         cards: cards,
-        deckCards:deckCards
+        deckCards: deckCards
+    }
+}
+
+
+module.exports.getCards_communitycard = (cardNumber, deckCards) => {
+
+    logger.info("getCards deckCards ::", deckCards);
+
+    let cards = [];
+
+
+    for (let i = 0; i < cardNumber; i++) {
+        let ran = parseInt(fortuna.random() * deckCards.length);
+        cards.push(deckCards[ran])
+        deckCards.splice(ran, 1);
+    }
+
+
+    console.log("cards cards ", cards)
+    console.log("cards deckCards ", deckCards)
+
+    return {
+        cards: cards,
+        deckCards: deckCards
     }
 }
 
@@ -258,16 +280,16 @@ module.exports.HighCard = (pack, color, card) => {
     }
 
     var finalcard = [];
-    console.log("poss ",poss)
+    console.log("poss ", poss)
     for (var i = 0; i < poss.length; i++) {
-        console.log("pack",pack)
+        console.log("pack", pack)
         if (pack.indexOf(poss[i]) != -1) {
             finalcard.push(poss[i]);
             pack.splice(pack.indexOf(poss[i]), 1);
         }
     }
 
-    console.log("finalcard  ",finalcard)
+    console.log("finalcard  ", finalcard)
     return _.flatten(finalcard)
 
 }
