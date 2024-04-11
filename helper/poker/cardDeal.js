@@ -37,7 +37,8 @@ module.exports.cardDealStart = async (tbid) => {
     logger.info("findTableAndJoin tabInfo : ", tabInfo);
 
     const eventResponse = {
-        cardDealIndexs: cardDealIndexs
+        cardDealIndexs: cardDealIndexs,
+        cardDetails:cardDetails
     }
     commandAcions.sendEventInTable(tabInfo._id.toString(), CONST.TABLE_CARD_DEAL, eventResponse);
 
