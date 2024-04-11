@@ -71,7 +71,9 @@ module.exports.setUserCards = async (cardsInfo, tb) => {
                     fold: -1,
                     raise: -1,
                     type: "",
-                    isturn:-1
+                    isturn:-1,
+                    minbet:tb.minbet,
+                    maxbet:tb.maxbet
                 }
 
                 let update = {

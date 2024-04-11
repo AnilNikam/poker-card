@@ -2,6 +2,98 @@ const _ = require("underscore");
 //const { RemainCardTounusecardThrow } = require("./helper/botFunction");
 
 
+
+let contractData =  [{
+    si: 0,
+    smallblind: 1,
+    bigblind:  -1,
+    bet: 1,
+    check: -1,
+    allIn: -1,
+    fold: -1,
+    raise: -1,
+    type: "",
+    isturn:-1,
+    minbet:2,
+    maxbet:100
+},{
+    si: 1,
+    smallblind: -1,
+    bigblind:  1,
+    bet: 2,
+    check: -1,
+    allIn: -1,
+    fold: -1,
+    raise: -1,
+    type: "",
+    isturn:-1,
+    minbet:2,
+    maxbet:100
+},{
+    si: 2,
+    smallblind: -1,
+    bigblind:  -1,
+    bet: 0,
+    check: -1,
+    allIn: -1,
+    fold: -1,
+    raise: -1,
+    type: "",
+    isturn:-1,
+    minbet:2,
+    maxbet:100
+}]
+let ti = 1;
+let round = 2
+
+Getdetailsfornextturner(contractData,ti,round)
+
+function Getdetailsfornextturner(contractData,ti,round){
+
+    console.log("contractData ",contractData)
+    console.log("ti ",ti)
+    console.log("round ",round)
+
+    let turnuserData = contractData.filter((e)=>{ return e.si  == ti})[0]
+
+
+
+    if(round == 1){
+        let bigblinder = contractData.filter((e)=>{ return e.bigblind != -1})[0]  
+
+        turnuserData.fold = 1;
+        turnuserData.bet  = bigblinder.bet - turnuserData.bet;
+        turnuserData.raise = 1;
+        turnuserData.check = turnuserData.bigblind == 1 ? 1 : -1
+        turnuserData.minbet = turnuserData.bet
+      
+        console.log("turnuserData ",turnuserData)
+
+    }else{
+        let bigblinder = contractData.filter((e)=>{ return e.bigblind != -1})[0]  
+
+        const maxBet = contractData.reduce((max, obj) => (obj.bet > max ? obj.bet : max), contractData[0].bet);
+        console.log("maxBet ",maxBet)
+
+        let Allin = contractData.filter((e)=>{ return e.allIn == 1})[0]  
+     
+
+        turnuserData.fold = 1;
+        turnuserData.bet  = maxBet - turnuserData.bet;
+        turnuserData.raise = Allin.length > 0 ? 0:1;
+        turnuserData.allIn = Allin.length > 0 ? 1 : 0;
+        turnuserData.check = turnuserData.bet == 0 && Allin.length == 0 ? 1 : -1
+
+        turnuserData.minbet = turnuserData.bet
+
+        console.log("turnuserData ",turnuserData)
+
+    }
+
+}
+
+return false
+
 const checkImpureSequence = (card, wildCard) => {
     const joker = [];
     let cardType = [];

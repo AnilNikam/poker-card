@@ -27,7 +27,7 @@ const cardDealActions = require("./cardDeal");
     */
 module.exports.TAKEACTION = async (requestData, client) => {
 
-    if (typeof client.tbid == 'undefined' || Data.type == undefined || Data.bet == undefined ) {
+    if (typeof client.tbid == 'undefined' || Data.type == undefined || Data.bet == undefined) {
         commandAcions.sendDirectEvent(client.sck, CONST.TAC, requestData, false, "User session not set, please restart game!");
         return false;
     }
@@ -81,7 +81,7 @@ module.exports.TAKEACTION = async (requestData, client) => {
 
     var Set = {
         $set: {
-            
+
         }
     }
     if (tabInfo.contract.length > 0) {
@@ -93,11 +93,15 @@ module.exports.TAKEACTION = async (requestData, client) => {
     if (foundIndex != -1) {
         tabInfo.contract[foundIndex].bet = requestData.bet
         tabInfo.contract[foundIndex].type = requestData.type
+        tabInfo.contract[foundIndex].isturn = 1
+
 
         Set["$set"]["contract"] = tabInfo.contract;
         Set["$set"]["pi." + client.si + ".turnMissCounter"] = 0;
+
+
     } else {
-       console.log("ddddddddddddddddddddddddddddddddddd ELSE KKKKKKKKKKKKK")
+        console.log("ddddddddddddddddddddddddddddddddddd ELSE KKKKKKKKKKKKK")
         // var jdt = {
         //     "suit": data.suit,
         //     "contract": data.contract,
@@ -122,7 +126,7 @@ module.exports.TAKEACTION = async (requestData, client) => {
         trackClass.trackingplayingerror(client, 'TAC', { data: requestData, tb: updated }, 'error:TAC003');
         return false;
     }
-    
+
 
     commandAcions.clearJob(tabInfo.job_id);
     commandAcions.sendEventInTable(updated._id.toString(), CONST.TAC, {
@@ -135,71 +139,91 @@ module.exports.TAKEACTION = async (requestData, client) => {
     //All User Bet same and Check After Round Change 
     // Check also same bet and 
 
-    let allusersamebet =  updated.contract.filter((e)=>{
-       return e.bet == requestData.bet || e.fold == 1
+    let allusersamebet = updated.contract.filter((e) => {
+        return e.bet == requestData.bet || e.fold == 1
     })
 
-    console.log("allusersamebet ",allusersamebet)
-    
-    if(allusersamebet.length == updated.contract.length){
-        
+    console.log("allusersamebet ", allusersamebet)
+
+    if (allusersamebet.length == updated.contract.length) {
+
         //Round change 
         //Open One Card and change turn 
         //If 5 Card and Won Game 
-        if(updated.communitycard.length >= 5){
+        if (updated.communitycard.length >= 5) {
             // Go To Win 
-        }else{
-             this.OpenNextcard(updated)   
+        } else {
+            this.OpenNextcard(updated)
         }
 
-    }else{
+    } else {
         await roundStartActions.nextUserTurnstart(updated);
     }
 
 
     // If not same after start again 
- 
+
 }
 
-module.exports.OpenNextcard = async(tb)=>{
+module.exports.OpenNextcard = async (tb) => {
 
     //
-    if(tb.round == 1){
-        let Communitycard = cardDealActions.getCards_communitycard(3,tb)
+    if (tb.round == 1) {
+        let Communitycard = cardDealActions.getCards_communitycard(3, tb)
 
-        if(Communitycard.cards != undefined && Communitycard.deckCards){
+        if (Communitycard.cards != undefined && Communitycard.deckCards) {
 
             var WH = { _id: MongoId(tb._id.toString()) };
-            var Set={
-                $set:{
-                    communitycard:Communitycard.cards,
-                    deckCards:Communitycard.deckCards,
+            
+
+            tb.contract.forEach((e) => {
+                e.isturn = -1;
+                e.bet = 0;
+            });
+
+            var Set = {
+                $set: {
+                    communitycard: Communitycard.cards,
+                    deckCards: Communitycard.deckCards,
+                    contract:tb.contract
                 }
             }
-
             const updated = await PlayingTables.findOneAndUpdate(WH, Set, { new: true });
             logger.info("updated  updated  : ", updated);
 
             commandAcions.sendEventInTable(updated._id.toString(), CONST.OPENCARD, {
                 contract: updated.contract,
-                communitycard:updated.communitycard,
-                opencard:Communitycard.cards 
+                communitycard: updated.communitycard,
+                opencard: Communitycard.cards
             });
 
-        }else{
-            console.log("undefined  ",Communitycard)
+            setTimeout(()=>{
+                roundStartActions.nextUserTurnstart(updated);
+            },1000)
+
+        } else {
+            console.log("undefined  ", Communitycard)
         }
 
-    }else{
-        let Communitycard = cardDealActions.getCards_communitycard(1,tb)
+    } else {
+        let Communitycard = cardDealActions.getCards_communitycard(1, tb)
 
-        if(Communitycard.cards != undefined && Communitycard.deckCards){
+        if (Communitycard.cards != undefined && Communitycard.deckCards) {
 
             var WH = { _id: MongoId(tb._id.toString()) };
-            var Set={
-                $set:{
-                    communitycard:Communitycard.cards,
-                    deckCards:Communitycard.deckCards,
+           
+
+            tb.contract.forEach((e) => {
+                e.isturn = -1;
+                e.bet = 0;
+            });
+
+
+            var Set = {
+                $set: {
+                    communitycard: Communitycard.cards,
+                    deckCards: Communitycard.deckCards,
+                    contract:tb.contract
                 }
             }
 
@@ -208,23 +232,26 @@ module.exports.OpenNextcard = async(tb)=>{
 
             commandAcions.sendEventInTable(updated._id.toString(), CONST.OPENCARD, {
                 contract: updated.contract,
-                communitycard:updated.communitycard,
-                opencard:Communitycard.cards 
+                communitycard: updated.communitycard,
+                opencard: Communitycard.cards
             });
 
-        }else{
-            console.log("undefined  ",Communitycard)
+            setTimeout(()=>{
+                roundStartActions.nextUserTurnstart(updated);
+            },1000)
+            
+        } else {
+            console.log("undefined  ", Communitycard)
         }
     }
 
-
-
+    
 }
 
-module.exports.winnerround = async(tb)=>{
+module.exports.winnerround = async (tb) => {
 
     //
-    
+
 
 
 

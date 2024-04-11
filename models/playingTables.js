@@ -35,6 +35,9 @@ const PlayingTablesSchema = new Schema(
     deckCards:[],
     contract:[],
 
+    minbet:{ type: Number, default: 2 },
+    maxbet:{ type: Number, default: 100 },
+
     turnSeatIndex: { type: Number, default: -1 },
     jobId: { type: String, default: "" },
     turnDone: { type: Boolean, default: false },

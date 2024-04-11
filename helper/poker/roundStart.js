@@ -116,7 +116,7 @@ module.exports.startUserTurn = async (seatIndex, objData, firstTurnStart) => {
             return false
         }
 
-        let contractData = _.filter(tb.contract, function(num){ return num.si == seatIndex; });
+        //let contractData = _.filter(tb.contract, function (num) { return num.si == seatIndex; });
 
         // let update = {
 
@@ -137,11 +137,56 @@ module.exports.startUserTurn = async (seatIndex, objData, firstTurnStart) => {
         // allIn:-1,
         // fold:-1,
         // raise:-1
-        
+
+        if(tb.contract.filter((e) => { return e.fold != -1 }).length <= 1){
+            console.log("Winner For Only One Player ")
+
+            return false
+        }
+
+
+
+        let turnuserData = tb.contract.filter((e) => { return e.si == ti })[0]
+
+
+
+        if (round == 1) {
+            let bigblinder = tb.contract.filter((e) => { return e.bigblind != -1 })[0]
+
+            turnuserData.fold = 1;
+            turnuserData.bet = bigblinder.bet - turnuserData.bet;
+            turnuserData.raise = 1;
+            turnuserData.check = turnuserData.bigblind == 1 ? 1 : -1
+            turnuserData.minbet = turnuserData.bet
+
+            console.log("turnuserData ", turnuserData)
+
+        } else {
+            let bigblinder = tb.contract.filter((e) => { return e.bigblind != -1 })[0]
+
+            const maxBet = tb.contract.reduce((max, obj) => (obj.bet > max ? obj.bet : max), tb.contract[0].bet);
+            console.log("maxBet ", maxBet)
+
+            let Allin = tb.contract.filter((e) => { return e.allIn == 1 })[0]
+
+
+            turnuserData.fold = 1;
+            turnuserData.bet = maxBet - turnuserData.bet;
+            turnuserData.raise = Allin.length > 0 ? 0 : 1;
+            turnuserData.allIn = Allin.length > 0 ? 1 : 0;
+            turnuserData.check = turnuserData.bet == 0 && Allin.length == 0 ? 1 : -1
+
+            turnuserData.minbet = turnuserData.bet
+
+            console.log("turnuserData ", turnuserData)
+
+        }
+
+
         let response = {
             previousTurn: objData.turnSeatIndex,
             nextTurn: tb.turnSeatIndex,
-            turndata:contractData
+            turndata: turnuserData
         }
         commandAcions.sendEventInTable(tb._id.toString(), CONST.TURN_START, response);
 
@@ -313,12 +358,12 @@ module.exports.getUserTurnSeatIndex = async (tbInfo, prevTurn, cnt) => {
 module.exports.getUserTurnSeatIndexContract = async (tbInfo, prevTurn, cnt) => {
     try {
         let counter = cnt;
-        let p = _.filter(tbInfo.contract, function(num){ return num.fold == -1; });
+        let p = _.filter(tbInfo.contract, function (num) { return num.fold == -1; });
         let plen = p.length;
 
 
         if (prevTurn === plen - 1) p[0].si;
-        else x =   p[Number(prevTurn) + 1].si;
+        else x = p[Number(prevTurn) + 1].si;
 
         if (counter === plen + 1) {
             return prevTurn;
@@ -334,8 +379,8 @@ module.exports.getUserTurnSeatIndexContract = async (tbInfo, prevTurn, cnt) => {
             return (x);
         }
 
-        
-        
+
+
 
 
     } catch (error) {
@@ -355,18 +400,18 @@ module.exports.checkShileShowSeatIndex = (seatIndex, p) => {
         return pl;
 }
 
-module.exports.checShowButton = async (p,playerIndex) => {
+module.exports.checShowButton = async (p, playerIndex) => {
     try {
         //&&  (p[i].playerStatus == "chal" || (p[i].playerStatus == "blind" &&
         let counter = 0;
-        logger.info("checShowButton  :playerIndex  ", playerIndex );
-       
+        logger.info("checShowButton  :playerIndex  ", playerIndex);
+
 
 
         for (let i = 0; i < p.length; i++) {
-            logger.info("checShowButton  :seatIndex  ", p[i].seatIndex );
-            logger.info("checShowButton  :p[i].isSee  ",p[i].isSee);
-            if (p[i].seatIndex != "undefined" && playerIndex == p[i].seatIndex &&  p[i].isSee == true) {
+            logger.info("checShowButton  :seatIndex  ", p[i].seatIndex);
+            logger.info("checShowButton  :p[i].isSee  ", p[i].isSee);
+            if (p[i].seatIndex != "undefined" && playerIndex == p[i].seatIndex && p[i].isSee == true) {
                 counter++;
             }
         }
