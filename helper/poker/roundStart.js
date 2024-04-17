@@ -146,7 +146,7 @@ module.exports.startUserTurn = async (seatIndex, objData, firstTurnStart) => {
 
 
 
-        let turnuserData = tb.contract.filter((e) => { return e.si == ti })[0]
+        let turnuserData = tb.contract.filter((e) => { return e.si == seatIndex })[0]
 
 
 
