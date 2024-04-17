@@ -362,8 +362,8 @@ module.exports.getUserTurnSeatIndexContract = async (tbInfo, prevTurn, cnt) => {
         let plen = p.length;
 
 
-        if (prevTurn === plen - 1) p[0].si;
-        else x = p[Number(prevTurn) + 1].si;
+        if (prevTurn === plen - 1) p[0].seatIndex;
+        else x = p[Number(prevTurn) + 1].seatIndex;
 
         if (counter === plen + 1) {
             return prevTurn;
@@ -371,7 +371,7 @@ module.exports.getUserTurnSeatIndexContract = async (tbInfo, prevTurn, cnt) => {
 
         counter++;
 
-        if (x < plen && (p[x] == null || typeof p[x].si == 'undefined' || p[x].fold == -1)) {
+        if (x < plen && (p[x] == null || typeof p[x].seatIndex == 'undefined' || p[x].fold == -1)) {
             let index = await this.getUserTurnSeatIndexContract(tbInfo, x, counter);
             return index;
         }
