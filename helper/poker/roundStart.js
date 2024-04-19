@@ -153,9 +153,12 @@ module.exports.startUserTurn = async (seatIndex, objData, firstTurnStart) => {
         if (tb.round == 1) {
             let bigblinder = tb.contract.filter((e) => { return e.bigblind != -1 })[0]
 
+            let Allin = tb.contract.filter((e) => { return e.allIn == 1 })[0]
+
             turnuserData.fold = 1;
             turnuserData.bet = bigblinder.bet - turnuserData.bet;
             turnuserData.raise = 1;
+            turnuserData.call = turnuserData.bet == 0 && Allin.length == 0 ? 0 : 1
             turnuserData.check = turnuserData.bigblind == 1 ? 1 : 0
             turnuserData.minbet = turnuserData.bet
 
@@ -174,6 +177,8 @@ module.exports.startUserTurn = async (seatIndex, objData, firstTurnStart) => {
             turnuserData.bet = maxBet - turnuserData.bet;
             turnuserData.raise = Allin.length > 0 ? 0 : 1;
             turnuserData.allIn = Allin.length > 0 ? 1 : 0;
+            turnuserData.call = turnuserData.bet == 0 && Allin.length == 0 ? 0 : 1
+
             turnuserData.check = turnuserData.bet == 0 && Allin.length == 0 ? 1 : 0
 
             turnuserData.minbet = turnuserData.bet

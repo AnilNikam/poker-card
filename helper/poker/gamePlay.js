@@ -26,9 +26,11 @@ const cardDealActions = require("./cardDeal");
 
     */
 module.exports.TAKEACTION = async (requestData, client) => {
+console.log("requestData ",requestData)
+console.log("client ",client)
 
-    if (typeof client.tbid == 'undefined' || Data.type == undefined || Data.bet == undefined) {
-        commandAcions.sendDirectEvent(client.sck, CONST.TAC, requestData, false, "User session not set, please restart game!");
+    if (typeof client.tbid == 'undefined' || requestData.type == undefined || requestData.bet == undefined) {
+        commandAcions.sendDirectEvent(client.sck, CONST.TAKEACTION, requestData, false, "User session not set, please restart game!");
         return false;
     }
     if (typeof client.TAC != "undefined" && client.TAC) {
@@ -55,13 +57,13 @@ module.exports.TAKEACTION = async (requestData, client) => {
     if (tabInfo.turnDone) {
         logger.info("chal : client.su ::", client.seatIndex);
         delete client.TAC;
-        commandAcions.sendDirectEvent(client.sck, CONST.TAC, requestData, false, "Turn is already taken!");
+        commandAcions.sendDirectEvent(client.sck, CONST.TAKEACTION, requestData, false, "Turn is already taken!");
         return false;
     }
     if (tabInfo.turnSeatIndex != client.seatIndex) {
         logger.info("chal : client.su ::", client.seatIndex);
         delete client.TAC;
-        commandAcions.sendDirectEvent(client.sck, CONST.TAC, requestData, false, "It's not your turn!");
+        commandAcions.sendDirectEvent(client.sck, CONST.TAKEACTION, requestData, false, "It's not your turn!");
         return false;
     }
 
@@ -84,12 +86,14 @@ module.exports.TAKEACTION = async (requestData, client) => {
 
         }
     }
+    let foundIndex = -1
+    console.log("tabInfo.contract ",tabInfo.contract)
+
     if (tabInfo.contract.length > 0) {
         //_.map(tabInfo.contract, function (el) { return el.islastcontract = false; });
-        var foundIndex = tabInfo.contract.findIndex(x => x.si == client.si);
-    } else {
-        var foundIndex = -1
-    }
+        foundIndex = tabInfo.contract.findIndex(x => x.si == client.seatIndex);
+    } 
+
     if (foundIndex != -1) {
         tabInfo.contract[foundIndex].bet = requestData.bet
         tabInfo.contract[foundIndex].type = requestData.type
@@ -97,7 +101,7 @@ module.exports.TAKEACTION = async (requestData, client) => {
 
 
         Set["$set"]["contract"] = tabInfo.contract;
-        Set["$set"]["pi." + client.si + ".turnMissCounter"] = 0;
+        Set["$set"]["pi." + client.seatIndex + ".turnMissCounter"] = 0;
 
 
     } else {
@@ -106,41 +110,42 @@ module.exports.TAKEACTION = async (requestData, client) => {
         //     "suit": data.suit,
         //     "contract": data.contract,
         //     "status": "TAKE",
-        //     "uid": tabInfo.pi[client.si].ui.uid,
-        //     "si": parseInt(client.si),
+        //     "uid": tabInfo.pi[client.seatIndex].ui.uid,
+        //     "si": parseInt(client.seatIndex),
         //     "islastcontract": true
         // }
         // tabInfo.contract.push(jdt)
         // Set["$set"]["contract"] = tabInfo.contract;
-        // Set["$set"]["pi." + client.si + ".turn_miss_cont"] = 0;
+        // Set["$set"]["pi." + client.seatIndex + ".turn_miss_cont"] = 0;
     }
 
-    var WH = { _id: MongoId(client.tbid.toString()) };
+    var WH = { _id: MongoID(client.tbid.toString()) };
 
 
     const updated = await PlayingTables.findOneAndUpdate(WH, Set, { new: true });
-    logger.info("chal tb : ", tb);
+    logger.info("chal updated : ", updated);
 
 
     if (updated == null) {
-        trackClass.trackingplayingerror(client, 'TAC', { data: requestData, tb: updated }, 'error:TAC003');
+        trackClass.trackingplayingerror(client, CONST.TAKEACTION, { data: requestData, tb: updated }, 'error:TAC003');
         return false;
     }
 
 
     commandAcions.clearJob(tabInfo.job_id);
-    commandAcions.sendEventInTable(updated._id.toString(), CONST.TAC, {
-        contract: updated.contract,
+    commandAcions.sendEventInTable(updated._id.toString(), CONST.TAKEACTION, {
+      
         type: requestData.type,
         bet: requestData.bet,
-        si: client.si
+        si: client.seatIndex
     });
 
+    
     //All User Bet same and Check After Round Change 
     // Check also same bet and 
 
     let allusersamebet = updated.contract.filter((e) => {
-        return e.bet == requestData.bet || e.fold == 1
+        return (e.isturn == 1 && (e.bet == requestData.bet || e.fold == 1))
     })
 
     console.log("allusersamebet ", allusersamebet)
@@ -173,7 +178,7 @@ module.exports.OpenNextcard = async (tb) => {
 
         if (Communitycard.cards != undefined && Communitycard.deckCards) {
 
-            var WH = { _id: MongoId(tb._id.toString()) };
+            var WH = { _id: MongoID(tb._id.toString()) };
             
 
             tb.contract.forEach((e) => {
@@ -210,7 +215,7 @@ module.exports.OpenNextcard = async (tb) => {
 
         if (Communitycard.cards != undefined && Communitycard.deckCards) {
 
-            var WH = { _id: MongoId(tb._id.toString()) };
+            var WH = { _id: MongoID(tb._id.toString()) };
            
 
             tb.contract.forEach((e) => {
