@@ -8,6 +8,13 @@ const logger = require("../../logger");
 
 const PlayingTables = require("../../models/playingTables");
 
+module.exports.CheckAllPlayerData = async (tb) => {
+
+    
+    
+
+}
+
 module.exports.autoShow = async (tb) => {
 
     const wh = {
