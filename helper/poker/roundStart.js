@@ -151,16 +151,16 @@ module.exports.startUserTurn = async (seatIndex, objData, firstTurnStart) => {
         logger.info("turnuserData", turnuserData);
 
         if (tb.round == 1) {
-            let bigblinder = tb.contract.filter((e) => { return e.bigblind != -1 })[0]
+            let bigblinder = tb.contract.filter((e) => { return e.bigblind == 1 })[0]
 
-            let Allin = tb.contract.filter((e) => { return e.allIn == 1 })[0]
+             Allin = tb.contract.filter((e) => { return e.allIn == 1 })[0]
 
             logger.info("Allin ", Allin);
 
             turnuserData.fold = 1;
             turnuserData.bet = bigblinder.bet - turnuserData.bet;
             turnuserData.raise = 1;
-            turnuserData.call = turnuserData.bet == 0 && Allin.length == 0 ? 0 : 1
+            turnuserData.call = turnuserData.bet == 0 && Allin == undefined ? 0 : 1
             turnuserData.check = turnuserData.bigblind == 1 ? 1 : 0
             turnuserData.minbet = turnuserData.bet
 
@@ -172,7 +172,7 @@ module.exports.startUserTurn = async (seatIndex, objData, firstTurnStart) => {
             const maxBet = tb.contract.reduce((max, obj) => (obj.bet > max ? obj.bet : max), tb.contract[0].bet);
             logger.info("maxBet ", maxBet)
 
-            let Allin = tb.contract.filter((e) => { return e.allIn == 1 })[0]
+             Allin = tb.contract.filter((e) => { return e.allIn == 1 })[0]
 
 
             turnuserData.fold = 1;

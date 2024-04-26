@@ -27,7 +27,7 @@ const cardDealActions = require("./cardDeal");
     */
 module.exports.TAKEACTION = async (requestData, client) => {
 console.log("requestData ",requestData)
-console.log("client ",client)
+//console.log("client ",client)
 
     if (typeof client.tbid == 'undefined' || requestData.type == undefined || requestData.bet == undefined) {
         commandAcions.sendDirectEvent(client.sck, CONST.TAKEACTION, requestData, false, "User session not set, please restart game!");

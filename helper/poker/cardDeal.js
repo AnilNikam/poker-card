@@ -66,6 +66,8 @@ module.exports.setUserCards = async (cardsInfo, tb) => {
                     si: playerInfo[i].seatIndex,
                     smallblind: (playerInfo[i].seatIndex == tb.smallblindSeatIndex) ? 1 : 0,
                     bigblind: (playerInfo[i].seatIndex == tb.bigblindSeatIndex) ? 1 : 0,
+                    smallblindSeatIndex:tb.smallblindSeatIndex,
+                    bigblindSeatIndex:tb.bigblindSeatIndex,
                     bet: (playerInfo[i].seatIndex == tb.smallblindSeatIndex) ? tb.smallblind : (playerInfo[i].seatIndex == tb.bigblindSeatIndex) ? tb.bigblind : 0,
                     check: 0,
                     allIn: 0,
