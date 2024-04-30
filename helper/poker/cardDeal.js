@@ -165,26 +165,26 @@ module.exports.getCards = (playerInfo) => {
 }
 
 
-module.exports.getCards_communitycard = (cardNumber, deckCards) => {
+module.exports.getCards_communitycard = (cardNumber, tb) => {
 
-    logger.info("getCards deckCards ::", deckCards);
+    logger.info("getCards deckCards ::", tb.deckCards);
 
     let cards = [];
 
 
     for (let i = 0; i < cardNumber; i++) {
-        let ran = parseInt(fortuna.random() * deckCards.length);
-        cards.push(deckCards[ran])
-        deckCards.splice(ran, 1);
+        let ran = parseInt(fortuna.random() * tb.deckCards.length);
+        cards.push(tb.deckCards[ran])
+        tb.deckCards.splice(ran, 1);
     }
 
 
     console.log("cards cards ", cards)
-    console.log("cards deckCards ", deckCards)
+    console.log("cards deckCards ", tb.deckCards)
 
     return {
         cards: cards,
-        deckCards: deckCards
+        deckCards: tb.deckCards
     }
 }
 

@@ -26,8 +26,8 @@ const cardDealActions = require("./cardDeal");
 
     */
 module.exports.TAKEACTION = async (requestData, client) => {
-console.log("requestData ",requestData)
-//console.log("client ",client)
+logger.info("requestData ",requestData)
+//logger.info("client ",client)
 
     if (typeof client.tbid == 'undefined' || requestData.type == undefined || requestData.bet == undefined) {
         commandAcions.sendDirectEvent(client.sck, CONST.TAKEACTION, requestData, false, "User session not set, please restart game!");
@@ -87,7 +87,7 @@ console.log("requestData ",requestData)
         }
     }
     let foundIndex = -1
-    console.log("tabInfo.contract ",tabInfo.contract)
+    logger.info("tabInfo.contract ",tabInfo.contract)
 
     if (tabInfo.contract.length > 0) {
         //_.map(tabInfo.contract, function (el) { return el.islastcontract = false; });
@@ -95,7 +95,7 @@ console.log("requestData ",requestData)
     } 
 
     if (foundIndex != -1) {
-        tabInfo.contract[foundIndex].bet = requestData.bet
+        tabInfo.contract[foundIndex].bet = tabInfo.contract[foundIndex].bet + parseInt(requestData.bet)
         tabInfo.contract[foundIndex].type = requestData.type
         tabInfo.contract[foundIndex].isturn = 1
 
@@ -105,7 +105,7 @@ console.log("requestData ",requestData)
 
 
     } else {
-        console.log("ddddddddddddddddddddddddddddddddddd ELSE KKKKKKKKKKKKK")
+        logger.info("ddddddddddddddddddddddddddddddddddd ELSE KKKKKKKKKKKKK")
         // var jdt = {
         //     "suit": data.suit,
         //     "contract": data.contract,
@@ -145,10 +145,14 @@ console.log("requestData ",requestData)
     // Check also same bet and 
 
     let allusersamebet = updated.contract.filter((e) => {
-        return (e.isturn == 1 && (e.bet == requestData.bet || e.fold == 1))
+        return (e.isturn == 1 && (e.bet == 2 || e.fold == 1))
     })
 
-    console.log("allusersamebet ", allusersamebet)
+    logger.info("allusersamebet ", allusersamebet)
+    logger.info("updated.contract ", updated.contract)
+    
+    logger.info("updated.contract ", updated.contract.length ,allusersamebet.length )
+
 
     if (allusersamebet.length == updated.contract.length) {
 
@@ -171,7 +175,7 @@ console.log("requestData ",requestData)
 }
 
 module.exports.OpenNextcard = async (tb) => {
-
+    logger.info("tb ",tb.round)
     //
     if (tb.round == 1) {
         let Communitycard = cardDealActions.getCards_communitycard(3, tb)
@@ -185,7 +189,7 @@ module.exports.OpenNextcard = async (tb) => {
                 e.isturn = -1;
                 e.bet = 0;
             });
-
+            logger.info("tb.contract ",tb.contract)
             var Set = {
                 $set: {
                     communitycard: Communitycard.cards,
@@ -204,10 +208,10 @@ module.exports.OpenNextcard = async (tb) => {
 
             setTimeout(()=>{
                 roundStartActions.nextUserTurnstart(updated);
-            },1000)
+            },12000)
 
         } else {
-            console.log("undefined  ", Communitycard)
+            logger.info("undefined  ", Communitycard)
         }
 
     } else {
@@ -246,7 +250,7 @@ module.exports.OpenNextcard = async (tb) => {
             },1000)
             
         } else {
-            console.log("undefined  ", Communitycard)
+            logger.info("undefined  ", Communitycard)
         }
     }
 
