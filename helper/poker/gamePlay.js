@@ -144,8 +144,14 @@ logger.info("requestData ",requestData)
     //All User Bet same and Check After Round Change 
     // Check also same bet and 
 
+    let oneuser = updated.contract.filter((e) => {
+        return (e.isturn == 1 && e.fold != 1)
+    })
+
+    logger.info("oneuser ::::::::::::::::::::::: ", oneuser[0].bet)
+
     let allusersamebet = updated.contract.filter((e) => {
-        return (e.isturn == 1 && (e.bet == 2 || e.fold == 1))
+        return (e.isturn == 1 && (e.bet == oneuser[0].bet || e.fold == 1))
     })
 
     logger.info("allusersamebet ", allusersamebet)
