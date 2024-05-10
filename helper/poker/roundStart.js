@@ -177,11 +177,11 @@ module.exports.startUserTurn = async (seatIndex, objData, firstTurnStart) => {
 
             turnuserData.fold = 1;
             turnuserData.bet = maxBet - turnuserData.bet;
-            turnuserData.raise = Allin.length > 0 ? 0 : 1;
-            turnuserData.allIn = Allin.length > 0 ? 1 : 0;
-            turnuserData.call = turnuserData.bet == 0 && Allin.length == 0 ? 0 : 1
+            turnuserData.raise =  1;
+            turnuserData.allIn =  Allin != undefined ? 1 : 0;
+            turnuserData.call = turnuserData.bet == 0 &&  Allin == undefined  ? 0 : 1
 
-            turnuserData.check = turnuserData.bet == 0 && Allin.length == 0 ? 1 : 0
+            turnuserData.check = turnuserData.bet == 0 &&  Allin == undefined ? 1 : 0
 
             turnuserData.minbet = turnuserData.bet
 

@@ -34,7 +34,7 @@ logger.info("requestData ",requestData)
         return false;
     }
     if (typeof client.TAC != "undefined" && client.TAC) {
-
+        logger.info("TAC RErturn ::");
         return false;
     }
     client.TAC = true;
@@ -140,7 +140,7 @@ logger.info("requestData ",requestData)
         si: client.seatIndex
     });
 
-    
+    delete client.TAC;
     //All User Bet same and Check After Round Change 
     // Check also same bet and 
 
@@ -167,6 +167,7 @@ logger.info("requestData ",requestData)
         //If 5 Card and Won Game 
         if (updated.communitycard.length >= 5) {
             // Go To Win 
+            console.log("WINER :::::::::::::::::::::::::::::")
         } else {
             this.OpenNextcard(updated)
         }
@@ -201,6 +202,9 @@ module.exports.OpenNextcard = async (tb) => {
                     communitycard: Communitycard.cards,
                     deckCards: Communitycard.deckCards,
                     contract:tb.contract
+                },
+                $inc:{
+                    round:1
                 }
             }
             const updated = await PlayingTables.findOneAndUpdate(WH, Set, { new: true });
@@ -235,8 +239,10 @@ module.exports.OpenNextcard = async (tb) => {
 
 
             var Set = {
-                $set: {
+                $push: {
                     communitycard: Communitycard.cards,
+                },
+                $set: {
                     deckCards: Communitycard.deckCards,
                     contract:tb.contract
                 }
