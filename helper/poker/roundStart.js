@@ -153,15 +153,18 @@ module.exports.startUserTurn = async (seatIndex, objData, firstTurnStart) => {
         if (tb.round == 1) {
             let bigblinder = tb.contract.filter((e) => { return e.bigblind == 1 })[0]
 
-             Allin = tb.contract.filter((e) => { return e.allIn == 1 })[0]
+            const maxBet = tb.contract.reduce((max, obj) => (obj.bet > max ? obj.bet : max), tb.contract[0].bet);
+            logger.info("maxBet ", maxBet)
+
+            Allin = tb.contract.filter((e) => { return e.allIn == 1 })[0]
 
             logger.info("Allin ", Allin);
 
             turnuserData.fold = 1;
-            turnuserData.bet = bigblinder.bet - turnuserData.bet;
+            turnuserData.bet = maxBet - turnuserData.bet;
             turnuserData.raise = 1;
             turnuserData.call = turnuserData.bet == 0 && Allin == undefined ? 0 : 1
-            turnuserData.check = turnuserData.bigblind == 1 ? 1 : 0
+            turnuserData.check =turnuserData.bet == 0 &&  Allin == undefined ? 1 : 0
             turnuserData.minbet = turnuserData.bet
 
             logger.info("turnuserData ", turnuserData)
@@ -365,7 +368,7 @@ module.exports.getUserTurnSeatIndex = async (tbInfo, prevTurn, cnt) => {
 module.exports.getUserTurnSeatIndexContract = async (tbInfo, prevTurn, cnt) => {
     try {
         let counter = cnt;
-        let p = _.filter(tbInfo.contract, function (num) { return num.fold == 0; });
+        let p = tbInfo.contract //_.filter(tbInfo.contract, function (num) { return num.fold == 0; });
         let plen = p.length;
 
 
@@ -378,7 +381,7 @@ module.exports.getUserTurnSeatIndexContract = async (tbInfo, prevTurn, cnt) => {
 
         counter++;
 
-        if (x < plen && (p[x] == null || typeof p[x].si == 'undefined' || p[x].fold == 0)) {
+        if (x < plen && (p[x] == null || typeof p[x].si == 'undefined' || p[x].fold == 1)) {
             let index = await this.getUserTurnSeatIndexContract(tbInfo, x, counter);
             return index;
         }

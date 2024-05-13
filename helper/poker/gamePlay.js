@@ -159,10 +159,17 @@ logger.info("requestData ",requestData)
         return (e.isturn == 1 && e.fold != 1)
     })
 
-    logger.info("oneuser ::::::::::::::::::::::: ", oneuser[0].bet)
+    let comparebet = -1
+    if(oneuser.length > 0){
+        comparebet = oneuser[0].bet
+        logger.info("oneuser ::::::::::::::::::::::: ", oneuser[0].bet)
+    }
+
+    logger.info("comparebet ::::::::::::::::::::::: ", comparebet)
+
 
     let allusersamebet = updated.contract.filter((e) => {
-        return (e.isturn == 1 && (e.bet == oneuser[0].bet || e.fold == 1))
+        return ((e.isturn == 1 || e.fold == 1) && (e.bet == comparebet || e.fold == 1))
     })
 
     logger.info("allusersamebet ", allusersamebet)
