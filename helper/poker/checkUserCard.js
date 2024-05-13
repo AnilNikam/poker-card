@@ -5,10 +5,15 @@ const _ = require("underscore")
 module.exports.getWinnerUser = (userInfo, communitycard, contract) => {
     let players = [];
 
+    logger.info("getWinnerUser userInfo : ", userInfo);
+    logger.info("getWinnerUser communitycard : ", communitycard);
+    logger.info("getWinnerUser contract : ", contract);
+
+
     for (let i = 0; i < contract.length; i++) {
         if (contract[i].fold != 1) {
 
-            let response = this.getWinState(userInfo[contract[i].si].cards, communitycard.splice(0, communitycard.length - 1));
+            let response = this.getWinState(userInfo[contract[i].si].cards, communitycard);
 
             logger.info("getWinnerUser response : ", response);
 
@@ -24,14 +29,14 @@ module.exports.getWinnerUser = (userInfo, communitycard, contract) => {
 
     logger.info("players :::::::::::::::::::::", players)
 
-    totalbestWinnercomb.sort((e, f) => {
-        return f.data.winvalue - e.data.winvalue
-    })
+    // totalbestWinnercomb.sort((e, f) => {
+    //     return f.data.winvalue - e.data.winvalue
+    // })
 
     players = players.sort((a, b) => {
         return b.WinnerData.cardvalue  - a.WinnerData.cardvalue 
     }).sort((a, b) => {
-        return a.WinnerData.winvalue - b.WinnerData.winvalue
+        return b.WinnerData.winvalue - a.WinnerData.winvalue
     })
 
     // players = players.sort((a, b) => {
@@ -46,13 +51,16 @@ module.exports.getWinnerUser = (userInfo, communitycard, contract) => {
 
 module.exports.getWinState = (userCards, communitycard) => {
 
-    combinations = this.generateCombinations(userCards.contract(communitycard), 5);
+    logger.info("userCards ", userCards)
+    logger.info("communitycard ", communitycard)
+
+    combinations = this.generateCombinations(userCards.concat(communitycard), 5);
 
     logger.info("combinations ", combinations)
     logger.info("combinations ", combinations.length)
     let totalbestWinnercomb = []
     for (let i = 0; i <= combinations.length - 1; i++) {
-        winnerDeclare({ card: combinations[i], bet: 10 }, (e) => {
+        this.winnerDeclare({ card: combinations[i], bet: 10 }, (e) => {
 
             if (e.data.iswin) {
                 logger.info("return ::: ", e)
@@ -248,7 +256,7 @@ module.exports.royalflush = (data) => {
 }
 
 module.exports.straightflush = (data) => {
-    var a = DiffColor(data.card)
+    var a = this.DiffColor(data.card)
     var flag = true;
     a.cards.sort(function(e, f) {
         return e - f
@@ -415,7 +423,7 @@ module.exports.fullofhouse = (data) => {
 }
 
 module.exports.flush = (data) => {
-    var a = DiffColor(data.card)
+    var a = this.DiffColor(data.card)
     var flag = true;
     a.cards.sort(function(e, f) {
         return e - f
@@ -461,7 +469,7 @@ module.exports.flush = (data) => {
 
 module.exports.straight = (data) => {
 
-    var a = DiffColor(data.card)
+    var a  = this.DiffColor(data.card)
 
     var flag = true;
     a.cards.sort(function(e, f) {

@@ -96,41 +96,45 @@ module.exports.winnerDeclareCall = async (winner, tabInfo) => {
         const playerInGame = await roundStartActions.getPlayingUserInRound(tbInfo.playerInfo);
         logger.info("getWinner playerInGame ::", playerInGame);
 
-        for (let i = 0; i < playerInGame.length; i++) {
-            let winnerState = checkUserCardActions.getWinState(playerInGame[i].cards, tbInfo.hukum);
-            logger.info("winnerState FETCH::", winnerState);
+        // for (let i = 0; i < playerInGame.length; i++) {
+        //     let winnerState = checkUserCardActions.getWinState(playerInGame[i].cards, tbInfo.hukum);
+        //     logger.info("winnerState FETCH::", winnerState);
 
-            tbInfo.gameTracks.push(
-                {
-                    _id: playerInGame[i]._id,
-                    username: playerInGame[i].username,
-                    seatIndex: playerInGame[i].seatIndex,
-                    cards: playerInGame[i].cards,
-                    totalBet: playerInGame[i].totalBet,
-                    playStatus: (winnerIndexs.indexOf(playerInGame[i].seatIndex) != -1) ? "win" : "loss",
-                    winningCardStatus: winnerState.status
-                }
-            )
+        //     tbInfo.gameTracks.push(
+        //         {
+        //             _id: playerInGame[i]._id,
+        //             username: playerInGame[i].username,
+        //             seatIndex: playerInGame[i].seatIndex,
+        //             cards: playerInGame[i].cards,
+        //             totalBet: playerInGame[i].totalBet,
+        //             playStatus: (winnerIndexs.indexOf(playerInGame[i].seatIndex) != -1) ? "win" : "loss",
+        //             winningCardStatus: winnerState.status
+        //         }
+        //     )
+        // }
+
+        //logger.info("winnerDeclareCall tbInfo.gameTracks :: ", tbInfo.gameTracks, winnerIds);
+
+        //const winnerTrack = await gameTrackActions.gamePlayTracks(winnerIndexs, tbInfo.gameTracks, tbInfo);
+        //logger.info("winnerDeclareCall winnerTrack:: ", winnerTrack);
+
+        //for (let i = 0; i < tbInfo.gameTracks.length; i++) {
+            //if (tbInfo.gameTracks[i].playStatus == "win") {
+                await walletActions.addWallet(winner[0]._id, Number(tbInfo.potValue), 4, "poker Win", tabInfo);
+           // }
+       // }
+
+        // let winnerViewResponse = await this.winnerViewResponseFilter(tbInfo.gameTracks, winnerTrack, winnerIndexs);
+        // winnerViewResponse.gameId = tbInfo.gameId;
+        // winnerViewResponse.winnerIds = tbInfo.winnerIds;
+
+        let winnerViewResponse={
+            winneruser:winner[0],
+            alluser:winner
         }
-
-        logger.info("winnerDeclareCall tbInfo.gameTracks :: ", tbInfo.gameTracks, winnerIds);
-
-        const winnerTrack = await gameTrackActions.gamePlayTracks(winnerIndexs, tbInfo.gameTracks, tbInfo);
-        logger.info("winnerDeclareCall winnerTrack:: ", winnerTrack);
-
-        for (let i = 0; i < tbInfo.gameTracks.length; i++) {
-            if (tbInfo.gameTracks[i].playStatus == "win") {
-                await walletActions.addWallet(tbInfo.gameTracks[i]._id, Number(winnerTrack.winningAmount), 4, "poker Win", tabInfo);
-            }
-        }
-
-        let winnerViewResponse = await this.winnerViewResponseFilter(tbInfo.gameTracks, winnerTrack, winnerIndexs);
-        winnerViewResponse.gameId = tbInfo.gameId;
-        winnerViewResponse.winnerIds = tbInfo.winnerIds;
-
         commandAcions.sendEventInTable(tbInfo._id.toString(), CONST.WINNER, winnerViewResponse);
 
-        await roundEndActions.roundFinish(tbInfo);
+        //await roundEndActions.roundFinish(tbInfo);
 
     } catch (err) {
         logger.info("Exception  WinnerDeclareCall : 1 :: ", err)
