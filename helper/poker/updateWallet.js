@@ -51,19 +51,19 @@ module.exports.deductWallet = async (id, deductChips, tType, t, tbInfo, client, 
         };
         let totalDeductChips = deductChips;
 
-        if (userInfo.winningChips > 0 && deductChips < 0) {
+        // if (userInfo.winningChips > 0 && deductChips < 0) {
 
-            setInfo['$inc']['winningChips'] = (userInfo.winningChips + deductChips) >= 0 ? Number(deductChips) : Number(-userInfo.winningChips);
-            setInfo['$inc']['winningChips'] = Number(setInfo['$inc']['winningChips'].toFixed(2))
+        //     setInfo['$inc']['winningChips'] = (userInfo.winningChips + deductChips) >= 0 ? Number(deductChips) : Number(-userInfo.winningChips);
+        //     setInfo['$inc']['winningChips'] = Number(setInfo['$inc']['winningChips'].toFixed(2))
 
-            let winningChips = userInfo.winningChips;
+        //     let winningChips = userInfo.winningChips;
 
-            userInfo.winningChips = (userInfo.winningChips + deductChips) >= 0 ? (Number(userInfo.winningChips) + Number(deductChips)) : 0;
-            userInfo.winningChips = Number(Number(userInfo.winningChips).toFixed(2));
+        //     userInfo.winningChips = (userInfo.winningChips + deductChips) >= 0 ? (Number(userInfo.winningChips) + Number(deductChips)) : 0;
+        //     userInfo.winningChips = Number(Number(userInfo.winningChips).toFixed(2));
 
-            deductChips = (deductChips + userInfo.winningChips) >= 0 ? 0 : (Number(deductChips) + Number(winningChips));
-            deductChips = Number(Number(deductChips).toFixed(2));
-        }
+        //     deductChips = (deductChips + userInfo.winningChips) >= 0 ? 0 : (Number(deductChips) + Number(winningChips));
+        //     deductChips = Number(Number(deductChips).toFixed(2));
+        // }
 
         if (userInfo.chips > 0 && deductChips < 0) {
 

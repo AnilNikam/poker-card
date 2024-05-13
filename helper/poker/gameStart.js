@@ -137,6 +137,9 @@ module.exports.deduct = async (tabInfo, playerInfo) => {
                     let uWh = { _id: MongoID(tabInfo._id.toString()), "playerInfo.seatIndex": Number(playerInfo[i].seatIndex) }
                     logger.info("deduct uWh update ::", uWh, update)
                     await PlayingTables.findOneAndUpdate(uWh, update, { new: true });
+
+                    await walletActions.deductWallet(playerInfo[i]._id,-Number(tabInfo.bigblind), 1, "Poker Bet", tabInfo, playerInfo[i].sck, playerInfo[i].seatIndex);
+
                 }
 
                 if (tabInfo.smallblindSeatIndex == playerInfo[i].seatIndex) {
@@ -149,6 +152,9 @@ module.exports.deduct = async (tabInfo, playerInfo) => {
                     let uWh = { _id: MongoID(tabInfo._id.toString()), "playerInfo.seatIndex": Number(playerInfo[i].seatIndex) }
                     logger.info("deduct uWh update ::", uWh, update)
                     await PlayingTables.findOneAndUpdate(uWh, update, { new: true });
+
+                    await walletActions.deductWallet(playerInfo[i]._id,-Number(tabInfo.smallblind), 1, "Poker Bet", tabInfo, playerInfo[i].sck, playerInfo[i].seatIndex);
+
                 }
             }
         }

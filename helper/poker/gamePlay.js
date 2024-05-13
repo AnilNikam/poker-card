@@ -94,15 +94,26 @@ logger.info("requestData ",requestData)
         foundIndex = tabInfo.contract.findIndex(x => x.si == client.seatIndex);
     } 
 
+
+    
+
     if (foundIndex != -1) {
         tabInfo.contract[foundIndex].bet = tabInfo.contract[foundIndex].bet + parseInt(requestData.bet)
         tabInfo.contract[foundIndex].type = requestData.type
         tabInfo.contract[foundIndex].isturn = 1
 
+        if (requestData.type == "fold") {
+            tabInfo.contract[foundIndex].fold = 1;
+        }
+        if (requestData.type == "allIn") {
+            tabInfo.contract[foundIndex].allIn = 1;
+        }
 
         Set["$set"]["contract"] = tabInfo.contract;
-        Set["$set"]["pi." + client.seatIndex + ".turnMissCounter"] = 0;
+        Set["$set"]["playerInfo." + client.seatIndex + ".turnMissCounter"] = 0;
+        //Set["$set"]["playerInfo." + client.seatIndex + ".bet"] = 0;
 
+        await walletActions.deductWallet(client.uid,-parseInt(requestData.bet), 1, "Poker Bet", tabInfo, client.socketid, tabInfo.playerInfo[client.seatIndex].seatIndex);
 
     } else {
         logger.info("ddddddddddddddddddddddddddddddddddd ELSE KKKKKKKKKKKKK")
@@ -194,12 +205,18 @@ module.exports.OpenNextcard = async (tb) => {
 
             var WH = { _id: MongoID(tb._id.toString()) };
             
+            let totalbet = 0;
 
             tb.contract.forEach((e) => {
+                
+                totalbet = totalbet + e.bet;
+                
                 e.isturn = -1;
                 e.bet = 0;
             });
-            logger.info("tb.contract ",tb.contract)
+            logger.info("tb.contract ", tb.contract)
+            logger.info("tb.totalbet  ",totalbet)
+            
             var Set = {
                 $set: {
                     communitycard: Communitycard.cards,
@@ -207,7 +224,9 @@ module.exports.OpenNextcard = async (tb) => {
                     contract:tb.contract
                 },
                 $inc:{
-                    round:1
+                    round: 1,
+                    potValue: totalbet
+                
                 }
             }
             const updated = await PlayingTables.findOneAndUpdate(WH, Set, { new: true });
@@ -234,12 +253,18 @@ module.exports.OpenNextcard = async (tb) => {
 
             var WH = { _id: MongoID(tb._id.toString()) };
            
+            let totalbet = 0;
 
             tb.contract.forEach((e) => {
+
+                totalbet = totalbet + e.bet;
+                
+
                 e.isturn = -1;
                 e.bet = 0;
             });
 
+            logger.info("tb.totalbet  ",totalbet)
 
             var Set = {
                 $push: {
@@ -248,6 +273,10 @@ module.exports.OpenNextcard = async (tb) => {
                 $set: {
                     deckCards: Communitycard.deckCards,
                     contract:tb.contract
+                },
+                $inc: {
+                    round: 1,
+                    potValue:totalbet
                 }
             }
 
@@ -270,15 +299,6 @@ module.exports.OpenNextcard = async (tb) => {
     }
 
     
-}
-
-module.exports.winnerround = async (tb) => {
-
-    //
-
-
-
-
 }
 
 
