@@ -250,7 +250,7 @@ module.exports.royalflush = (data) => {
 module.exports.straightflush = (data) => {
     var a = DiffColor(data.card)
     var flag = true;
-    a.cards.sort(module.exports.(e, f) {
+    a.cards.sort(function(e, f) {
         return e - f
     });
 
@@ -417,7 +417,7 @@ module.exports.fullofhouse = (data) => {
 module.exports.flush = (data) => {
     var a = DiffColor(data.card)
     var flag = true;
-    a.cards.sort(module.exports.(e, f) {
+    a.cards.sort(function(e, f) {
         return e - f
     });
 
@@ -464,7 +464,7 @@ module.exports.straight = (data) => {
     var a = DiffColor(data.card)
 
     var flag = true;
-    a.cards.sort(module.exports.(e, f) {
+    a.cards.sort(function(e, f) {
         return e - f
     });
 
