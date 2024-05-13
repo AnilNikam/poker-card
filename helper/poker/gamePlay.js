@@ -168,6 +168,9 @@ logger.info("requestData ",requestData)
         if (updated.communitycard.length >= 5) {
             // Go To Win 
             console.log("WINER :::::::::::::::::::::::::::::")
+
+            checkWinnerActions.winnercall(updated)
+
         } else {
             this.OpenNextcard(updated)
         }

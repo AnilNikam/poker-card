@@ -15,42 +15,9 @@ module.exports.CheckAllPlayerData = async (tb) => {
 
 }
 
-module.exports.autoShow = async (tb) => {
 
-    const wh = {
-        _id: MongoID(tb._id.toString())
-    }
-    const tabInfo = await PlayingTables.findOne(wh, {}).lean();
 
-    logger.info("autoShow wh tabInfo : ", wh, tabInfo);
-    logger.info("autoShow condition 1: ", tabInfo.callFinalWinner);
-    logger.info("autoShow condition 2: ", tabInfo.gameState);
-
-    if (tabInfo.callFinalWinner) return false;
-
-    if (tabInfo.gameState != "RoundStated") return false;
-
-    const upWh = {
-        _id: MongoID(tb._id.toString())
-    }
-    const updateData = {
-        $set: {
-            "callFinalWinner": true
-        }
-    }
-    logger.info("autoShow upWh updateData :: ", upWh, updateData);
-
-    const tbInfo = await PlayingTables.findOneAndUpdate(upWh, updateData, { new: true });
-    logger.info("autoShow tbInfo : ", tbInfo);
-
-    let winners = await this.getWinner(tbInfo);
-    logger.info("autoShow winners : ", winners);
-
-    await gameFinishActions.winnerDeclareCall(winners, tbInfo);
-
-}
-
-module.exports.winnercall = async (tb, isShow, showUserSeatIndex) => {
+module.exports.winnercall = async (tb) => {
 
     const wh = {
         _id: MongoID(tb._id.toString())
@@ -78,21 +45,21 @@ module.exports.winnercall = async (tb, isShow, showUserSeatIndex) => {
     const tbInfo = await PlayingTables.findOneAndUpdate(upWh, updateData, { new: true });
     logger.info("winnercall tbInfo : ", tbInfo);
 
-    let winners = await this.getWinner(tbInfo, isShow, showUserSeatIndex);
+    let winners = await this.getWinner(tbInfo);
     logger.info("winners ==> : ", winners);
 
     await gameFinishActions.winnerDeclareCall(winners, tbInfo);
 
 }
 
-module.exports.getWinner = async (tb, isShow, showUserSeatIndex) => {
+module.exports.getWinner = async (tb) => {
 
     logger.info("getWinner tb : ", tb);
 
     const playerInGame = await roundStartActions.getPlayingUserInRound(tb.playerInfo);
     logger.info("getWinner playerInGame ::", playerInGame);
 
-    let winners = checkUserCardActions.getWinnerUser(playerInGame, tb.hukum, isShow, showUserSeatIndex);
+    let winners = checkUserCardActions.getWinnerUser(playerInGame, tb.communitycard, tb.contract);
     logger.info("getWinner winners ::", winners);
 
     return winners;

@@ -2,365 +2,756 @@
 const logger = require("../../logger");
 const _ = require("underscore")
 
-module.exports.getWinnerUser = (userInfo, hukum, isShow, showUserSeatIndex) => {
+module.exports.getWinnerUser = (userInfo, communitycard, contract) => {
     let players = [];
 
-    for (let i = 0; i < userInfo.length; i++) {
-        let response = this.getWinState(userInfo[i].cards, hukum);
-        logger.info("getWinnerUser response : ", response);
+    for (let i = 0; i < contract.length; i++) {
+        if (contract[i].fold != 1) {
 
-        response.seatIndex = userInfo[i].seatIndex;
-        players.push(response);
+            let response = this.getWinState(userInfo[contract[i].si].cards, communitycard.splice(0, communitycard.length - 1));
+
+            logger.info("getWinnerUser response : ", response);
+
+            userInfo[contract[i].si].WinnerData = response
+
+            players.push(userInfo[contract[i].si]);
+
+            // response.seatIndex = userInfo[i].seatIndex;
+            // players.push(response);
+
+        }
     }
+
+    logger.info("players :::::::::::::::::::::", players)
+
+    totalbestWinnercomb.sort((e, f) => {
+        return f.data.winvalue - e.data.winvalue
+    })
 
     players = players.sort((a, b) => {
-        return b.cardCount - a.cardCount
+        return b.WinnerData.cardvalue  - a.WinnerData.cardvalue 
     }).sort((a, b) => {
-        return a.index - b.index
+        return a.WinnerData.winvalue - b.WinnerData.winvalue
     })
+
+    // players = players.sort((a, b) => {
+    //     return b.cardCount - a.cardCount
+    // }).sort((a, b) => {
+    //     return a.index - b.index
+    // })
     logger.info("getWinnerUser players : ", players);
 
-    if (typeof isShow != "undefined" && isShow) {
-        let winners = [players[0]];
-        if (winners[0].cardCount == players[1].cardCount && winners[0].index == players[1].index) {
-            if (winners[0].seatIndex == showUserSeatIndex) {
-                winners = [players[1]];
+    return players
+}
+
+module.exports.getWinState = (userCards, communitycard) => {
+
+    combinations = this.generateCombinations(userCards.contract(communitycard), 5);
+
+    logger.info("combinations ", combinations)
+    logger.info("combinations ", combinations.length)
+    let totalbestWinnercomb = []
+    for (let i = 0; i <= combinations.length - 1; i++) {
+        winnerDeclare({ card: combinations[i], bet: 10 }, (e) => {
+
+            if (e.data.iswin) {
+                logger.info("return ::: ", e)
+                totalbestWinnercomb.push(e)
+            }
+        })
+    }
+
+    logger.info("totalbestWinnercomb ", totalbestWinnercomb)
+
+    totalbestWinnercomb.sort((e, f) => {
+        return f.data.winvalue - e.data.winvalue
+    })
+
+    let sorthighcardalltype = []
+
+
+    sorthighcardalltype = totalbestWinnercomb.filter((e) => {
+        return e.data.wintype == totalbestWinnercomb[0].data.wintype
+    })
+
+    sorthighcardalltype.sort((e, f) => {
+        return f.data.cardvalue - e.data.cardvalue
+    })
+
+    logger.info("sorthighcardalltype ", sorthighcardalltype)
+    return sorthighcardalltype[0].data;
+
+    // if (totalbestWinnercomb[0].data.wintype == "highcard") {
+
+    //   totalbestWinnercomb.sort((e, f) => {
+    //     return f.data.cardvalue - e.data.cardvalue
+    //   })
+
+    //   logger.info("totalbestWinnercomb :::", totalbestWinnercomb)
+
+    //   return totalbestWinnercomb[0].data;
+    // } else {
+    //   return totalbestWinnercomb[0].data;
+    // }
+
+
+    // return {
+    //     flag: true,
+    //     cards: cards,
+    //     cardCount: this.countCards(cards),
+    //     status: "High_Cards",
+    //     index: 6
+    // }
+}
+
+module.exports.winnerDeclare = (data, callback) => {
+
+    if (this.royalflush(data)) {
+
+        let totalcard = 0
+
+        for (var x in data.card) {
+            totalcard = totalcard + (parseInt(data.card[x].split("-")[1]) == 1 ? 14 : parseInt(data.card[x].split("-")[1]))
+        }
+
+        var winobj = {
+            "en": "DRAW",
+            "data": {
+                iswin: true,
+                wintype: "royalflush",
+                wingold: 0,
+                wincardinx: data.card,
+                oldcard: data.card,
+                winvalue: 10,
+                cardvalue: totalcard
             }
         }
-        return winners;
+
+        return callback(winobj)
+
+    } else if (sf = this.straightflush(data)) {
+
+        sf.data.oldcard = data.card
+        sf.data.winvalue = 9
+        return callback(sf)
+
+    } else if (fok = this.fourofakind(data)) {
+        fok.data.oldcard = data.card
+        fok.data.winvalue = 8
+        return callback(fok)
+
+    } else if (foh = this.fullofhouse(data)) {
+        foh.data.oldcard = data.card
+        foh.data.winvalue = 7
+        return callback(foh)
+
+    } else if (fls = this.flush(data)) {
+        fls.data.oldcard = data.card
+        fls.data.winvalue = 6
+
+        return callback(fls)
+
+    } else if (strt = this.straight(data)) {
+        strt.data.oldcard = data.card
+        strt.data.winvalue = 5
+
+        return callback(strt)
+
+    } else if (tok = this.threeofakind(data)) {
+        tok.data.oldcard = data.card
+        tok.data.winvalue = 4
+
+        return callback(tok)
+
+    } else if (tp = this.twopair(data)) {
+        tp.data.oldcard = data.card
+        tp.data.winvalue = 3
+
+        return callback(tp)
+
+    } else if (pai = this.pair(data)) {
+        pai.data.oldcard = data.card
+        pai.data.winvalue = 1
+
+        return callback(pai)
+
+    } else if (jb = this.jacksorbetter(data)) {
+        jb.data.oldcard = data.card
+        jb.data.winvalue = 0
+
+        return callback(jb)
+
     } else {
-        let winners = [players[0]];
-        for (let i = 1; i < players.length; i++) {
-            if (winners[0].cardCount == players[1].cardCount && winners[0].index == players[1].index) {
-                winners.push(players[i]);
+        var winobj = {
+            "en": "DRAW",
+            "data": {
+                iswin: false,
+                wintype: "",
+                wingold: 0,
+                wincardinx: data.card,
+                oldcard: data.card,
+                winvalue: -1
+
             }
         }
-        return winners;
+        return callback(winobj)
     }
 }
 
-module.exports.getWinState = (userCards, hukum) => {
+module.exports.generateCombinations = (cards, k) => {
+    const combinations = [];
 
-    let hukumCards = this.gethukumList(userCards, hukum);
-    logger.info("\ngetWinState hukumCards : ", hukumCards);
+    function generate(prefix, remaining, k) {
+        if (k === 0) {
+            combinations.push(prefix);
+            return;
+        }
 
-    let remaningCards = _.difference(userCards, hukumCards);
-    logger.info("getWinState hciuc :", remaningCards, hukumCards, userCards);
+        for (let i = 0; i < remaining.length; i++) {
+            const newPrefix = prefix.concat(remaining[i]);
+            const newRemaining = remaining.slice(i + 1);
+            generate(newPrefix, newRemaining, k - 1);
+        }
+    }
 
-    remaningCards = remaningCards.sort((a, b) => {
-        return b.split('-')[1] - a.split('-')[1];
-    })
-    logger.info("getWinState remaningCards :", remaningCards);
+    generate([], cards, k);
+    return combinations;
+}
 
-    let cards = this.replaceHukumCards(remaningCards, hukum);
-    // logger.info("getWinState cards :", cards);
+module.exports.DiffColor = (card) => {
+    var obj = {
+        cards: [],
+        color: []
+    };
+    for (var i in card) {
+        if (card[i] != null) {
+            var d = card[i].split('-');
+            obj.cards.push(parseInt(d[1]));
+            obj.color.push(d[0]);
+        }
+    }
+    return obj;
+}
 
-    cards = cards.sort((a, b) => {
-        return b.split('-')[1] - a.split('-')[1];
+module.exports.royalflush = (data) => {
+    var isroyalflush = true;
+
+
+    for (var i = 0; i < data.card.length; i++) {
+        if (parseInt(data.card[i].split("-")[1]) < 10 || data.card[i].split("-")[0] != data.card[0].split("-")[0]) {
+            isroyalflush = false;
+            break;
+        }
+    }
+
+    return isroyalflush
+}
+
+module.exports.straightflush = (data) => {
+    var a = DiffColor(data.card)
+    var flag = true;
+    a.cards.sort(module.exports.(e, f) {
+        return e - f
     });
-    logger.info("getWinState cards :", cards);
 
-    let resTrail = this.checkTrail(cards);
-    logger.info("getWinState resTrail :", resTrail);
-
-    if (resTrail.flag) {
-        return resTrail;
-    }
-
-    let resPureSeq = this.checkPureSeq(cards);
-    logger.info("getWinState resPureSeq :", resPureSeq);
-
-    if (resPureSeq.flag) {
-        return resPureSeq;
-    }
-
-    let resSeq = this.checkSeq(cards);
-    logger.info("getWinState resSeq :", resSeq);
-
-    if (resSeq.flag) {
-        return resSeq;
-    }
-
-    let resColor = this.checkColor(cards);
-    logger.info("getWinState resColor :", resColor);
-
-    if (resColor.flag) {
-        return resColor;
-    }
-
-    let resPair = this.checkPair(cards);
-    logger.info("getWinState resPair :", resPair);
-
-    if (resPair.flag) {
-        return resPair;
-    }
-
-    return {
-        flag: true,
-        cards: cards,
-        cardCount: this.countCards(cards),
-        status: "High_Cards",
-        index: 6
-    }
-}
-
-module.exports.gethukumList = (nCards, hukum) => {
-    let hukumList = [];
-    nCards = nCards.map((e) => {
-        if (Number(e.split("-")[1]) == Number(hukum.split("-")[1])) {
-            hukumList.push(e);
-        }
-        return e;
-    })
-    return hukumList;
-}
-
-module.exports.replaceHukumCards = (remaningCards, hukum) => {
-    logger.info("replaceHukumCards remaningCards : ", remaningCards.length);
-    if (remaningCards.length == 0) {
-        return [
-            "H-1-0", "S-1-0", "D-1-0"
-        ]
-    } else if (remaningCards.length == 1) {
-        let suit = ["H", "S", "D", "C"];
-        let cards = [remaningCards[0]];
-        for (let i = 0; i < (3 - remaningCards.length); i++) {
-            for (let j = 0; j < suit.length; j++) {
-                let card = suit[j] + "-" + remaningCards[0].split('-')[1] + "-0";
-                if (cards.indexOf(card) == -1) {
-                    cards.push(card);
-                    break;
-                }
+    if (flag == true) {
+        for (var x in a.color) {
+            if (a.color[x] != a.color[0]) {
+                flag = false;
+                break;
             }
         }
-        return cards;
-    } else if (remaningCards.length == 2) {
-        logger.info("replaceHukumCards remaningCards 11: ", remaningCards[0].split('-')[0], remaningCards[1].split('-')[0]);
-        if (remaningCards[0].split('-')[0] == remaningCards[1].split('-')[0]) {
-            logger.info("replaceHukumCards remaningCards 11: ", remaningCards.length);
-            let cards = this.getRemaningCards(remaningCards);
-            return cards;
+    }
+
+    let totalcard = 0
+
+    for (var x in data.card) {
+        totalcard = totalcard + (parseInt(data.card[x].split("-")[1]) == 1 ? 14 : parseInt(data.card[x].split("-")[1]))
+    }
+
+    if (flag == true) {
+        for (var i = 1; i < a.cards.length; i++) {
+            if (a.cards[i] < 10 && a.cards[i] - a.cards[i - 1] == 1 || a.cards[i] - a.cards[i - 1] == -12) {
+                flag = true;
+                var winobj = {
+                    "en": "DRAW",
+                    "data": {
+                        iswin: flag,
+                        wintype: "straightflush",
+                        wingold: 0,
+                        wincardinx: data.card,
+                        cardvalue: totalcard
+                    }
+                }
+
+                return winobj
+            } else {
+                flag = false;
+                break;
+            }
+        }
+    }
+}
+
+module.exports.fourofakind = (data) => {
+    var flag = false
+    var temp1 = []
+    var temp2 = []
+    var temp3 = []
+    var temp4 = []
+
+    for (var x in data.card) {
+        if (data.card[x].split("-")[1] == data.card[0].split("-")[1]) {
+            temp1.push(data.card[x])
         } else {
-            let cards = this.getRemaningCards(remaningCards);
-            return cards;
+            temp2.push(data.card[x])
         }
-    } else {
-        return remaningCards;
     }
-}
 
-module.exports.getRemaningCards = (remaningCards) => {
-    logger.info("getRemaningCards remaningCards 11: ", remaningCards)
-    if (remaningCards[0].split('-')[1] == 12 && remaningCards[1].split('-')[1] == 1) {
+    var cnt = 0
+    for (var x in temp1) {
+        if (temp1[x].split("-")[1] == temp1[0].split("-")[1]) {
+            cnt++
+        }
+    }
 
-        let card = remaningCards[0].split('-')[0] + "-14-0"
-        remaningCards.push(card);
 
-        return remaningCards;
-    } else if (remaningCards[0].split('-')[1] == 13 && remaningCards[1].split('-')[1] == 12) {
+    var cnt1 = 0
+    for (var x in temp2) {
+        if (temp2[x].split("-")[1] == temp2[0].split("-")[1]) {
+            temp4.push(temp2[x])
+            cnt1++
+        } else {
+            temp3.push(temp2[x])
+        }
+    }
 
-        let card = remaningCards[0].split('-')[0] + "-1-0"
-        remaningCards.push(card);
+    var cnt2 = 0
+    for (var x in temp3) {
+        if (temp3[x].split("-")[1] == temp3[0].split("-")[1]) {
+            cnt2++
+        }
+    }
 
-        return remaningCards;
-    } else if (remaningCards[0].split('-')[1] == 2 && remaningCards[1].split('-')[1] == 3) {
 
-        let card = remaningCards[0].split('-')[0] + "-" + (remaningCards[1].split('-')[1] - 1) + "-0"
-        remaningCards.push(card);
+    if (cnt == 4 && temp1.length == 4 || cnt == 3 && temp1.length == 3) {
+        wincardinx = temp1
+    } else if (cnt1 == 4 && temp4.length == 4 || cnt1 == 3 && temp4.length == 3) {
+        wincardinx = temp4
+    } else if (cnt2 == 3 && temp3.length == 3) {
+        wincardinx = temp3
+    }
 
-        return remaningCards;
-    } else if ((remaningCards[1].split('-')[1] - remaningCards[0].split('-')[1]) == -1) {
-        let no = Number(remaningCards[0].split('-')[1]) + 1;
-        let card = remaningCards[0].split('-')[0] + "-" + no + "-0"
-        remaningCards.push(card);
+    let totalcard = 0
 
-        return remaningCards;
-    } else if ((remaningCards[1].split('-')[1] - remaningCards[0].split('-')[1]) == -2) {
-        let no = Number(remaningCards[1].split('-')[1]) + 1
-        let card = remaningCards[0].split('-')[0] + "-" + no + "-0"
-        remaningCards.push(card);
+    for (var x in data.card) {
+        totalcard = totalcard + (parseInt(data.card[x].split("-")[1]) == 1 ? 14 : parseInt(data.card[x].split("-")[1]))
+    }
 
-        return remaningCards;
-    } else if (remaningCards[0].split('-')[0] == remaningCards[1].split('-')[0]) {
-
-        let card = remaningCards[0].split('-')[0] + "-1-0"
-        remaningCards.push(card); 1
-
-        return remaningCards;
-    } else {
-        let suit = ["H", "S", "D", "C"];
-        let cards = remaningCards;
-        logger.info("getRemaningCards cards 11: ", cards)
-        for (let i = 0; i < (3 - remaningCards.length); i++) {
-            for (let j = 0; j < suit.length; j++) {
-                let card = suit[j] + "-" + remaningCards[0].split('-')[1] + "-0";
-                logger.info("getRemaningCards card 11: ", card)
-                if (cards.indexOf(card) == -1) {
-                    cards.push(card);
-                    break;
-                }
+    if (cnt == 4 || cnt1 == 4) {
+        flag = true;
+        var winobj = {
+            "en": "DRAW",
+            "data": {
+                iswin: flag,
+                wintype: "fourofakind",
+                wingold: 0,
+                wincardinx: wincardinx,
+                cardvalue: totalcard
             }
         }
-        return cards;
+
+        return winobj
+    }
+
+}
+
+module.exports.fullofhouse = (data) => {
+    var flag = false
+    var temp1 = []
+    var temp2 = []
+
+    for (var x in data.card) {
+        if (data.card[x].split("-")[1] == data.card[0].split("-")[1]) {
+            temp1.push(data.card[x])
+        } else {
+            temp2.push(data.card[x])
+        }
+    }
+
+    var count = 0
+    for (var x in temp2) {
+        if (temp2[x].split("-")[1] == temp2[0].split("-")[1]) {
+            count++
+        }
+    }
+
+    var wincardinx = []
+    if (count == 3 || count == 2) {
+
+        wincardinx.push(temp1, temp2)
+    }
+
+    let totalcard = 0
+
+    for (var x in data.card) {
+        totalcard = totalcard + (parseInt(data.card[x].split("-")[1]) == 1 ? 14 : parseInt(data.card[x].split("-")[1]))
+    }
+    if ((temp1.length == 2 && count == 3) || (temp1.length == 3 && count == 2)) {
+        flag = true
+        var winobj = {
+            "en": "DRAW",
+            "data": {
+                iswin: flag,
+                wintype: "fullofhouse",
+                wingold: 0,
+                wincardinx: wincardinx,
+                cardvalue: totalcard
+            }
+        }
+
+        return winobj
     }
 }
 
-module.exports.countCards = (cards) => {
-    let sum = 0;
-    for (let i = 0; i < cards.length; i++) {
-        let cardsC = (Number(cards[i].split('-')[1]) == 1) ? 14 : Number(cards[i].split('-')[1])
-        sum = sum + cardsC
+module.exports.flush = (data) => {
+    var a = DiffColor(data.card)
+    var flag = true;
+    a.cards.sort(module.exports.(e, f) {
+        return e - f
+    });
+
+    if (flag == true) {
+        for (var x in a.color) {
+            if (a.color[x] != a.color[0]) {
+                flag = false;
+                break;
+            }
+        }
     }
-    return sum
+    let totalcard = 0
+
+    for (var x in data.card) {
+        totalcard = totalcard + (parseInt(data.card[x].split("-")[1]) == 1 ? 14 : parseInt(data.card[x].split("-")[1]))
+    }
+    if (flag == true) {
+        for (var i = 1; i < a.cards.length; i++) {
+
+            if (a.cards[i] - a.cards[i - 1] != 1) {
+                flag = true;
+                var winobj = {
+                    "en": "DRAW",
+                    "data": {
+                        iswin: flag,
+                        wintype: "flush",
+                        wingold: 0,
+                        wincardinx: data.card,
+                        cardvalue: totalcard
+                    }
+                }
+
+                return winobj
+            } else {
+                flag = false;
+                break;
+            }
+        }
+    }
 }
 
-module.exports.checkTrail = (cards) => {
-    let response = {
-        flag: false
-    }
-    for (let i = 0; i < cards.length; i++) {
-        if (cards[0].split('-')[1] != cards[i].split('-')[1]) {
-            return response;
+module.exports.straight = (data) => {
+
+    var a = DiffColor(data.card)
+
+    var flag = true;
+    a.cards.sort(module.exports.(e, f) {
+        return e - f
+    });
+
+    var count = 0;
+    for (var x in a.color) {
+        if (a.color[x] == a.color[0]) {
+            count++;
         }
     }
-    if (cards[0].split('-')[1] == 1) {
-        return {
-            flag: true,
-            cards: cards,
-            cardCount: (14) * 3,
-            status: "trail",
-            index: 1
+
+    if (count >= 2) {
+
+        return false
+    }
+
+    var count1 = 0
+    for (var i = 1; i < a.cards.length; i++) {
+        if (a.cards[i] - a.cards[i - 1] == 1 || a.cards[i] - a.cards[i - 1] == -12) {
+            flag = true;
+            count1++
         }
+    }
+
+    let totalcard = 0
+
+    for (var x in data.card) {
+        totalcard = totalcard + (parseInt(data.card[x].split("-")[1]) == 1 ? 14 : parseInt(data.card[x].split("-")[1]))
+    }
+    if (count1 == 4) {
+        flag = true;
+        var winobj = {
+            "en": "DRAW",
+            "data": {
+                iswin: flag,
+                wintype: "straight",
+                wingold: 0,
+                wincardinx: data.card,
+                cardvalue: totalcard
+            }
+        }
+
+        return winobj
+    }
+}
+
+module.exports.threeofakind = (data) => {
+    var flag = false
+    var temp1 = []
+    var temp2 = []
+    var temp3 = []
+    var temp4 = []
+
+    for (var x in data.card) {
+        if (data.card[x].split("-")[1] == data.card[0].split("-")[1]) {
+            temp1.push(data.card[x])
+        } else {
+            temp2.push(data.card[x])
+        }
+    }
+
+    var cnt = 0
+    for (var x in temp1) {
+        if (temp1[x].split("-")[1] == temp1[0].split("-")[1]) {
+            cnt++
+        }
+    }
+
+
+    var cnt1 = 0
+    for (var x in temp2) {
+        if (temp2[x].split("-")[1] == temp2[0].split("-")[1]) {
+            temp4.push(temp2[x])
+            cnt1++
+        } else {
+            temp3.push(temp2[x])
+        }
+    }
+
+
+    var cnt2 = 0
+    for (var x in temp3) {
+        if (temp3[x].split("-")[1] == temp3[0].split("-")[1]) {
+            cnt2++
+        }
+    }
+
+
+    if (cnt == 4 && temp1.length == 4 || cnt == 3 && temp1.length == 3) {
+        wincardinx = temp1
+    } else if (cnt1 == 4 && temp4.length == 4 || cnt1 == 3 && temp4.length == 3) {
+        wincardinx = temp4
+    } else if (cnt2 == 3 && temp3.length == 3) {
+        wincardinx = temp3
+    }
+
+    let totalcard = 0
+
+    for (var x in data.card) {
+        totalcard = totalcard + (parseInt(data.card[x].split("-")[1]) == 1 ? 14 : parseInt(data.card[x].split("-")[1]))
+    }
+    // if(cnt == 4 || cnt1 == 4){
+    //     flag = true;
+    //     var winobj = { 
+    //			"en": "DRAW",
+    //          "data": {
+    //         		iswin: flag, 
+    //         		wintype: "fourofakind", 
+    //         		wingold: 0, 
+    //         		wincardinx: wincardinx
+    //			}
+    //     }
+    //     logger.info("winobj :::::::::::::", winobj)
+    //     return winobj
+    // }
+
+    if (cnt == 3 || cnt1 == 3 || (cnt2 == 3 && temp3.length)) {
+        flag = true;
+        //cdClass.updateUserGold(client.uid, data.betAmt * 3)
+        var winobj = {
+            "en": "DRAW",
+            "data": {
+                iswin: flag,
+                wintype: "threeofakind",
+                wingold: 0,
+                wincardinx: wincardinx,
+                cardvalue: totalcard
+            }
+        }
+
+        return winobj
+    }
+}
+
+module.exports.twopair = (data) => {
+    var flag = false
+    var temp1 = []
+    var temp2 = []
+    var temp3 = []
+    var temp4 = []
+
+    for (var x in data.card) {
+        if (data.card[x].split("-")[1] == data.card[0].split("-")[1]) {
+            temp1.push(data.card[x])
+        } else {
+            temp2.push(data.card[x])
+        }
+    }
+
+    var cnt = 0
+    for (var x in temp1) {
+        if (temp1[x].split("-")[1] == temp1[0].split("-")[1]) {
+            cnt++
+        }
+    }
+    var cnt1 = 0
+    for (var x in temp2) {
+        if (temp2[x].split("-")[1] == temp2[0].split("-")[1]) {
+            temp3.push(temp2[x])
+            cnt1++
+        } else {
+            temp4.push(temp2[x])
+        }
+    }
+
+
+    var cnt2 = 0
+    for (var x in temp3) {
+        if (temp3[x].split("-")[1] == temp3[0].split("-")[1]) {
+            cnt2++
+        }
+    }
+
+    var cnt3 = 0
+    for (var x in temp4) {
+        if (temp4[x].split("-")[1] == temp4[0].split("-")[1]) {
+            cnt3++
+        }
+    }
+
+    let totalcard = 0
+
+    for (var x in data.card) {
+        totalcard = totalcard + (parseInt(data.card[x].split("-")[1]) == 1 ? 14 : parseInt(data.card[x].split("-")[1]))
+    }
+
+    var wincardinx = []
+    if (cnt == 2 && temp1.length == 2 && cnt1 == 2 && temp2.length == 2) {
+        wincardinx.push(temp1, temp2)
+    } else if (cnt1 == 2 && temp2.length == 2 && cnt2 == 2 && temp3.length == 2) {
+        wincardinx.push(temp2, temp3)
+    } else if (cnt2 == 2 && temp3.length == 2 && cnt == 2 && temp1.length == 2) {
+        wincardinx.push(temp3, temp1)
+    } else if (cnt == 2 && temp1.length == 2 && cnt3 == 2 && temp4.length == 2) {
+        wincardinx.push(temp1, temp4)
+    } else if (cnt2 == 2 && temp3.length == 2 && cnt3 == 2 && temp4.length == 2) {
+        wincardinx.push(temp3, temp4)
     } else {
-        return {
-            flag: true,
-            cards: cards,
-            cardCount: (cards[0].split('-')[1]) * 3,
-            status: "trail",
-            index: 1
+        return false
+    }
+
+    if (cnt == 2 && cnt1 == 2 || cnt1 == 2 && cnt2 == 2 || cnt2 == 2 && cnt == 2 || cnt == 2 && cnt3 == 2) {
+        flag = true
+        var winobj = {
+            "en": "DRAW",
+            "data": {
+                iswin: flag,
+                wintype: "twopair",
+                wingold: 0,
+                wincardinx: wincardinx,
+                cardvalue: totalcard
+            }
         }
+
+        return winobj
     }
 }
 
-module.exports.checkSeqCondition = (cards, flag) => {
-    if (cards[0].split('-')[1] == 3 && cards[1].split('-')[1] == 2 && cards[2].split('-')[1] == 1) {
-        return {
-            flag: true,
-            cards: cards,
-            cardCount: 38,
-            status: (flag) ? "Pure_Sequence" : "Sequence",
-            index: (flag) ? 2 : 3
+module.exports.pair = (data) => {
+    var flag = false
+    var temp1 = []
+    var temp2 = []
+
+    for (var x in data.card) {
+        if (data.card[x].split("-")[1] == data.card[0].split("-")[1]) {
+            temp1.push(data.card[x])
+        } else {
+            temp2.push(data.card[x])
         }
-    } else if (cards[0].split('-')[1] == 13 && cards[1].split('-')[1] == 12 && cards[2].split('-')[1] == 1) {
-        return {
-            flag: true,
-            cards: cards,
-            cardCount: 37,
-            status: (flag) ? "Pure_Sequence" : "Sequence",
-            index: (flag) ? 2 : 3
+    }
+
+    var cnt = 0
+    for (var x in temp1) {
+        if (temp1[x].split("-")[1] == temp1[0].split("-")[1]) {
+            cnt++
         }
+    }
+
+    let totalcard = 0
+
+    for (var x in data.card) {
+        totalcard = totalcard + (parseInt(data.card[x].split("-")[1]) == 1 ? 14 : parseInt(data.card[x].split("-")[1]))
+    }
+
+
+    var wincardinx = []
+    if (cnt == 2 && temp1.length == 2) {
+        wincardinx.push(temp1)
     } else {
-        return {
-            flag: false
+        return false
+    }
+
+    if (cnt == 2) {
+        flag = true
+        var winobj = {
+            "en": "DRAW",
+            "data": {
+                iswin: flag,
+                wintype: "pair",
+                wingold: 0,
+                wincardinx: wincardinx,
+                cardvalue: totalcard
+            }
         }
+
+        return winobj
     }
 }
 
-module.exports.checkPureSeq = (cards) => {
-    logger.info("checkPureSeq  cards : ", cards);
-    let response = {
-        flag: false
+module.exports.jacksorbetter = (data) => {
+
+    let totalcard = 0;
+
+    for (var x in data.card) {
+        totalcard = totalcard + (parseInt(data.card[x].split("-")[1]) == 1 ? 14 : parseInt(data.card[x].split("-")[1]))
     }
-    for (let i = 0; i < cards.length; i++) {
-        if (cards[0].split('-')[0] != cards[i].split('-')[0]) {
-            return response;
+
+    var winobj = {
+        "en": "DRAW",
+        "data": {
+            iswin: true,
+            wintype: "highcard",
+            wingold: 0,
+            wincardinx: data.card,
+            cardvalue: totalcard
         }
     }
 
-    let special_seq = this.checkSeqCondition(cards, true);
-    if (special_seq.flag) {
-        return special_seq
-    }
+    return winobj
 
-    for (let i = 0; i < cards.length - 1; i++) {
-        if ((cards[i].split('-')[1] - cards[i + 1].split('-')[1]) != 1) {
-            return response;
-        }
-    }
-
-    return {
-        flag: true,
-        cards: cards,
-        cardCount: this.countCards(cards),
-        status: "Pure_Sequence",
-        index: 2
-    }
-}
-
-module.exports.checkSeq = (cards) => {
-    logger.info("checkSeq  cards : ", cards);
-    let response = {
-        flag: false
-    }
-
-    let special_seq = this.checkSeqCondition(cards, true);
-    if (special_seq.flag) {
-        return special_seq
-    }
-
-    for (let i = 0; i < cards.length - 1; i++) {
-        if ((cards[i].split('-')[1] - cards[i + 1].split('-')[1]) != 1) {
-            return response;
-        }
-    }
-
-    return {
-        flag: true,
-        cards: cards,
-        cardCount: this.countCards(cards),
-        status: "Sequence",
-        index: 3
-    }
-}
-
-module.exports.checkColor = (cards) => {
-    logger.info("checkColor  cards : ", cards);
-    let response = {
-        flag: false
-    }
-    for (let i = 0; i < cards.length; i++) {
-        if (cards[0].split('-')[0] != cards[i].split('-')[0]) {
-            return response;
-        }
-    }
-    return {
-        flag: true,
-        cards: cards,
-        cardCount: this.countCards(cards),
-        status: "color",
-        index: 4
-    }
-}
-
-module.exports.checkPair = (cards) => {
-    logger.info("checkPair  cards : ", cards);
-    let response = {
-        flag: false
-    }
-    let same = false;
-    for (let i = 0; i < cards.length - 1; i++) {
-        if (Number(cards[i].split('-')[1]) == Number(cards[i + 1].split('-')[1])) {
-            same = true;
-        }
-    }
-    if (!same) {
-        return response;
-    }
-    return {
-        flag: true,
-        cards: cards,
-        cardCount: this.countCards(cards),
-        status: "pair",
-        index: 5
-    }
 }

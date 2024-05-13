@@ -81,7 +81,7 @@ module.exports.collectBoot = async (tbId) => {
 
 
         // Big Blind
-        
+
         // Small Blind
 
         let update = {
@@ -89,8 +89,8 @@ module.exports.collectBoot = async (tbId) => {
                 gameState: "CollectBoot",
                 gameId: gameId.toString(),
                 dealerSeatIndex: dealerSeatIndex,
-                smallblindSeatIndex:smallblindSeatIndex,
-                bigblindSeatIndex:bigblindSeatIndex,
+                smallblindSeatIndex: smallblindSeatIndex,
+                bigblindSeatIndex: bigblindSeatIndex,
                 chalValue: Number(tb.boot)
             }
         }
@@ -127,25 +127,25 @@ module.exports.deduct = async (tabInfo, playerInfo) => {
             if (playerInfo[i] != {} && typeof playerInfo[i].seatIndex != "undefined" && playerInfo[i].status == "play") {
                 seatIndexs.push(playerInfo[i].seatIndex);
 
-                if(tabInfo.bigblindSeatIndex == playerInfo[i].seatIndex ){
-                
+                if (tabInfo.bigblindSeatIndex == playerInfo[i].seatIndex) {
+
                     let update = {
                         $inc: {
                             "playerInfo.$.bet": Number(tabInfo.bigblind)
                         }
-                    }   
+                    }
                     let uWh = { _id: MongoID(tabInfo._id.toString()), "playerInfo.seatIndex": Number(playerInfo[i].seatIndex) }
                     logger.info("deduct uWh update ::", uWh, update)
                     await PlayingTables.findOneAndUpdate(uWh, update, { new: true });
                 }
 
-                if(tabInfo.smallblindSeatIndex == playerInfo[i].seatIndex ){
-                
+                if (tabInfo.smallblindSeatIndex == playerInfo[i].seatIndex) {
+
                     let update = {
                         $inc: {
                             "playerInfo.$.bet": Number(tabInfo.smallblind)
                         }
-                    }   
+                    }
                     let uWh = { _id: MongoID(tabInfo._id.toString()), "playerInfo.seatIndex": Number(playerInfo[i].seatIndex) }
                     logger.info("deduct uWh update ::", uWh, update)
                     await PlayingTables.findOneAndUpdate(uWh, update, { new: true });
@@ -262,3 +262,4 @@ module.exports.getCount = async (type) => {
     let resp2 = await IdCounter.findOneAndUpdate(wh, update, { upsert: true, new: true });
     return resp2.counter;
 }
+
