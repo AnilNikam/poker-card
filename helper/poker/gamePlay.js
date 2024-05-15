@@ -26,8 +26,8 @@ const cardDealActions = require("./cardDeal");
 
     */
 module.exports.TAKEACTION = async (requestData, client) => {
-logger.info("requestData ",requestData)
-//logger.info("client ",client)
+    logger.info("requestData ", requestData)
+    //logger.info("client ",client)
 
     if (typeof client.tbid == 'undefined' || requestData.type == undefined || requestData.bet == undefined) {
         commandAcions.sendDirectEvent(client.sck, CONST.TAKEACTION, requestData, false, "User session not set, please restart game!");
@@ -87,12 +87,12 @@ logger.info("requestData ",requestData)
         }
     }
     let foundIndex = -1
-    logger.info("tabInfo.contract ",tabInfo.contract)
+    logger.info("tabInfo.contract ", tabInfo.contract)
 
     if (tabInfo.contract.length > 0) {
         //_.map(tabInfo.contract, function (el) { return el.islastcontract = false; });
         foundIndex = tabInfo.contract.findIndex(x => x.si == client.seatIndex);
-    } 
+    }
 
 
     
@@ -113,7 +113,7 @@ logger.info("requestData ",requestData)
         Set["$set"]["playerInfo." + client.seatIndex + ".turnMissCounter"] = 0;
         //Set["$set"]["playerInfo." + client.seatIndex + ".bet"] = 0;
 
-        await walletActions.deductWallet(client.uid,-parseInt(requestData.bet), 1, "Poker Bet", tabInfo, client.socketid, tabInfo.playerInfo[client.seatIndex].seatIndex);
+        await walletActions.deductWallet(client.uid, -parseInt(requestData.bet), 1, "Poker Bet", tabInfo, client.socketid, tabInfo.playerInfo[client.seatIndex].seatIndex);
 
     } else {
         logger.info("ddddddddddddddddddddddddddddddddddd ELSE KKKKKKKKKKKKK")
@@ -160,7 +160,7 @@ logger.info("requestData ",requestData)
     })
 
     let comparebet = -1
-    if(oneuser.length > 0){
+    if (oneuser.length > 0) {
         comparebet = oneuser[0].bet
         logger.info("oneuser ::::::::::::::::::::::: ", oneuser[0].bet)
     }
@@ -175,7 +175,7 @@ logger.info("requestData ",requestData)
     logger.info("allusersamebet ", allusersamebet)
     logger.info("updated.contract ", updated.contract)
     
-    logger.info("updated.contract ", updated.contract.length ,allusersamebet.length )
+    logger.info("updated.contract ", updated.contract.length, allusersamebet.length)
 
 
     if (allusersamebet.length == updated.contract.length) {
@@ -193,6 +193,10 @@ logger.info("requestData ",requestData)
             this.OpenNextcard(updated)
         }
 
+    } else if (allusersamebet.length == 1){
+        // Winner 
+        console.log("Winner ::::::::::::::::::")
+        checkWinnerActions.winnercall(updated)
     } else {
         await roundStartActions.nextUserTurnstart(updated);
     }
