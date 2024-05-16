@@ -1,8 +1,12 @@
 
-// -> drwa valo case 
-// -> next Round 
-// -> bet show 
-// -> 
+// $-> drwa valo case
+// $-> next Round
+// -> bet show
+// -> Robot Play
+// ->
+
+
+
  
 
 deckOne = [

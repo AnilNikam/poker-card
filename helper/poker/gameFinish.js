@@ -89,7 +89,18 @@ module.exports.winnerDeclareCall = async (winner, tabInfo) => {
 
         let winnerIndexs = [];
         let winnerIds = [];
+
+        // players = players.sort((a, b) => {
+        //     return b.WinnerData.cardvalue  - a.WinnerData.cardvalue 
+        // }).sort((a, b) => {
+        //     return b.WinnerData.winvalue - a.WinnerData.winvalue
+        // })
+        let TotalUserWinner  = []
         for (let i = 0; i < winner.length; i++) {
+            
+            if (winner[0].winvalue == winner[i].winvalue && winner[0].cardvalue == winner[i].cardvalue) {
+                TotalUserWinner.push(winner[i])
+            }
             winnerIndexs.push(winner[i].seatIndex);
             winnerIds.push(winner[i]._id)
         }
@@ -118,23 +129,23 @@ module.exports.winnerDeclareCall = async (winner, tabInfo) => {
         //const winnerTrack = await gameTrackActions.gamePlayTracks(winnerIndexs, tbInfo.gameTracks, tbInfo);
         //logger.info("winnerDeclareCall winnerTrack:: ", winnerTrack);
 
-        //for (let i = 0; i < tbInfo.gameTracks.length; i++) {
-            //if (tbInfo.gameTracks[i].playStatus == "win") {
-                await walletActions.addWallet(winner[0]._id, Number(tbInfo.potValue), 4, "poker Win", tabInfo);
-           // }
-       // }
+        for (let i = 0; i < TotalUserWinner.length; i++) {
+            if (TotalUserWinner[i]._id != undefined) {
+                await walletActions.addWallet(TotalUserWinner[i]._id, Number(tbInfo.potValue)/TotalUserWinner.length, 4, "poker Win", tabInfo);
+            }
+        }
 
         // let winnerViewResponse = await this.winnerViewResponseFilter(tbInfo.gameTracks, winnerTrack, winnerIndexs);
         // winnerViewResponse.gameId = tbInfo.gameId;
         // winnerViewResponse.winnerIds = tbInfo.winnerIds;
 
         let winnerViewResponse={
-            winneruser:winner[0],
+            winneruser:TotalUserWinner,
             alluser:winner
         }
         commandAcions.sendEventInTable(tbInfo._id.toString(), CONST.WINNER, winnerViewResponse);
 
-        //await roundEndActions.roundFinish(tbInfo);
+        await roundEndActions.roundFinish(tbInfo);
 
     } catch (err) {
         logger.info("Exception  WinnerDeclareCall : 1 :: ", err)
