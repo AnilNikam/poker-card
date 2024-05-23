@@ -165,7 +165,7 @@ module.exports.findEmptySeatAndUserSeat = async (table, betInfo, client) => {
             playerSocketId: client.id,
             playerLostChips: 0,
             isSee: false,
-            Iscom:userInfo.Iscom != undefined ? userInfo.Iscom:0,
+            isBot:userInfo.isBot != undefined ? userInfo.isBot:false,
             cards: [],
             playingstatus:"",
             bet:0   
@@ -217,6 +217,12 @@ module.exports.findEmptySeatAndUserSeat = async (table, betInfo, client) => {
             diff += CONST.gameStartTime;
         }
 
+        let robot_wh = {
+            _id: client.uid,
+            isBot:true
+        }
+        await GameUser.updateOne(robot_wh, { $set: {isfree:false} });
+
         sendEvent(client, CONST.JOIN_SIGN_UP, {});
 
         //GTI event
@@ -233,7 +239,7 @@ module.exports.findEmptySeatAndUserSeat = async (table, betInfo, client) => {
             tableAmount: tableInfo.tableAmount,
         });
 
-        if(userInfo.Iscom == undefined || userInfo.Iscom == 0)
+        if(userInfo.isBot == undefined || userInfo.isBot == false)
         client.join(tableInfo._id.toString());
 
         sendDirectEvent(client.tbid.toString(), CONST.JOIN_TABLE, {
@@ -251,9 +257,9 @@ module.exports.findEmptySeatAndUserSeat = async (table, betInfo, client) => {
             await gameStartActions.gameTimerStart(tableInfo);
         }else{
 
-            // setTimeout(()=>{
-            //     botLogic.JoinRobot(tableInfo,betInfo)
-            // },2000)
+            setTimeout(()=>{
+                botLogic.JoinRobot(tableInfo,betInfo)
+            },2000)
   
         }
     } catch (error) {

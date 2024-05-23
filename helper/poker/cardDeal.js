@@ -121,10 +121,10 @@ module.exports.getCards = (playerInfo) => {
 
 
     // for (let i = 0; i < playerInfo.length; i++) {
-    //     if (typeof playerInfo[i].seatIndex != "undefined" && playerInfo[i].status == "play" && playerInfo[i].Iscom == 1) {
+    //     if (typeof playerInfo[i].seatIndex != "undefined" && playerInfo[i].status == "play" && playerInfo[i].isBot == true) {
     //         let card = [];
 
-    //         console.log(playerInfo[i].Iscom)
+    //         console.log(playerInfo[i].isBot)
 
     //         card =  this.HighCard(deckCards,color,number)
 
@@ -136,10 +136,10 @@ module.exports.getCards = (playerInfo) => {
         if (typeof playerInfo[i].seatIndex != "undefined" && playerInfo[i].status == "play") {
             let card = [];
 
-            console.log(playerInfo[i].Iscom)
+            console.log(playerInfo[i].isBot)
 
 
-            if (typeof playerInfo[i].seatIndex != "undefined" && playerInfo[i].Iscom == 0) {
+            //if (typeof playerInfo[i].seatIndex != "undefined" && playerInfo[i].isBot == false) {
                 for (let i = 0; i < 2; i++) {
                     let ran = parseInt(fortuna.random() * deckCards.length);
                     card.push(deckCards[ran])
@@ -147,7 +147,7 @@ module.exports.getCards = (playerInfo) => {
                 }
 
                 cards[playerInfo[i].seatIndex] = card;
-            }
+            //}
 
         }
     }

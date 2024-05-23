@@ -202,10 +202,10 @@ module.exports.startUserTurn = async (seatIndex, objData, firstTurnStart) => {
         }
         commandAcions.sendEventInTable(tb._id.toString(), CONST.TURN_START, response);
 
-        // if(tb.playerInfo != undefined && tb.playerInfo[tb.turnSeatIndex] != undefined && tb.playerInfo[tb.turnSeatIndex].Iscom == 1){
-        //     // Rboot Logic Start Playing 
-        //     botLogic.PlayRobot(tb,tb.playerInfo[tb.turnSeatIndex],playerInGame)
-        // }
+        if(tb.playerInfo != undefined && tb.playerInfo[tb.turnSeatIndex] != undefined && tb.playerInfo[tb.turnSeatIndex].isBot == true){
+            // Rboot Logic Start Playing 
+            botLogic.PlayRobot(tb,tb.playerInfo[tb.turnSeatIndex],turnuserData)
+        }
 
 
         let tbid = tb._id.toString();

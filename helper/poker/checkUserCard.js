@@ -39,14 +39,22 @@ module.exports.getWinnerUser = (userInfo, communitycard, contract) => {
         return b.WinnerData.winvalue - a.WinnerData.winvalue
     })
 
+    let finalWinner = []
+
+    for (var i = 0; i <= players.length - 1; i++){
+        if (players[0].cardvalue == players[i].cardvalue && players[0].winvalue == players[i].winvalue) {
+            finalWinner.push(players[i])
+        }
+    }
+
     // players = players.sort((a, b) => {
     //     return b.cardCount - a.cardCount
     // }).sort((a, b) => {
     //     return a.index - b.index
     // })
-    logger.info("getWinnerUser players : ", players);
+    logger.info("getWinnerUser finalWinner : ", finalWinner);
 
-    return players
+    return finalWinner
 }
 
 module.exports.getWinState = (userCards, communitycard) => {
