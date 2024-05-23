@@ -172,6 +172,10 @@ module.exports.TAKEACTION = async (requestData, client) => {
         return ((e.isturn == 1 || e.fold == 1) && (e.bet == comparebet || e.fold == 1))
     })
 
+    let allfolduser = updated.contract.filter((e) => {
+        return  e.fold != 1
+    })
+
     logger.info("allusersamebet ", allusersamebet)
     logger.info("updated.contract ", updated.contract)
     
@@ -193,9 +197,9 @@ module.exports.TAKEACTION = async (requestData, client) => {
             this.OpenNextcard(updated)
         }
 
-    } else if (allusersamebet.length == 1){
+    } else if (allfolduser.length == 1){
         // Winner 
-        console.log("Winner ::::::::::::::::::")
+        console.log("Winner :::::::::::::::::: allfolduser ",allfolduser)
         checkWinnerActions.winnercall(updated)
     } else {
         await roundStartActions.nextUserTurnstart(updated);
@@ -246,7 +250,8 @@ module.exports.OpenNextcard = async (tb) => {
             commandAcions.sendEventInTable(updated._id.toString(), CONST.OPENCARD, {
                 contract: updated.contract,
                 communitycard: updated.communitycard,
-                opencard: Communitycard.cards
+                opencard: Communitycard.cards,
+                potValue:updated.potValue
             });
 
             setTimeout(()=>{

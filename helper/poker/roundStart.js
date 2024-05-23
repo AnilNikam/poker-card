@@ -159,6 +159,8 @@ module.exports.startUserTurn = async (seatIndex, objData, firstTurnStart) => {
             Allin = tb.contract.filter((e) => { return e.allIn == 1 })[0]
 
             logger.info("Allin ", Allin);
+            logger.info("turnuserData ", turnuserData);
+
 
             turnuserData.fold = 1;
             turnuserData.bet = maxBet - turnuserData.bet;
@@ -231,11 +233,7 @@ module.exports.userTurnExpaire = async (tbid) => {
             _id: MongoID(tbid)
         }
         let project = {
-            gameState: 1,
-            playerInfo: 1,
-            activePlayer: 1,
-            turnSeatIndex: 1,
-            turnDone: 1
+           
         }
         let tabInfo = await PlayingTables.findOne(wh, project).lean();
         logger.info("userTurnExpaire tabInfo : ", tabInfo);
@@ -367,6 +365,9 @@ module.exports.getUserTurnSeatIndex = async (tbInfo, prevTurn, cnt) => {
 
 module.exports.getUserTurnSeatIndexContract = async (tbInfo, prevTurn, cnt) => {
     try {
+
+        logger.info('tbInfo.js getUserTurnSeatIndex tbInfo : ', tbInfo);
+
         let counter = cnt;
         let p = tbInfo.contract //_.filter(tbInfo.contract, function (num) { return num.fold == 0; });
         let plen = p.length;
