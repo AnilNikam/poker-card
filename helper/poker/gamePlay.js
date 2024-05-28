@@ -256,7 +256,7 @@ module.exports.OpenNextcard = async (tb) => {
 
             setTimeout(()=>{
                 roundStartActions.nextUserTurnstart(updated);
-            },12000)
+            },3000)
 
         } else {
             logger.info("undefined  ", Communitycard)

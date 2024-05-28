@@ -145,8 +145,9 @@ module.exports.winnerDeclareCall = async (winner, tabInfo) => {
         }
         commandAcions.sendEventInTable(tbInfo._id.toString(), CONST.WINNER, winnerViewResponse);
 
-        await roundEndActions.roundFinish(tbInfo);
-
+        setTimeout(()=>{
+            roundEndActions.roundFinish(tbInfo);
+        },5000)
     } catch (err) {
         logger.info("Exception  WinnerDeclareCall : 1 :: ", err)
     }
