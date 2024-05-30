@@ -38,7 +38,10 @@ module.exports.cardDealStart = async (tbid) => {
 
     const eventResponse = {
         cardDealIndexs: cardDealIndexs,
-        cardDetails:cardDetails
+        cardDetails: cardDetails,
+        dealerSeatIndex: tabInfo.dealerSeatIndex,
+        smallblindSeatIndex: tabInfo.smallblindSeatIndex,
+        bigblindSeatIndex: tabInfo.bigblindSeatIndex,
     }
     commandAcions.sendEventInTable(tabInfo._id.toString(), CONST.TABLE_CARD_DEAL, eventResponse);
 
@@ -66,17 +69,17 @@ module.exports.setUserCards = async (cardsInfo, tb) => {
                     si: playerInfo[i].seatIndex,
                     smallblind: (playerInfo[i].seatIndex == tb.smallblindSeatIndex) ? 1 : 0,
                     bigblind: (playerInfo[i].seatIndex == tb.bigblindSeatIndex) ? 1 : 0,
-                    smallblindSeatIndex:tb.smallblindSeatIndex,
-                    bigblindSeatIndex:tb.bigblindSeatIndex,
+                    smallblindSeatIndex: tb.smallblindSeatIndex,
+                    bigblindSeatIndex: tb.bigblindSeatIndex,
                     bet: (playerInfo[i].seatIndex == tb.smallblindSeatIndex) ? tb.smallblind : (playerInfo[i].seatIndex == tb.bigblindSeatIndex) ? tb.bigblind : 0,
                     check: 0,
                     allIn: 0,
                     fold: 0,
                     raise: 0,
                     type: "",
-                    isturn:-1,
-                    minbet:tb.minbet,
-                    maxbet:tb.maxbet
+                    isturn: -1,
+                    minbet: tb.minbet,
+                    maxbet: tb.maxbet
                 }
 
                 let update = {
@@ -140,13 +143,13 @@ module.exports.getCards = (playerInfo) => {
 
 
             //if (typeof playerInfo[i].seatIndex != "undefined" && playerInfo[i].isBot == false) {
-                for (let i = 0; i < 2; i++) {
-                    let ran = parseInt(fortuna.random() * deckCards.length);
-                    card.push(deckCards[ran])
-                    deckCards.splice(ran, 1);
-                }
+            for (let i = 0; i < 2; i++) {
+                let ran = parseInt(fortuna.random() * deckCards.length);
+                card.push(deckCards[ran])
+                deckCards.splice(ran, 1);
+            }
 
-                cards[playerInfo[i].seatIndex] = card;
+            cards[playerInfo[i].seatIndex] = card;
             //}
 
         }
