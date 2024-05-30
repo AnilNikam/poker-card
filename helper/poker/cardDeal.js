@@ -42,8 +42,8 @@ module.exports.cardDealStart = async (tbid) => {
         dealerSeatIndex: tabInfo.dealerSeatIndex,
         smallblindSeatIndex: tabInfo.smallblindSeatIndex,
         bigblindSeatIndex: tabInfo.bigblindSeatIndex,
-        bigblind: bigblind,
-        smallblind:smallblind
+        bigblind: tabInfo.bigblind,
+        smallblind:tabInfo.smallblind
     }
     commandAcions.sendEventInTable(tabInfo._id.toString(), CONST.TABLE_CARD_DEAL, eventResponse);
 
