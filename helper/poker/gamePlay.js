@@ -302,7 +302,8 @@ module.exports.OpenNextcard = async (tb) => {
             commandAcions.sendEventInTable(updated._id.toString(), CONST.OPENCARD, {
                 contract: updated.contract,
                 communitycard: updated.communitycard,
-                opencard: Communitycard.cards
+                opencard: Communitycard.cards,
+                potValue:updated.potValue
             });
 
             setTimeout(()=>{
