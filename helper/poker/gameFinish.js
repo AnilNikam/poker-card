@@ -141,6 +141,7 @@ module.exports.winnerDeclareCall = async (winner, tabInfo) => {
         for (let i = 0; i < TotalUserWinner.length; i++) {
             if (TotalUserWinner[i]._id != undefined) {
                 await walletActions.addWallet(TotalUserWinner[i]._id, Number(tbInfo.potValue)/TotalUserWinner.length, 4, "poker Win", tabInfo);
+                TotalUserWinner[i].WinGold = Number(tbInfo.potValue)/TotalUserWinner.length
             }
         }
 
@@ -150,7 +151,8 @@ module.exports.winnerDeclareCall = async (winner, tabInfo) => {
 
         let winnerViewResponse={
             winneruser:TotalUserWinner,
-            alluser:winner
+            alluser: winner,
+            potValue:tbInfo.potValue
         }
         commandAcions.sendEventInTable(tbInfo._id.toString(), CONST.WINNER, winnerViewResponse);
 

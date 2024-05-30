@@ -28,7 +28,8 @@ module.exports.roundFinish = async (tb) => {
                 turnDone: false,
                 jobId: "",
                 contract: [],
-                communitycard:[]
+                communitycard: []
+                
             },
             $unset: {
                 gameTimer: 1
