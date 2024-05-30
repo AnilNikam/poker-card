@@ -24,7 +24,8 @@ module.exports.gameTimerStart = async (tb) => {
         let update = {
             $set: {
                 gameState: "GameStartTimer",
-                "GameTimer.GST": new Date()
+                "GameTimer.GST": new Date(),
+                round:1
             }
         }
         logger.info("gameTimerStart UserInfo : ", wh, update);
@@ -74,10 +75,18 @@ module.exports.collectBoot = async (tbId) => {
         // smallblindSeatIndex: { type: Number, default: -1 },
         // bigblindSeatIndex: { type: Number, default: -1 },
 
+        logger.info(" tb :::::::::::dealerSeatIndex ", tb.dealerSeatIndex);
+
+
 
         let dealerSeatIndex = await roundStartActions.getUserTurnSeatIndex(tb, tb.dealerSeatIndex, 0);
         let smallblindSeatIndex = await roundStartActions.getUserTurnSeatIndex(tb, dealerSeatIndex, 0);
         let bigblindSeatIndex = await roundStartActions.getUserTurnSeatIndex(tb, smallblindSeatIndex, 0);
+
+
+        logger.info("dealerSeatIndex ", dealerSeatIndex);
+        logger.info("smallblindSeatIndex ", smallblindSeatIndex);
+        logger.info("bigblindSeatIndex ", bigblindSeatIndex);
 
 
         // Big Blind

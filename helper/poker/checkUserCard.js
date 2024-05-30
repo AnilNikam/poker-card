@@ -138,7 +138,7 @@ module.exports.winnerDeclare = (data, callback) => {
                 wingold: 0,
                 wincardinx: data.card,
                 oldcard: data.card,
-                winvalue: 10,
+                winvalue: 9,
                 cardvalue: totalcard
             }
         }
@@ -148,40 +148,40 @@ module.exports.winnerDeclare = (data, callback) => {
     } else if (sf = this.straightflush(data)) {
 
         sf.data.oldcard = data.card
-        sf.data.winvalue = 9
+        sf.data.winvalue = 8
         return callback(sf)
 
     } else if (fok = this.fourofakind(data)) {
         fok.data.oldcard = data.card
-        fok.data.winvalue = 8
+        fok.data.winvalue = 7
         return callback(fok)
 
     } else if (foh = this.fullofhouse(data)) {
         foh.data.oldcard = data.card
-        foh.data.winvalue = 7
+        foh.data.winvalue = 6
         return callback(foh)
 
     } else if (fls = this.flush(data)) {
         fls.data.oldcard = data.card
-        fls.data.winvalue = 6
+        fls.data.winvalue = 5
 
         return callback(fls)
 
     } else if (strt = this.straight(data)) {
         strt.data.oldcard = data.card
-        strt.data.winvalue = 5
+        strt.data.winvalue =4
 
         return callback(strt)
 
     } else if (tok = this.threeofakind(data)) {
         tok.data.oldcard = data.card
-        tok.data.winvalue = 4
+        tok.data.winvalue = 3
 
         return callback(tok)
 
     } else if (tp = this.twopair(data)) {
         tp.data.oldcard = data.card
-        tp.data.winvalue = 3
+        tp.data.winvalue = 2
 
         return callback(tp)
 

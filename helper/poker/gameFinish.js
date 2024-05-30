@@ -97,8 +97,17 @@ module.exports.winnerDeclareCall = async (winner, tabInfo) => {
         // })
         let TotalUserWinner  = []
         for (let i = 0; i < winner.length; i++) {
-            
-            if (winner[0].winvalue == winner[i].winvalue && winner[0].cardvalue == winner[i].cardvalue) {
+            logger.info("winner[0].winvalue ::", winner[0].WinnerData.winvalue);
+            logger.info("winner[i].winvalue ::", winner[i].WinnerData.winvalue);
+
+            logger.info("winner[0].cardvalue ::", winner[0].WinnerData.cardvalue);
+            logger.info("winner[i].cardvalue ::", winner[i].WinnerData.cardvalue);
+
+
+            logger.info("TotalUserWinner ::", TotalUserWinner);
+
+
+            if (winner[0].WinnerData.winvalue == winner[i].WinnerData.winvalue && winner[0].WinnerData.cardvalue == winner[i].WinnerData.cardvalue) {
                 TotalUserWinner.push(winner[i])
             }
             winnerIndexs.push(winner[i].seatIndex);
