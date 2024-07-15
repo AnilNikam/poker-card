@@ -2,7 +2,7 @@
 const mongoose = require("mongoose")
 const MongoID = mongoose.Types.ObjectId;
 
-const PlayingTables = mongoose.model("playingTables");
+const PlayingTables = require("../../models/playingTables");
 
 const gameTrackActions = require("./gameTrack");
 const commandAcions = require("../socketFunctions");
@@ -95,7 +95,7 @@ module.exports.winnerDeclareCall = async (winner, tabInfo) => {
         // }).sort((a, b) => {
         //     return b.WinnerData.winvalue - a.WinnerData.winvalue
         // })
-        let TotalUserWinner  = []
+        let TotalUserWinner = []
         for (let i = 0; i < winner.length; i++) {
             logger.info("winner[0].winvalue ::", winner[0].WinnerData.winvalue);
             logger.info("winner[i].winvalue ::", winner[i].WinnerData.winvalue);
@@ -140,8 +140,8 @@ module.exports.winnerDeclareCall = async (winner, tabInfo) => {
 
         for (let i = 0; i < TotalUserWinner.length; i++) {
             if (TotalUserWinner[i]._id != undefined) {
-                await walletActions.addWallet(TotalUserWinner[i]._id, Number(tbInfo.potValue)/TotalUserWinner.length, 4, "poker Win", tabInfo);
-                TotalUserWinner[i].WinGold = Number(tbInfo.potValue)/TotalUserWinner.length
+                await walletActions.addWallet(TotalUserWinner[i]._id, Number(tbInfo.potValue) / TotalUserWinner.length, 4, "poker Win", tabInfo);
+                TotalUserWinner[i].WinGold = Number(tbInfo.potValue) / TotalUserWinner.length
             }
         }
 
@@ -149,16 +149,16 @@ module.exports.winnerDeclareCall = async (winner, tabInfo) => {
         // winnerViewResponse.gameId = tbInfo.gameId;
         // winnerViewResponse.winnerIds = tbInfo.winnerIds;
 
-        let winnerViewResponse={
-            winneruser:TotalUserWinner,
+        let winnerViewResponse = {
+            winneruser: TotalUserWinner,
             alluser: winner,
-            potValue:tbInfo.potValue
+            potValue: tbInfo.potValue
         }
         commandAcions.sendEventInTable(tbInfo._id.toString(), CONST.WINNER, winnerViewResponse);
 
-        setTimeout(()=>{
+        setTimeout(() => {
             roundEndActions.roundFinish(tbInfo);
-        },5000)
+        }, 5000)
     } catch (err) {
         logger.info("Exception  WinnerDeclareCall : 1 :: ", err)
     }

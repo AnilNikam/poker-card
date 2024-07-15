@@ -3,12 +3,11 @@ const commandAcions = require('../socketFunctions');
 const CONST = require('../../constant');
 const mongoose = require('mongoose');
 const MongoID = mongoose.Types.ObjectId;
-const GameUser = mongoose.model('users');
-const UserReferTracks = mongoose.model('userReferTracks');
-const PlayingTables = mongoose.model('playingTables');
-const IdCounter = mongoose.model('idCounter');
+const GameUser = require('../../models/users');
+const UserReferTracks = require('../../models/userReferTracks');
+const PlayingTables = require('../../models/playingTables');
+const IdCounter = require('../../models/idCounter');
 const logger = require('../../logger');
-const { tryEach } = require('async');
 
 module.exports.appLunchDetails = async (requestData, client) => {
   try {

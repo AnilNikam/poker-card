@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 const MongoID = mongoose.Types.ObjectId;
-const GameUser = mongoose.model('users');
+const GameUser = require('../models/users');
 const PlayingTables = mongoose.model("playingTables");
 
 // const pointTableAction = require("./rummy/joinTable");
@@ -62,7 +62,7 @@ const findRoom = async (tableInfo, betInfo) => {
         let robotInfo = await GameUser.aggregate([
             { $match: user_wh },
             { $sample: { size: 1 } }
-          ]).exec()
+        ]).exec()
 
         console.log("JoinRobot ROBOT Info : ", robotInfo)
 

@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
-const Users = mongoose.model('users');
-const BetLists = mongoose.model('poolbetLists');
+const Users = require('../models/users');
+// const BetLists = require('../models/poolbetLists');
 
 const logger = require('../logger');
 const usersHelper = require('../helper/usersHelper');
@@ -85,12 +85,12 @@ async function getBetList(requestBody) {
           type: '$type',
           status: '$status',
           tableName: '$tableName',
-          maxSeat:'$maxSeat',
-          commission:'$commission'
+          maxSeat: '$maxSeat',
+          commission: '$commission'
         },
       },
     ]);
-    console.log("responseData ",responseData)
+    console.log("responseData ", responseData)
     if (responseData.length !== 0) {
       return { status: 1, message: 'result sucessfully ', data: responseData };
     } else {

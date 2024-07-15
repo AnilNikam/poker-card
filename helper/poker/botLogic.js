@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const GameUser = mongoose.model('users');
+const GameUser = require('../../models/users');
 const commonHelper = require('../commonHelper');
 const commandAcions = require("../socketFunctions");
 const CONST = require("../../constant");

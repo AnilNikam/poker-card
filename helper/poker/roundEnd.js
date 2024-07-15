@@ -1,6 +1,6 @@
 const mongoose = require("mongoose")
 const MongoID = mongoose.Types.ObjectId;
-const PlayingTables = mongoose.model("playingTables");
+const PlayingTables = require("../../models/playingTables");
 
 const commandAcions = require("../socketFunctions");
 const gameStartActions = require("./gameStart");
@@ -29,7 +29,7 @@ module.exports.roundFinish = async (tb) => {
                 jobId: "",
                 contract: [],
                 communitycard: []
-                
+
             },
             $unset: {
                 gameTimer: 1

@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
-const Users = mongoose.model('users');
-const otpAdharkyc = mongoose.model('otpAdharkyc');
-const BankDetails = mongoose.model('bankDetails');
+const Users = require('../../models/users');
+const otpAdharkyc = require('../../models/otpAdharkyc');
+const BankDetails = require('../../models/bankDetails');
 const MongoID = mongoose.Types.ObjectId;
 
 const { OBJECT_ID } = require('../../config');
@@ -125,7 +125,7 @@ const userSignup = async (requestData_, socket) => {
   //  logger.info('userSignup wh :', wh);
 
   let resp = await Users.findOne(wh, { username: 1, _id: 1 });
-   logger.info('userSignup resp :', resp);
+  logger.info('userSignup resp :', resp);
 
   if (resp === null) {
     requestData.new_user = true;
@@ -250,7 +250,7 @@ const registerUser = async (requestBody, socket) => {
     if (loginType === 'Mobile') {
       const query = { mobileNumber: mobileNumber };
       let result = await Users.findOne(query, {});
-      logger.info("result =>",result)
+      logger.info("result =>", result)
       if (!result) {
 
 

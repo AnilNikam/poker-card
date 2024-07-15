@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const Users = mongoose.model('users');
+const Users = require('../../models/users');
 const express = require('express');
 const router = express.Router();
 const config = require('../../config');
@@ -20,14 +20,14 @@ const logger = require('../../logger');
 router.post('/sendNotification', async (req, res) => {
     try {
         console.info('requet => ', req.body);
-        if(req.body.title != undefined && req.body.title != null && req.body.notification != undefined && req.body.notification != null){
-        
+        if (req.body.title != undefined && req.body.title != null && req.body.notification != undefined && req.body.notification != null) {
+
             //pushNotifications.sendAllUser({title:req.body.title,body:req.body.notification})
 
             logger.info('admin/dahboard.js post dahboard  error => ');
 
-            res.json({ falgs:true });
-        }else{
+            res.json({ falgs: true });
+        } else {
             logger.error('admin/dahboard.js post bet-list req.body => ', req.body);
             res.status(config.INTERNAL_SERVER_ERROR).json(req.body);
         }

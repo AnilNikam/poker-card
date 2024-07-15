@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 const logger = require('../../logger');
-const UserOtp = mongoose.model('userOtp');
+const UserOtp = require('../../models/userOtp');
 
 module.exports.sendOTP = async (data) => {
   try {

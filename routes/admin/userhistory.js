@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
 const MongoID = mongoose.Types.ObjectId;
-const Users = mongoose.model('users');
+const Users = require('../../models/users');
 const express = require('express');
 const router = express.Router();
 const config = require('../../config');
@@ -29,7 +29,7 @@ router.get('/rummyHistory', async (req, res) => {
             return false
         }
         const BlackandWhiteData = await GameHistory.find({ userId: MongoID(req.query.userId), "game": "BlackandWhite" },
-            { DateTime: 1, userId: 1, Name: 1, PhoneNumber: 1, RoomId: 1, Amount: 1, Type: 1, game:1 }).sort({ DateTime: -1 })
+            { DateTime: 1, userId: 1, Name: 1, PhoneNumber: 1, RoomId: 1, Amount: 1, Type: 1, game: 1 }).sort({ DateTime: -1 })
 
 
         console.log("rummyHistory ", BlackandWhiteData)
@@ -61,8 +61,8 @@ router.get('/completeWithdrawal', async (req, res) => {
             res.json({ completeWithdrawalData: [] });
             return false
         }
-        const completeWithdrawalData = await UserWalletTracks.find({ userId: MongoID(req.query.userId),transTypeText:"PayOut" },
-        { createdAt: 1, userId: 1, uniqueId: 1, chips: 1, transAmount: 1, totalBucket: 1, transTypeText: 1 }).sort({ createdAt: -1 })
+        const completeWithdrawalData = await UserWalletTracks.find({ userId: MongoID(req.query.userId), transTypeText: "PayOut" },
+            { createdAt: 1, userId: 1, uniqueId: 1, chips: 1, transAmount: 1, totalBucket: 1, transTypeText: 1 }).sort({ createdAt: -1 })
 
         console.log("completeWithdrawalData ", completeWithdrawalData)
 
@@ -86,14 +86,14 @@ router.get('/completeWithdrawal', async (req, res) => {
 */
 router.get('/completeDeposite', async (req, res) => {
     try {
-        
+
         if (req.query.userId == undefined) {
             res.json({ completeDepositeData: [] });
             return false
         }
 
-        const completeDepositeData = await UserWalletTracks.find({ userId: MongoID(req.query.userId) , "trnxTypeTxt": "PayIn"},
-        { createdAt: 1, userId: 1, uniqueId: 1, chips: 1, transAmount: 1, totalBucket: 1, transTypeText: 1  }).sort({ createdAt: -1 })
+        const completeDepositeData = await UserWalletTracks.find({ userId: MongoID(req.query.userId), "trnxTypeTxt": "PayIn" },
+            { createdAt: 1, userId: 1, uniqueId: 1, chips: 1, transAmount: 1, totalBucket: 1, transTypeText: 1 }).sort({ createdAt: -1 })
 
         logger.info('admin/dahboard.js post dahboard  error => ', completeDepositeData);
 
@@ -122,8 +122,8 @@ router.get('/registerRaferralBonus', async (req, res) => {
             return false
         }
 
-        const registerRaferralBonusData = await UserWalletTracks.find({ userId: MongoID(req.query.userId) , "trnxTypeTxt": "PayIn"},
-        { createdAt: 1, userId: 1, uniqueId: 1, chips: 1, transAmount: 1, totalBucket: 1, transTypeText: 1  }).sort({ createdAt: -1 })
+        const registerRaferralBonusData = await UserWalletTracks.find({ userId: MongoID(req.query.userId), "trnxTypeTxt": "PayIn" },
+            { createdAt: 1, userId: 1, uniqueId: 1, chips: 1, transAmount: 1, totalBucket: 1, transTypeText: 1 }).sort({ createdAt: -1 })
 
         logger.info('admin/dahboard.js post registerRaferralBonusData  error => ', registerRaferralBonusData);
 

@@ -1,6 +1,6 @@
 const mongoose = require("mongoose")
 const MongoID = mongoose.Types.ObjectId;
-const GamePlayTracks = mongoose.model("gamePlayTracks");
+const GamePlayTracks = require("../../models/gamePlayTrack");
 const logger = require("../../logger");
 
 

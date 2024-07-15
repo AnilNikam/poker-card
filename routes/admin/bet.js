@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const BetLists = mongoose.model('betLists');
+const BetLists = require('../../models/betLists');
 const express = require('express');
 const router = express.Router();
 const config = require('../../config');

@@ -1,8 +1,8 @@
 const mongoose = require("mongoose")
 const MongoID = mongoose.Types.ObjectId;
-const GameUser = mongoose.model('users');
-const PlayingTables = mongoose.model("playingTables");
-const BetLists = mongoose.model("betLists")
+const GameUser = require('../../models/users');
+const PlayingTables = require('../../models/playingTables');
+const BetLists = require('../../models/betLists')
 
 const { sendEvent, sendDirectEvent, AddTime, setDelay, clearJob } = require('../socketFunctions');
 
@@ -102,7 +102,7 @@ module.exports.createTable = async (betInfo) => {
             discardCard: '',
             smallblind: betInfo.smallblind,
             bigblind: betInfo.bigblind,
-            communitycard:[] 
+            communitycard: []
         };
         logger.info("createTable insertobj : ", insertobj);
 
@@ -165,12 +165,12 @@ module.exports.findEmptySeatAndUserSeat = async (table, betInfo, client) => {
             playerSocketId: client.id,
             playerLostChips: 0,
             isSee: false,
-            isBot:userInfo.isBot != undefined ? userInfo.isBot:false,
+            isBot: userInfo.isBot != undefined ? userInfo.isBot : false,
             cards: [],
-            playingstatus:"",
-            bet:0   
+            playingstatus: "",
+            bet: 0
 
-            
+
         }
 
         logger.info("findEmptySeatAndUserSeat playerDetails : ", playerDetails);
@@ -219,9 +219,9 @@ module.exports.findEmptySeatAndUserSeat = async (table, betInfo, client) => {
 
         let robot_wh = {
             _id: client.uid,
-            isBot:true
+            isBot: true
         }
-        await GameUser.updateOne(robot_wh, { $set: {isfree:false} });
+        await GameUser.updateOne(robot_wh, { $set: { isfree: false } });
 
         sendEvent(client, CONST.JOIN_SIGN_UP, {});
 
@@ -239,8 +239,8 @@ module.exports.findEmptySeatAndUserSeat = async (table, betInfo, client) => {
             tableAmount: tableInfo.tableAmount,
         });
 
-        if(userInfo.isBot == undefined || userInfo.isBot == false)
-        client.join(tableInfo._id.toString());
+        if (userInfo.isBot == undefined || userInfo.isBot == false)
+            client.join(tableInfo._id.toString());
 
         sendDirectEvent(client.tbid.toString(), CONST.JOIN_TABLE, {
             ap: tableInfo.activePlayer,
@@ -255,12 +255,12 @@ module.exports.findEmptySeatAndUserSeat = async (table, betInfo, client) => {
             clearJob(jobId)
 
             await gameStartActions.gameTimerStart(tableInfo);
-        }else{
+        } else {
 
-            setTimeout(()=>{
-                botLogic.JoinRobot(tableInfo,betInfo)
-            },2000)
-  
+            setTimeout(() => {
+                botLogic.JoinRobot(tableInfo, betInfo)
+            }, 2000)
+
         }
     } catch (error) {
         console.info("findEmptySeatAndUserSeat", error);

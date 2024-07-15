@@ -1,8 +1,8 @@
 const mongoose = require("mongoose")
 const MongoID = mongoose.Types.ObjectId;
-const GameUser = mongoose.model('users');
-const PlayingTables = mongoose.model("playingTables");
-const IdCounter = mongoose.model("idCounter")
+const GameUser = require('../../models/users');
+const PlayingTables = require("../../models/playingTables");
+const IdCounter = require("../../models/idCounter")
 
 const commandAcions = require("../socketFunctions");
 const CONST = require("../../constant");
@@ -25,7 +25,7 @@ module.exports.gameTimerStart = async (tb) => {
             $set: {
                 gameState: "GameStartTimer",
                 "GameTimer.GST": new Date(),
-                round:1
+                round: 1
             }
         }
         logger.info("gameTimerStart UserInfo : ", wh, update);
@@ -147,7 +147,7 @@ module.exports.deduct = async (tabInfo, playerInfo) => {
                     logger.info("deduct uWh update ::", uWh, update)
                     await PlayingTables.findOneAndUpdate(uWh, update, { new: true });
 
-                    await walletActions.deductWallet(playerInfo[i]._id,-Number(tabInfo.bigblind), 1, "Poker Bet", tabInfo, playerInfo[i].sck, playerInfo[i].seatIndex);
+                    await walletActions.deductWallet(playerInfo[i]._id, -Number(tabInfo.bigblind), 1, "Poker Bet", tabInfo, playerInfo[i].sck, playerInfo[i].seatIndex);
 
                 }
 
@@ -162,7 +162,7 @@ module.exports.deduct = async (tabInfo, playerInfo) => {
                     logger.info("deduct uWh update ::", uWh, update)
                     await PlayingTables.findOneAndUpdate(uWh, update, { new: true });
 
-                    await walletActions.deductWallet(playerInfo[i]._id,-Number(tabInfo.smallblind), 1, "Poker Bet", tabInfo, playerInfo[i].sck, playerInfo[i].seatIndex);
+                    await walletActions.deductWallet(playerInfo[i]._id, -Number(tabInfo.smallblind), 1, "Poker Bet", tabInfo, playerInfo[i].sck, playerInfo[i].seatIndex);
 
                 }
             }

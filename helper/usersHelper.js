@@ -1,12 +1,12 @@
 const mongoose = require('mongoose');
 
-const User = mongoose.model('users');
-const Admin = mongoose.model('admin');
-const Wallet = mongoose.model('wallets');
-const BetLists = mongoose.model('betLists');
-const PoolBetLists = mongoose.model('poolbetLists');
-const DealBetLists = mongoose.model('dealbetLists');
-const ProblemReport = mongoose.model('problemReport');
+const User = require('../models/users');
+const Admin = require('../models/admin');
+const Wallet = require('../models/wallets');
+const BetLists = require('../models/betLists');
+// const PoolBetLists = require('../models/poolbetLists');
+const DealBetLists = require('../models/dealbetLists');
+const ProblemReport = require('../models/problemReport');
 const bcrypt = require('bcrypt');
 const logger = require('../logger');
 
@@ -28,7 +28,7 @@ const usersHelper = {
   },
 
   registerUser: async function (newData) {
-    console.log("newData ",newData)
+    console.log("newData ", newData)
     const newUser = new User(newData);
 
     const data = await newUser.save();

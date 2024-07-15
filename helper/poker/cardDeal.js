@@ -7,7 +7,7 @@ const CONST = require('../../constant');
 const logger = require("../../logger");
 const commandAcions = require("../socketFunctions");
 const roundStartActions = require("./roundStart");
-const PlayingTables = mongoose.model("playingTables");
+const PlayingTables = require("../../models/playingTables");
 const _ = require("underscore")
 const cardLogic = require("./cardLogic");
 
@@ -43,7 +43,7 @@ module.exports.cardDealStart = async (tbid) => {
         smallblindSeatIndex: tabInfo.smallblindSeatIndex,
         bigblindSeatIndex: tabInfo.bigblindSeatIndex,
         bigblind: tabInfo.bigblind,
-        smallblind:tabInfo.smallblind
+        smallblind: tabInfo.smallblind
     }
     commandAcions.sendEventInTable(tabInfo._id.toString(), CONST.TABLE_CARD_DEAL, eventResponse);
 

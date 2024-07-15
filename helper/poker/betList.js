@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const commandAcions = require("../socketFunctions");
 const CONST = require("../../constant");
 const logger = require('../../logger');
-const BetLists = mongoose.model('betLists');
+const BetLists = require('../../models/betLists');
 
 module.exports.getBetList = async (requestData, client) => {
     try {

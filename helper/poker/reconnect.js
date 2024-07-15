@@ -7,8 +7,8 @@ const commonHelper = require('../commonHelper');
 const { sendDirectEvent, getPlayingUserInRound } = require('../socketFunctions');
 const { filterBeforeSendSPEvent } = require('../signups/appStart');
 
-const Users = mongoose.model('users');
-const PlayingTables = mongoose.model('playingTables');
+const Users = require('../../models/users');
+const PlayingTables = require('../../models/playingTables');
 const MongoID = mongoose.Types.ObjectId;
 
 module.exports.

@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const BetLists = mongoose.model('dealbetLists');
+const BetLists = require('../../models/dealbetLists');
 const express = require('express');
 const router = express.Router();
 const config = require('../../config');
@@ -89,41 +89,41 @@ router.delete('/:id', async (req, res) => {
 router.put('/', async (req, res) => {
   //logger.info('Update Bet List req.body => ', req.body);
   try {
-    const { entryFee, betListId, maxSeat, status, tableName,gamePlayType,deal,commission } = req.body;
+    const { entryFee, betListId, maxSeat, status, tableName, gamePlayType, deal, commission } = req.body;
     //const entryFeexists = await BetLists.countDocuments({ gamePlayType:gamePlayType,entryFee:entryFee,deal:deal });
     //logger.info('put entryFeexists deal ', entryFeexists);
     // if (entryFeexists > 0) {
     //   res.status(config.OK_STATUS).json({ status: 0, message: 'Deal Already Exists' });
     // } else {
-      const newData = {
-        entryFee: parseInt(entryFee),
-        commission: parseInt(commission),
-        deal: parseInt(deal),
-        modifiedAt: Date.now(),
-        maxSeat: parseInt(maxSeat),
-        status: status,
-        tableName: tableName,
-      };
-       logger.info('newData => ', newData);
+    const newData = {
+      entryFee: parseInt(entryFee),
+      commission: parseInt(commission),
+      deal: parseInt(deal),
+      modifiedAt: Date.now(),
+      maxSeat: parseInt(maxSeat),
+      status: status,
+      tableName: tableName,
+    };
+    logger.info('newData => ', newData);
 
-      const condition = { _id: commonHelper.strToMongoDb(betListId) };
+    const condition = { _id: commonHelper.strToMongoDb(betListId) };
     logger.info('condition => ', condition);
 
-      const responseData = await commonHelper.update(BetLists, condition, newData);
-      logger.info('update response Data => ', responseData);
+    const responseData = await commonHelper.update(BetLists, condition, newData);
+    logger.info('update response Data => ', responseData);
 
-      if (responseData.status === 1) {
-        res.status(config.OK_STATUS).json({
-          status: 1,
-          message: 'record Update',
-          data: responseData.data,
-        });
-      } else {
-        res.status(config.DATABASE_ERROR_STATUS).json({
-          status: 0,
-          message: 'record not Update',
-        });
-      }
+    if (responseData.status === 1) {
+      res.status(config.OK_STATUS).json({
+        status: 1,
+        message: 'record Update',
+        data: responseData.data,
+      });
+    } else {
+      res.status(config.DATABASE_ERROR_STATUS).json({
+        status: 0,
+        message: 'record not Update',
+      });
+    }
     //}
   } catch (error) {
     logger.error('admin/users.js put bet-list error => ', error);

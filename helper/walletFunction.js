@@ -1,7 +1,6 @@
 const mongoose = require('mongoose');
-const Wallet = mongoose.model('wallets');
-const Transaction = mongoose.model('Transaction');
-const Users = mongoose.model('users');
+const Wallet = require('../models/wallets');
+const Users = require('../models/users');
 const MongoID = mongoose.Types.ObjectId;
 
 const logger = require('../logger');

@@ -4,7 +4,7 @@ const config = require('../../config');
 const commonHelper = require('../../helper/commonHelper');
 const auth = require('../../middleware/auth');
 const mongoose = require('mongoose');
-const Users = mongoose.model('users');
+const Users = require('../../models/users');
 const mainCtrl = require('../../controller/mainController');
 const logger = require('../../logger');
 

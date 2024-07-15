@@ -1,15 +1,15 @@
 const mongoose = require('mongoose');
-const Users = mongoose.model('users');
+const Users = require('../../models/users');
 const express = require('express');
 const router = express.Router();
 const config = require('../../config');
 const commonHelper = require('../../helper/commonHelper');
 const mainCtrl = require('../../controller/adminController');
 const logger = require('../../logger');
-// const Userdeposit = mongoose.model('userdeposit');
-// const Userpayout = mongoose.model('userpayout');
-const UserWalletTracks = mongoose.model('userWalletTracks');
-const PaymentOut = mongoose.model('paymentout');
+// const Userdeposit = require('../models/userdeposit');
+// const Userpayout = require('../models/userpayout');
+const UserWalletTracks = require('../../models/userWalletTracks');
+const PaymentOut = require('../../models/paymentout');
 
 
 

@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
-const BetLists = mongoose.model('betLists');
-const PoolBetLists = mongoose.model('poolbetLists');
-const DealBetLists = mongoose.model('dealbetLists');
+const BetLists = require('../../models/betLists');
+const PoolBetLists = require('../../models/poolbetLists');
+const DealBetLists = require('../../models/dealbetLists');
 
 const CONST = require('../../constant');
 const logger = require('../../logger');

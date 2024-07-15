@@ -5,7 +5,7 @@ const logger = require('../logger');
 const usersHelper = require('../helper/usersHelper');
 const commonHelper = require('../helper/commonHelper');
 
-const Admin = mongoose.model('admin');
+const Admin = require('../models/admin');
 
 
 /**

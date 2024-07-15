@@ -6,7 +6,7 @@ const config = require('../../config');
 const commonHelper = require('../../helper/commonHelper');
 const mainCtrl = require('../../controller/adminController');
 const logger = require('../../logger');
-const Noticetext = mongoose.model('noticeText');
+const Noticetext = require('../../models/noticeText');
 /**
 * @api {get} /admin/socialURLsList
 * @apiName  add-bet-list
@@ -46,13 +46,13 @@ router.post('/noticeText', async (req, res) => {
         const data = await newObj.save();
 
         if (data) {
-        return  res.json({
-            flags:true,
-            message: 'record added',
-            data: JSON.parse(JSON.stringify(data)),
-        });
+            return res.json({
+                flags: true,
+                message: 'record added',
+                data: JSON.parse(JSON.stringify(data)),
+            });
         } else {
-        return  res.json({flags:false, status: 0, message: 'record not added', data: null });
+            return res.json({ flags: false, status: 0, message: 'record not added', data: null });
         }
     } catch (error) {
         logger.error('admin/dahboard.js post bet-list error => ', error);
@@ -77,7 +77,7 @@ router.delete('/noticedelete/:id', async (req, res) => {
         const RecentUser = await Noticetext.deleteOne({ _id: new mongoose.Types.ObjectId(req.params.id) })
 
 
-        logger.info('admin/dahboard.js post dahboard  error => ',RecentUser);
+        logger.info('admin/dahboard.js post dahboard  error => ', RecentUser);
 
         res.json({ falgs: true });
     } catch (error) {

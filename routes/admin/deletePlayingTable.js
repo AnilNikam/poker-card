@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
-const PlayingTable = mongoose.model('playingTables');
-const Users = mongoose.model('users');
+const PlayingTable = require('../../models/playingTables');
+const Users = require('../../models/users');
 
 const express = require('express');
 const router = express.Router();

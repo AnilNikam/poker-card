@@ -1,20 +1,19 @@
-const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 const { omit } = require('lodash');
-const axios = require('axios');
 const nodemailer = require('nodemailer');
+const mongoose = require('mongoose');
 const MongoID = mongoose.Types.ObjectId;
 
-const Admin = mongoose.model('admin');
-const Users = mongoose.model('users');
-const Wallet = mongoose.model('wallets');
-const OtpEmail = mongoose.model('otpEmail');
-const BetLists = mongoose.model('betLists');
-const OtpMobile = mongoose.model('otpMobile');
-const Friend = mongoose.model('friends');
-const otpAdharkyc = mongoose.model('otpAdharkyc');
-const BankDetails = mongoose.model('bankDetails');
-const WalletTrackTransaction = mongoose.model('userWalletTracks');
+const Admin = require('../models/admin');
+const Users = require('../models/users');
+const Wallet = require('../models/wallets');
+const OtpEmail = require('../models/otpEmail');
+const BetLists = require('../models/betLists');
+const OtpMobile = require('../models/otpMobile');
+const Friend = require('../models/friends');
+const otpAdharkyc = require('../models/otpAdharkyc');
+const BankDetails = require('../models/bankDetails');
+const WalletTrackTransaction = require('../models/userWalletTracks');
 
 
 const config = require('../config');

@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const collectionName = 'playingTables';
-const BetLists = mongoose.model('betLists');
+const BetLists = require('../models/betLists');
 
 const PlayingTablesSchema = new Schema(
   {
@@ -18,11 +18,11 @@ const PlayingTablesSchema = new Schema(
 
     chalLimit: { type: Number, default: 0 },
     potLimit: { type: Number, default: 0 },
-    
+
     smallblind: { type: Number, default: 0 },
-    bigblind:{ type: Number, default: 0 },
-    communitycard:[],
-    round:{ type: Number, default: 1 },   
+    bigblind: { type: Number, default: 0 },
+    communitycard: [],
+    round: { type: Number, default: 1 },
 
     rate: { type: Number },
     hukum: { type: String, default: "" },
@@ -32,11 +32,11 @@ const PlayingTablesSchema = new Schema(
     dealerSeatIndex: { type: Number, default: -1 },
     smallblindSeatIndex: { type: Number, default: -1 },
     bigblindSeatIndex: { type: Number, default: -1 },
-    deckCards:[],
-    contract:[],
+    deckCards: [],
+    contract: [],
 
-    minbet:{ type: Number, default: 2 },
-    maxbet:{ type: Number, default: 100 },
+    minbet: { type: Number, default: 2 },
+    maxbet: { type: Number, default: 100 },
 
     turnSeatIndex: { type: Number, default: -1 },
     jobId: { type: String, default: "" },

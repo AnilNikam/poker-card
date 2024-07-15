@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const Notification = mongoose.model('notifications');
+const Notification = require('../models/notifications');
 
 const logger = require('../logger');
 const notificationsHelper = {};

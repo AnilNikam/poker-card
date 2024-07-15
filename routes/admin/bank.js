@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
-const Users = mongoose.model('users');
-const BankDetails = mongoose.model('bankDetails');
+const Users = require('../../models/users');
+const BankDetails = require('../../models/bankDetails');
 
 const express = require('express');
 const router = express.Router();
@@ -32,7 +32,7 @@ router.get('/BankList', async (req, res) => {
             wh = { paymentStatus: "Rejected" }
         }
 
-        const bankList = await BankDetails.find(wh, { name: 1, email: 1,reMark:1, phone: 1, accountNumber: 1, IFSC: 1, createdAt: 1, userId: 1, BeneficiaryName: 1, paymentStatus: 1 })
+        const bankList = await BankDetails.find(wh, { name: 1, email: 1, reMark: 1, phone: 1, accountNumber: 1, IFSC: 1, createdAt: 1, userId: 1, BeneficiaryName: 1, paymentStatus: 1 })
 
         logger.info('admin/dahboard.js post BankList  error => ', bankList);
 
@@ -55,7 +55,7 @@ router.put('/BankUpdate', async (req, res) => {
     try {
 
         console.log("req ", req.body)
-        if(req.body.reMark == null || req.body.paymentStatus == null){
+        if (req.body.reMark == null || req.body.paymentStatus == null) {
             res.json({ status: false });
             return false
         }
@@ -63,7 +63,7 @@ router.put('/BankUpdate', async (req, res) => {
         let response = {
             $set: {
                 reMark: req.body.reMark,
-                paymentStatus:req.body.paymentStatus
+                paymentStatus: req.body.paymentStatus
             }
         }
 

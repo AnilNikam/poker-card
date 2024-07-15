@@ -8,7 +8,7 @@ const gamePlayActions = require("./gamePlay");
 const logger = require("../../logger");
 const botLogic = require("./botLogic");
 
-const PlayingTables = mongoose.model("playingTables");
+const PlayingTables = require("../../models/playingTables");
 
 
 module.exports.roundStarted = async (tbid) => {
@@ -138,7 +138,7 @@ module.exports.startUserTurn = async (seatIndex, objData, firstTurnStart) => {
         // fold:-1,
         // raise:-1
 
-        if(tb.contract.filter((e) => { return e.fold != -1 }).length <= 1){
+        if (tb.contract.filter((e) => { return e.fold != -1 }).length <= 1) {
             console.log("Winner For Only One Player ")
 
             return false
@@ -166,7 +166,7 @@ module.exports.startUserTurn = async (seatIndex, objData, firstTurnStart) => {
             turnuserData.bet = maxBet - turnuserData.bet;
             turnuserData.raise = 1;
             turnuserData.call = turnuserData.bet == 0 && Allin == undefined ? 0 : 1
-            turnuserData.check =turnuserData.bet == 0 &&  Allin == undefined ? 1 : 0
+            turnuserData.check = turnuserData.bet == 0 && Allin == undefined ? 1 : 0
             turnuserData.minbet = turnuserData.bet
 
             logger.info("turnuserData ", turnuserData)
@@ -177,16 +177,16 @@ module.exports.startUserTurn = async (seatIndex, objData, firstTurnStart) => {
             const maxBet = tb.contract.reduce((max, obj) => (obj.bet > max ? obj.bet : max), tb.contract[0].bet);
             logger.info("maxBet ", maxBet)
 
-             Allin = tb.contract.filter((e) => { return e.allIn == 1 })[0]
+            Allin = tb.contract.filter((e) => { return e.allIn == 1 })[0]
 
 
             turnuserData.fold = 1;
             turnuserData.bet = maxBet - turnuserData.bet;
-            turnuserData.raise =  1;
-            turnuserData.allIn =  Allin != undefined ? 1 : 0;
-            turnuserData.call = turnuserData.bet == 0 &&  Allin == undefined  ? 0 : 1
+            turnuserData.raise = 1;
+            turnuserData.allIn = Allin != undefined ? 1 : 0;
+            turnuserData.call = turnuserData.bet == 0 && Allin == undefined ? 0 : 1
 
-            turnuserData.check = turnuserData.bet == 0 &&  Allin == undefined ? 1 : 0
+            turnuserData.check = turnuserData.bet == 0 && Allin == undefined ? 1 : 0
 
             turnuserData.minbet = turnuserData.bet
 
@@ -202,9 +202,9 @@ module.exports.startUserTurn = async (seatIndex, objData, firstTurnStart) => {
         }
         commandAcions.sendEventInTable(tb._id.toString(), CONST.TURN_START, response);
 
-        if(tb.playerInfo != undefined && tb.playerInfo[tb.turnSeatIndex] != undefined && tb.playerInfo[tb.turnSeatIndex].isBot == true){
+        if (tb.playerInfo != undefined && tb.playerInfo[tb.turnSeatIndex] != undefined && tb.playerInfo[tb.turnSeatIndex].isBot == true) {
             // Rboot Logic Start Playing 
-            botLogic.PlayRobot(tb,tb.playerInfo[tb.turnSeatIndex],turnuserData)
+            botLogic.PlayRobot(tb, tb.playerInfo[tb.turnSeatIndex], turnuserData)
         }
 
 
@@ -233,7 +233,7 @@ module.exports.userTurnExpaire = async (tbid) => {
             _id: MongoID(tbid)
         }
         let project = {
-           
+
         }
         let tabInfo = await PlayingTables.findOne(wh, project).lean();
         logger.info("userTurnExpaire tabInfo : ", tabInfo);

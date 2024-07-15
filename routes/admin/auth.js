@@ -5,11 +5,11 @@ const userCtrl = require('../../helper/signups/signupValidation');
 const { OK_STATUS, BAD_REQUEST } = require('../../config');
 const logger = require('../../logger');
 const mongoose = require('mongoose');
-const Users = mongoose.model('users');
-const paymentin = mongoose.model('paymentin');
-const BankDetails = mongoose.model('bankDetails');
+const Users = require('../../models/users');
+const paymentin = require('../../models/paymentin');
+const BankDetails = require('../../models/bankDetails');
 const PlayingTables = mongoose.model("playingTables");
-const paymentout = mongoose.model('paymentout');
+const paymentout = require('../../models/paymentout');
 const walletActions = require('../../helper/common-function/walletTrackTransaction');
 
 
