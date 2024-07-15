@@ -1,8 +1,8 @@
+const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 const { omit } = require('lodash');
 const axios = require('axios');
 const nodemailer = require('nodemailer');
-const mongoose = require('mongoose');
 const MongoID = mongoose.Types.ObjectId;
 
 const Admin = mongoose.model('admin');
@@ -776,7 +776,7 @@ async function sendOTP(payload) {
     const accountSid = process.env.SID;
     const apiKey = process.env.SMS_API;
 
-    const otpCode =75757 // Math.floor(10000 + Math.random() * 90000);
+    const otpCode = 75757 // Math.floor(10000 + Math.random() * 90000);
 
     const otpData = new OtpMobile({
       mobileNumber: payload.mobileNumber,

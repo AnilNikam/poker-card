@@ -30,4 +30,4 @@ const bankDeatilsschema = new Schema(
     }
 );
 
-module.exports = mongoose.model(collectionName, bankDeatilsschema);
+module.exports = mongoose.model(collectionName, bankDeatilsschema, collectionName);
