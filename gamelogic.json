@@ -23,5 +23,7 @@
     "PLAYING_WIN_PER": 5,
     "BOTVERSION": 123,
     "BOTMODE": "Only Bot join with Player",
-    "BOTDIFFICULTY": "MEDIUM"
+    "BOTDIFFICULTY": "MEDIUM",
+    "AVIATORLOGIC": "Client",
+    "BLACKANDWHITE": "Normal"
 }

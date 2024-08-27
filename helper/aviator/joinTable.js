@@ -208,10 +208,10 @@ module.exports.findEmptySeatAndUserSeat = async (table, client) => {
             diff += CONST.gameStartTime;
         }
 
-        sendEvent(client, CONST.JOIN_SIGN_UP, {});
+        sendEvent(client, CONST.AV_JOIN_SIGN_UP, {});
 
         //GTI event
-        sendEvent(client, CONST.GAME_TABLE_INFO, {
+        sendEvent(client, CONST.AVIATOR_GTI, {
             ssi: tableInfo.playerInfo[seatIndex].seatIndex,
             gst: diff,
             pi: tableInfo.playerInfo,
@@ -230,7 +230,7 @@ module.exports.findEmptySeatAndUserSeat = async (table, client) => {
             let UpdateInfo = await GameUser.updateOne({ _id: MongoID(userInfo._id) }, { type: "busy" });
         }
 
-        sendDirectEvent(client.tbid.toString(), CONST.JOIN_TABLE, {
+        sendDirectEvent(client.tbid.toString(), CONST.AVIATOR_JT, {
             ap: tableInfo.activePlayer,
             playerDetail: tableInfo.playerInfo[seatIndex],
         });
