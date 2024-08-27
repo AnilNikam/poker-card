@@ -15,7 +15,7 @@ const commandAcions = require('../socketFunctions');
 const { userSesssionSet, filterBeforeSendSPEvent, getUserDefaultFields, saveGameUser, checkReferral } = require('./appStart');
 const commonHelper = require('../commonHelper');
 const walletActions = require('../../helper/common-function/walletTrackTransaction');
-const { PayOutTransfer } = require('../../controller/paymentController,js');
+const { PayOutTransfer } = require('../../controller/paymentController.js');
 
 const checkMobileNumber = async (requestData, socket) => {
   logger.info(' Signup validation Request Data ->', requestData);

@@ -15,7 +15,7 @@ const gamePlayActions = require('../helper/poker');
 
 const signupActions = require('../helper/signups');
 const commonHelper = require('../helper/commonHelper');
-const gamePlayActions = require('../helper/aviator');
+const AviatorGamePlayActions = require('../helper/aviator');
 
 
 
@@ -728,47 +728,47 @@ myIo.init = function (server) {
             socket.uid = payload.data.playerId;
             socket.sck = socket.id;
 
-            await gamePlayActions.joinTable(payload.data, socket);
+            await AviatorGamePlayActions.joinTable(payload.data, socket);
             break;
           }
 
           case CONST.ACTION: {
-            gamePlayActions.action(payload.data, socket);
+            AviatorGamePlayActions.action(payload.data, socket);
             break;
           }
 
           case CONST.CANCEL: {
-            gamePlayActions.Cancel(payload.data, socket);
+            AviatorGamePlayActions.Cancel(payload.data, socket);
             break;
           }
 
           case CONST.MYBET: {
-            gamePlayActions.mybetlist(payload.data, socket);
+            AviatorGamePlayActions.mybetlist(payload.data, socket);
             break;
           }
 
           case CONST.CHECKOUT: {
-            gamePlayActions.CHECKOUT(payload.data, socket);
+            AviatorGamePlayActions.CHECKOUT(payload.data, socket);
             break;
           }
 
           case CONST.PLAYERLIST: {
-            gamePlayActions.PLAYERLIST(payload.data, socket);
+            AviatorGamePlayActions.PLAYERLIST(payload.data, socket);
             break;
           }
 
           case CONST.MYREFLIST: {
-            gamePlayActions.MYREFLIST(payload.data, socket);
+            AviatorGamePlayActions.MYREFLIST(payload.data, socket);
             break;
           }
 
           case CONST.AV_LEAVE_TABLE: {
-            gamePlayActions.leaveTable(payload.data, socket);
+            AviatorGamePlayActions.leaveTable(payload.data, socket);
             break;
           }
 
           case CONST.AV_RECONNECT: {
-            await gamePlayActions.reconnect(payload.data, socket);
+            await AviatorGamePlayActions.reconnect(payload.data, socket);
             break;
           }
           default:

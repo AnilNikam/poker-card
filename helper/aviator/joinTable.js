@@ -2,7 +2,7 @@ const mongoose = require("mongoose")
 const MongoID = mongoose.Types.ObjectId;
 const GameUser = mongoose.model('users');
 const AviatorTables = mongoose.model("aviatorTables");
-const BetLists = mongoose.model("betList")
+// const BetLists = mongoose.model("betList")
 const commandAcions = require("../socketFunctions");
 const { sendEvent, sendDirectEvent, AddTime, setDelay, clearJob } = require('../socketFunctions');
 

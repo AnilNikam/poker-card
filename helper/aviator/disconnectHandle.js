@@ -1,12 +1,10 @@
 const mongoose = require('mongoose');
 const MongoID = mongoose.Types.ObjectId;
 const AviatorTables = mongoose.model("aviatorTables");
-const BlackNwhiteTables = mongoose.model("blackNwhiteTables");
 
 const logger = require('../../logger');
 const CONST = require('../../constant');
 const leaveTableActions = require('./leaveTable');
-const BNWleaveTableActions = require('../blackNwhite/leaveTable');
 
 //const { AddTime, setDelay } = require('./socketFunctions');
 

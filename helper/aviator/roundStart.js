@@ -2,7 +2,7 @@ const mongoose = require("mongoose")
 const MongoID = mongoose.Types.ObjectId;
 
 const CONST = require("../../constant");
-const commandAcions = require('../helper/socketFunctions');
+const commandAcions = require('../socketFunctions');
 const gamePlayActions = require("./gamePlay");
 const logger = require("../../logger");
 const botLogic = require("./botLogic");
