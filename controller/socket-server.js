@@ -15,15 +15,17 @@ const gamePlayActions = require('../helper/poker');
 
 const signupActions = require('../helper/signups');
 const commonHelper = require('../helper/commonHelper');
+const gamePlayActions = require('../helper/aviator');
+
 
 
 const { sendEvent, sendDirectEvent } = require('../helper/socketFunctions');
 const { getPaymentHistory, updateWallet } = require('../helper/walletFunction');
 const { registerUser, addBankAccount } = require('../helper/signups/signupValidation');
 const { userReconnect, takeSeat } = require('../helper/common-function/reConnectFunction');
-const paymentAction = require('./paymentController,js');
-const { PayOutTransfer } = require('./paymentController,js');
-const { checkPayoutStatus } = require('./paymentController,js');
+const paymentAction = require('./paymentController.js');
+const { PayOutTransfer } = require('./paymentController.js');
+const { checkPayoutStatus } = require('./paymentController.js');
 const { checkReferral, activePlayerCounter } = require('../helper/signups/appStart');
 
 const walletActions = require('../helper/common-function/walletTrackTransaction');
@@ -125,7 +127,7 @@ myIo.init = function (server) {
                   await signupActions.userLogin(payload.data, socket);
                 } else if (payload.data.otpType === 'EDIT_MOBILE_NUMBER') {
                   await signupActions.updateMobileNumber(payload.data, socket);
-                } else if(payload.data.otpType === "VERIFY_NUMBER_FOR_SIGNUP"){
+                } else if (payload.data.otpType === "VERIFY_NUMBER_FOR_SIGNUP") {
                   await signupActions.userSignup(payload.data, socket);
                 }
               } else {
@@ -169,7 +171,7 @@ myIo.init = function (server) {
               socket.uid = payload.data.playerId;
               socket.sck = socket.id;
               await gamePlayActions.joinTable(payload.data, socket);
-          
+
             } catch (error) {
               logger.error('socketServer.js JOIN_SIGN_UP error => ', error);
               sendEvent(socket, CONST.ERROR, error);
@@ -177,13 +179,13 @@ myIo.init = function (server) {
             break;
           }
 
-          
+
 
           case CONST.TAKEACTION: {
             try {
-             
+
               await gamePlayActions.TAKEACTION(payload.data, socket);
-          
+
             } catch (error) {
               logger.error('socketServer.js TAKEACTION error => ', error);
               sendEvent(socket, CONST.ERROR, error);
@@ -721,6 +723,54 @@ myIo.init = function (server) {
             break;
           }
 
+          // Avaitor
+          case CONST.AV_JOIN_SIGN_UP: {
+            socket.uid = payload.data.playerId;
+            socket.sck = socket.id;
+
+            await gamePlayActions.joinTable(payload.data, socket);
+            break;
+          }
+
+          case CONST.ACTION: {
+            gamePlayActions.action(payload.data, socket);
+            break;
+          }
+
+          case CONST.CANCEL: {
+            gamePlayActions.Cancel(payload.data, socket);
+            break;
+          }
+
+          case CONST.MYBET: {
+            gamePlayActions.mybetlist(payload.data, socket);
+            break;
+          }
+
+          case CONST.CHECKOUT: {
+            gamePlayActions.CHECKOUT(payload.data, socket);
+            break;
+          }
+
+          case CONST.PLAYERLIST: {
+            gamePlayActions.PLAYERLIST(payload.data, socket);
+            break;
+          }
+
+          case CONST.MYREFLIST: {
+            gamePlayActions.MYREFLIST(payload.data, socket);
+            break;
+          }
+
+          case CONST.AV_LEAVE_TABLE: {
+            gamePlayActions.leaveTable(payload.data, socket);
+            break;
+          }
+
+          case CONST.AV_RECONNECT: {
+            await gamePlayActions.reconnect(payload.data, socket);
+            break;
+          }
           default:
             sendEvent(socket, CONST.INVALID_EVENT, {
               msg: 'This Event Is Nothing',
