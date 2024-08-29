@@ -487,8 +487,8 @@ module.exports.mybetlist = async (requestData, client) => {
         }
         const project = {}
 
-        const mybetlist = await MyBetTable.find(wh, project).sort({ _id: -1 }).limit(50).lean();
-        logger.info("mybetlist mybetlist : ", mybetlist);
+        let mybetlist = await MyBetTable.find(wh, project).sort({ _id: -1 }).limit(50).lean();
+        logger.info("before mybetlist mybetlist : ", mybetlist);
 
 
         if (!mybetlist) {
@@ -503,11 +503,13 @@ module.exports.mybetlist = async (requestData, client) => {
             return bet;
         });
 
+        logger.info("after mybetlist mybetlist : ", mybetlist);
+
         sendEvent(client, CONST.MYBET, { mybetlist });
 
         return true;
     } catch (e) {
-        logger.info("Exception CANCEL : ", e);
+        logger.info("Exception mybetlist Error ==> : ", e);
     }
 }
 
