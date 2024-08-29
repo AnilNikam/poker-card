@@ -112,3 +112,20 @@ module.exports.socketUserRedis = (obj) => {
     logger.error('socketFunction.js socketUserRedis error :--> ' + error);
   }
 };
+
+module.exports.getPlayingUserInRound = async (p) => {
+  try {
+
+    let pl = [];
+    if (typeof p == 'undefined' || p == null)
+      return pl;
+
+    for (let x = 0; x < p.length; x++) {
+      if (typeof p[x] == 'object' && p[x] != null && typeof p[x].seatIndex != 'undefined')
+        pl.push(p[x]);
+    }
+    return pl;
+  } catch (error) {
+    logger.error('roundStart.js getPlayingUserInRound error : ', error);
+  }
+}
