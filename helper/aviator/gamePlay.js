@@ -476,6 +476,7 @@ module.exports.MYREFLIST = async (requestData, client) => {
 module.exports.mybetlist = async (requestData, client) => {
     try {
         logger.info("MYBET requestData : ", requestData);
+
         if (typeof client.tbid == "undefined" || typeof client.uid == "undefined" || typeof client.seatIndex == "undefined") {
             commandAcions.sendDirectEvent(client.sck, CONST.MYBET, requestData, false, "User session not set, please restart game!");
             return false;
@@ -484,22 +485,25 @@ module.exports.mybetlist = async (requestData, client) => {
         const wh = {
             uid: client.uid.toString(),
         }
-        const project = {
+        const project = {}
 
-        }
-        //console.log("wh ", wh)
         const mybetlist = await MyBetTable.find(wh, project).sort({ _id: -1 }).limit(50).lean();
         logger.info("mybetlist mybetlist : ", mybetlist);
 
-        if (mybetlist == null) {
+
+        if (!mybetlist) {
             logger.info("mybetlist bet data not found  ::", mybetlist);
-            return false
+            return false;
         }
 
-        //console.log("mybetlist ", mybetlist)
+        // Format date
+        mybetlist = mybetlist.map(bet => {
+            const date = new Date(bet.dateTime);
+            bet.dateTime = date.toLocaleString('en-GB', { timeZone: 'UTC' }).replace(',', ''); // 'en-GB' gives DD/MM/YYYY
+            return bet;
+        });
 
-
-        sendEvent(client, CONST.MYBET, { mybetlist: mybetlist });
+        sendEvent(client, CONST.MYBET, { mybetlist });
 
         return true;
     } catch (e) {
