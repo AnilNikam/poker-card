@@ -771,6 +771,16 @@ myIo.init = function (server) {
             await AviatorGamePlayActions.reconnect(payload.data, socket);
             break;
           }
+
+          //Dice Game
+          case CONST.D_JOIN_SIGN_UP: {
+            socket.uid = payload.data.playerId;
+            socket.sck = socket.id;
+
+            await AviatorGamePlayActions.joinTable(payload.data, socket);
+            break;
+          }
+
           default:
             sendEvent(socket, CONST.INVALID_EVENT, {
               msg: 'This Event Is Nothing',

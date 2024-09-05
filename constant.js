@@ -206,6 +206,12 @@ const CONST = {
   AVIATORGST: "AVIATORGST",
   STARTAVIATOR: "STARTAVIATOR",
 
+  //Dice
+  D_JOIN_SIGN_UP: "DSP",
+  DICE_JOIN_TABLE: "DJT",
+  DICE_GAME_TABLE_INFO: "DJTI",
+
+
   // Timer
   userTurnTimer: 29,
   gameStartTime: 15,
