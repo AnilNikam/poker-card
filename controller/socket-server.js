@@ -12,12 +12,10 @@ const mainCtrl = require('./mainController');
 //const poolGamePlayActions = require('../helper/pool-rummy');
 
 const gamePlayActions = require('../helper/poker');
-
 const signupActions = require('../helper/signups');
 const commonHelper = require('../helper/commonHelper');
 const AviatorGamePlayActions = require('../helper/aviator');
-
-
+const DiceGamePlayActions = require('../helper/dice');
 
 const { sendEvent, sendDirectEvent } = require('../helper/socketFunctions');
 const { getPaymentHistory, updateWallet } = require('../helper/walletFunction');

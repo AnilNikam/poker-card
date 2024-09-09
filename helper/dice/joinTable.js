@@ -10,7 +10,6 @@ const logger = require("../../logger");
 const botLogic = require("./botLogic");
 
 
-
 module.exports.joinTable = async (requestData, client) => {
     try {
         logger.info("Dice requestData-->", requestData);
