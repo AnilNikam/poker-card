@@ -1,8 +1,8 @@
 const mongoose = require('mongoose');
-const commandAcions = require("../helper/socketFunctions");
+const commandAcions = require("../../helper/socketFunctions");
 const CONST = require("../../constant");
 const logger = require('../../logger');
-const BetLists = mongoose.model('betList');
+const BetLists = mongoose.model('dicebetLists');
 
 module.exports.getBetList = async (requestData, client) => {
     try {
@@ -12,9 +12,7 @@ module.exports.getBetList = async (requestData, client) => {
                 $project: {
                     "betId": '$_id',
                     "_id": 0,
-                    "boot": '$boot',
-                    "chalLimit": "$chalLimit",
-                    "potLimit": "$potLimit",
+                    "entryFee": '$entryFee',
                     "maxSeat": "$maxSeat",
                 }
             }
@@ -25,7 +23,7 @@ module.exports.getBetList = async (requestData, client) => {
         let entryFeeSet = new Set();
 
         listInfo.forEach(item => {
-            entryFeeSet.add(item.boot.toString());
+            entryFeeSet.add(item.entryFee.toString());
         });
 
         let entryFeeList = Array.from(entryFeeSet);
@@ -37,9 +35,9 @@ module.exports.getBetList = async (requestData, client) => {
 
         client.uid = requestData.user_id;
         client.sck = client.id;
-        commandAcions.sendEvent(client, CONST.GET_TEEN_PATTI_ROOM_LIST, response);
+        commandAcions.sendEvent(client, CONST.GET_DICE_BET_LIST, response);
 
     } catch (error) {
-        logger.info("GET_TEEN_PATTI_ROOM_LIST", error);
+        logger.info("GET_DICE_BET_LIST", error);
     }
 }

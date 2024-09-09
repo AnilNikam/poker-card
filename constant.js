@@ -210,6 +210,7 @@ const CONST = {
   D_JOIN_SIGN_UP: "DSP",
   DICE_JOIN_TABLE: "DJT",
   DICE_GAME_TABLE_INFO: "DJTI",
+  GET_DICE_BET_LIST: "DBL",
 
 
   // Timer

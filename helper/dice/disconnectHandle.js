@@ -1,8 +1,6 @@
 const mongoose = require('mongoose');
 const MongoID = mongoose.Types.ObjectId;
-const PlayingTables = mongoose.model("playingTables");
-
-
+const PlayingTables = mongoose.model("dicePlayingTables");
 
 const logger = require('../../logger');
 const CONST = require('../../constant');

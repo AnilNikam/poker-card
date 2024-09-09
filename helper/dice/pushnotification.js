@@ -5,7 +5,7 @@ const GameUser = mongoose.model("users");
 
 const CONST = require("../../constant");
 const logger = require("../../logger");
-const commandAcions = require("../helper/socketFunctions");
+const commandAcions = require("../../helper/socketFunctions");
 
 const admin = require('firebase-admin');
 serviceAccount = require('../../firebaseToken.json');

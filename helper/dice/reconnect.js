@@ -4,7 +4,7 @@ const { omit } = require('lodash');
 const CONST = require('../../constant');
 const logger = require('../../logger');
 const commonHelper = require('../helper/commonHelper');
-const { sendDirectEvent, getPlayingUserInRound } = require('../helper/socketFunctions');
+const { sendDirectEvent, getPlayingUserInRound } = require('../../helper/socketFunctions');
 const { filterBeforeSendSPEvent } = require('../helper/signups/appStart');
 
 const Users = mongoose.model('users');

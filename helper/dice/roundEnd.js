@@ -3,7 +3,7 @@ const MongoID = mongoose.Types.ObjectId;
 const PlayingTables = mongoose.model("playingTables");
 const Users = mongoose.model("users");
 
-const commandAcions = require("../helper/socketFunctions");
+const commandAcions = require("../../helper/socketFunctions");
 const gameStartActions = require("./gameStart");
 const logger = require("../../logger");
 const CONST = require("../../constant");

@@ -5,12 +5,12 @@ const fortuna = require('javascript-fortuna');
 fortuna.init();
 const CONST = require('../../constant');
 const logger = require("../../logger");
-const commandAcions = require("../helper/socketFunctions");
+const commandAcions = require("../../helper/socketFunctions");
 const roundStartActions = require("./roundStart");
-const PlayingTables = mongoose.model("playingTables");
+const PlayingTables = mongoose.model("dicePlayingTables");
 const _ = require("underscore")
 const cardLogic = require("./cardLogic");
-const { createDealer } = require("../helper/helperFunction");
+const { createDealer } = require("../../helper/helperFunction");
 
 module.exports.cardDealStart = async (tbid) => {
     logger.info("collectBoot tbid : ", tbid);

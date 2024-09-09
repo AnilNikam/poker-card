@@ -1,10 +1,10 @@
 const mongoose = require("mongoose")
 const MongoID = mongoose.Types.ObjectId;
 const GameUser = mongoose.model('users');
-const PlayingTables = mongoose.model("playingTables");
+const PlayingTables = mongoose.model("dicePlayingTables");
 const IdCounter = mongoose.model("idCounter")
 
-const commandAcions = require("../helper/socketFunctions");
+const commandAcions = require("../../helper/socketFunctions");
 const CONST = require("../../constant");
 const logger = require("../../logger");
 const cardDealActions = require("./cardDeal");

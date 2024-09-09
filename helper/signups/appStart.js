@@ -262,7 +262,7 @@ module.exports.userSesssionSet = async (userData, client) => {
 
     const { _id, uniqueId, mobileNumber, email } = userData;
 
-    rClient.hmset(`socket-${_id.toString()}`, 'socketId', client.id.toString(), 'userId', _id.toString(), 'mobileNumber', mobileNumber, 'uniqueId', uniqueId, 'email', email);
+    // rClient.hmset(`socket-${_id.toString()}`, 'socketId', client.id.toString(), 'userId', _id.toString(), 'mobileNumber', mobileNumber, 'uniqueId', uniqueId, 'email', email);
 
     return true;
   } catch (e) {

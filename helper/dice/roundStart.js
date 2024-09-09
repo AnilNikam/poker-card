@@ -2,12 +2,12 @@ const mongoose = require("mongoose")
 const MongoID = mongoose.Types.ObjectId;
 
 const CONST = require("../../constant");
-const commandAcions = require('../helper/socketFunctions');
+const commandAcions = require('../../helper/socketFunctions');
 const gamePlayActions = require("./gamePlay");
 const logger = require("../../logger");
 const botLogic = require("./botLogic");
 const { lastUserWinnerDeclareCall } = require("./gameFinish");
-const { createDealer } = require("../helper/helperFunction");
+const { createDealer } = require("../../helper/helperFunction");
 
 
 const PlayingTables = mongoose.model("playingTables");

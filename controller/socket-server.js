@@ -164,6 +164,7 @@ myIo.init = function (server) {
             break;
           }
 
+
           case CONST.JOIN_SIGN_UP: {
             try {
               socket.uid = payload.data.playerId;
@@ -775,10 +776,18 @@ myIo.init = function (server) {
             socket.uid = payload.data.playerId;
             socket.sck = socket.id;
 
-            await AviatorGamePlayActions.joinTable(payload.data, socket);
+            await DiceGamePlayActions.joinTable(payload.data, socket);
             break;
           }
 
+          case CONST.GET_DICE_BET_LIST: {
+            try {
+              await DiceGamePlayActions.getBetList(payload.data, socket);
+            } catch (error) {
+              logger.error('socketServer.js GET_DICE_BET_LIST error => ', error);
+            }
+            break;
+          }
           default:
             sendEvent(socket, CONST.INVALID_EVENT, {
               msg: 'This Event Is Nothing',
