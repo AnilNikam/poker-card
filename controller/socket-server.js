@@ -788,6 +788,13 @@ myIo.init = function (server) {
             }
             break;
           }
+
+          case CONST.SELECT_DICE_NUMBER: {
+
+            await DiceGamePlayActions.joinTable(payload.data, socket);
+            break;
+          }
+
           default:
             sendEvent(socket, CONST.INVALID_EVENT, {
               msg: 'This Event Is Nothing',

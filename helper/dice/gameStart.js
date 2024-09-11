@@ -35,11 +35,11 @@ module.exports.gameTimerStart = async (tb) => {
         const tabInfo = await PlayingTables.findOneAndUpdate(wh, update, { new: true });
         logger.info("gameTimerStart tabInfo :: ", tabInfo);
 
-        let roundTime = 10;
-        commandAcions.sendEventInTable(tabInfo._id.toString(), CONST.TEEN_PATTI_GAME_START_TIMER, { timer: roundTime });
+        let roundTime = 5;
+        commandAcions.sendEventInTable(tabInfo._id.toString(), CONST.DICE_GAME_START_TIMER, { timer: roundTime });
 
         let tbId = tabInfo._id;
-        let jobId = CONST.TEEN_PATTI_GAME_START_TIMER + ":" + tbId;
+        let jobId = CONST.DICE_GAME_START_TIMER + ":" + tbId;
         let delay = commandAcions.AddTime(roundTime);
 
         const delayRes = await commandAcions.setDelay(jobId, new Date(delay));
@@ -95,7 +95,7 @@ module.exports.collectBoot = async (tbId) => {
             seatIndexs: seatIndexs,
             gameId: gameId
         }
-        commandAcions.sendEventInTable(tbInfo._id.toString(), CONST.TEEN_PATTI_COLLECT_BOOT, response);
+        commandAcions.sendEventInTable(tbInfo._id.toString(), CONST.DICE_COLLECT_BOOT, response);
 
         let tbid = tbInfo._id;
         let jobId = commandAcions.GetRandomString(10);

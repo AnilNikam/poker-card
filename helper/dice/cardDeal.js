@@ -13,7 +13,7 @@ const cardLogic = require("./cardLogic");
 const { createDealer } = require("../../helper/helperFunction");
 
 module.exports.cardDealStart = async (tbid) => {
-    logger.info("collectBoot tbid : ", tbid);
+    logger.info("Select Dice : ", tbid);
     let wh = {
         _id: tbid
     };

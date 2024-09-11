@@ -58,6 +58,51 @@ module.exports.roundStarted = async (tbid) => {
     }
 
 }
+module.exports.selectDiceNumber = async (tbid) => {
+    try {
+        logger.info("roundStarted call tbid : ", tbid);
+        const wh = {
+            _id: MongoID(tbid)
+        }
+        const project = {
+            gameState: 1,
+            playerInfo: 1,
+            activePlayer: 1,
+            currentPlayerTurnIndex: 1,
+
+        }
+        let tabInfo = await PlayingTables.findOne(wh, project).lean();
+        logger.info("roundStarted tabInfo : ", tabInfo);
+
+        if (tabInfo == null) {
+            logger.info("roundStarted table in 1:", tabInfo);
+            return false;
+        }
+
+        if (tabInfo.gameState != "CardDealing" || tabInfo.activePlayer < 2) {
+            logger.info("roundStarted table in 2:", tabInfo.gameState, tabInfo.activePlayer);
+            return false;
+        }
+
+        const update = {
+            $set: {
+                gameState: CONST.ROUND_STARTED//"RoundStated"
+            }
+        }
+        logger.info("roundStarted update : ", wh, update);
+
+        const tb = await PlayingTables.findOneAndUpdate(wh, update, { new: true });
+        logger.info("roundStarted tb : ", tb);
+
+        // await this.setFirstTurn(tb);
+        await this.nextUserTurnstart(tb);
+
+
+    } catch (error) {
+        logger.error('roundStart.js roundStarted error : ', error);
+    }
+
+}
 
 module.exports.setFirstTurn = async (tb) => {
     logger.info("setFirstTurn tb :", tb);
@@ -137,8 +182,8 @@ module.exports.startUserTurn = async (seatIndex, objData, firstTurnStart) => {
         // if(typeof tb.playerInfo[tb.turnSeatIndex].seatIndex != "undefined"){
 
         // }
-        let isShow = await this.checShowButton(tb.playerInfo, tb.turnSeatIndex);
-        logger.info("startUserTurn isShow :=>", isShow);
+        // let isShow = await this.checShowButton(tb.playerInfo, tb.turnSeatIndex);
+        // logger.info("startUserTurn isShow :=>", isShow);
 
         let chalvalue = tb.chalValue;
 
@@ -157,7 +202,7 @@ module.exports.startUserTurn = async (seatIndex, objData, firstTurnStart) => {
             isShow: isShow
         }
 
-        commandAcions.sendEventInTable(tb._id.toString(), CONST.TEEN_PATTI_USER_TURN_START, response);
+        commandAcions.sendEventInTable(tb._id.toString(), CONST.DICE_USER_TURN_START, response);
 
         // if (tb.playerInfo != undefined && tb.playerInfo[tb.turnSeatIndex] != undefined && tb.playerInfo[tb.turnSeatIndex].Iscom == 1) {
         //     // Rboot Logic Start Playing 

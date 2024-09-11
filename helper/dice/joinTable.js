@@ -180,7 +180,6 @@ module.exports.findEmptySeatAndUserSeat = async (table, betInfo, client) => {
             coins: totalWallet,
             status: CONST.WAITING,
             playerStatus: "",
-            chalValue: 0,
             dice: [],
             turnMissCounter: 0,
             turnCount: 0,
