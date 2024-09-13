@@ -23,6 +23,7 @@ const CONST = {
   ROUND_LOCK: 'RoundLock',
   GAMEPLAY: 'GAMEPLAY',
   CARD_DEALING: 'CardDealing',
+  SELECT_DICE: 'SelectDiceNumber',
 
   // SPENN Paymnent Key
   API_KEY: 'Owiv+7//L9E3TsxkJuBHAInUSPHYfVJIw2KKcPjpyrZA4bBxxnDFHbL7c0yAyRADbO/REty9bwU=',
@@ -216,6 +217,8 @@ const CONST = {
   SELECT_DICE_NUMBER: "SDN",
   DICE_ACTION: "DA",
   DICE_USER_TURN_START: 'DUTS',
+  GET_DICE_NUMBER: "GDN",
+  DICE_LEAVE_TABLE: "DLT",
 
 
   // Timer

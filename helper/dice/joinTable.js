@@ -123,6 +123,7 @@ module.exports.createTable = async (betInfo) => {
             entryFee: betInfo.entryFee,
             playerInfo: this.makeObjects(Number(betInfo.maxSeat)),
             gameState: "",
+            currentDiceNumber: 0
         };
         logger.info("createTable insertobj : ", insertobj);
 
@@ -182,6 +183,7 @@ module.exports.findEmptySeatAndUserSeat = async (table, betInfo, client) => {
             playerStatus: "",
             dice: [],
             turnMissCounter: 0,
+            cuurentDiceNumber: 0,
             turnCount: 0,
             sck: client.id,
             playerSocketId: client.id,

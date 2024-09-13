@@ -1,7 +1,7 @@
 const mongoose = require("mongoose")
 const MongoID = mongoose.Types.ObjectId;
 
-const PlayingTables = mongoose.model("playingTables");
+const PlayingTables = mongoose.model("dicePlayingTables");
 const GameUser = mongoose.model("users");
 
 const CONST = require("../../constant");
@@ -15,7 +15,7 @@ const { filterBeforeSendSPEvent, getPlayingUserInTable } = require("../common-fu
 module.exports.leaveTable = async (requestData, client) => {
     requestData = (requestData != null) ? requestData : {}
     if (typeof client.tbid == "undefined" || typeof client.uid == "undefined" || typeof client.seatIndex == "undefined") {
-        commandAcions.sendDirectEvent(client.sck, CONST.TEEN_PATTI_LEAVE_TABLE, requestData, false, "User session not set, please restart game!");
+        commandAcions.sendDirectEvent(client.sck, CONST.DICE_LEAVE_TABLE, requestData, false, "User session not set, please restart game!");
         return false;
     }
 
@@ -72,9 +72,9 @@ module.exports.leaveTable = async (requestData, client) => {
                 let userTrack = {
                     _id: playerInfo._id,
                     username: playerInfo.username,
-                    cards: playerInfo.cards,
+                    // cards: playerInfo.cards,
                     seatIndex: playerInfo.seatIndex,
-                    totalBet: playerInfo.totalBet,
+                    // totalBet: playerInfo.totalBet,
                     playerStatus: "leaveTable"
                 }
                 updateData["$push"] = {
@@ -107,8 +107,8 @@ module.exports.leaveTable = async (requestData, client) => {
     // let tbInfo = await PlayingTables.findOneAndUpdate(wh, updateData, { new: true });
     // logger.info("leaveTable tbInfo : ", tbInfo);
 
-    commandAcions.sendDirectEvent(client.sck.toString(), CONST.TEEN_PATTI_LEAVE_TABLE, response);
-    commandAcions.sendEventInTable(tb._id.toString(), CONST.TEEN_PATTI_LEAVE_TABLE, response);
+    commandAcions.sendDirectEvent(client.sck.toString(), CONST.DICE_LEAVE_TABLE, response);
+    commandAcions.sendEventInTable(tb._id.toString(), CONST.DICE_LEAVE_TABLE, response);
 
     let userDetails = await GameUser.findOne({
         _id: MongoID(client.uid.toString()),

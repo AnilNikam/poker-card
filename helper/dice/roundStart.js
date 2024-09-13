@@ -9,9 +9,7 @@ const botLogic = require("./botLogic");
 const { lastUserWinnerDeclareCall } = require("./gameFinish");
 const { createDealer } = require("../../helper/helperFunction");
 
-
-const PlayingTables = mongoose.model("playingTables");
-
+const PlayingTables = mongoose.model("dicePlayingTables");
 
 module.exports.roundStarted = async (tbid) => {
     try {
@@ -34,7 +32,7 @@ module.exports.roundStarted = async (tbid) => {
             return false;
         }
 
-        if (tabInfo.gameState != "CardDealing" || tabInfo.activePlayer < 2) {
+        if (tabInfo.gameState != "SelectDiceNumber" || tabInfo.activePlayer < 2) {
             logger.info("roundStarted table in 2:", tabInfo.gameState, tabInfo.activePlayer);
             return false;
         }
@@ -58,6 +56,7 @@ module.exports.roundStarted = async (tbid) => {
     }
 
 }
+
 module.exports.selectDiceNumber = async (tbid) => {
     try {
         logger.info("roundStarted call tbid : ", tbid);
@@ -185,11 +184,11 @@ module.exports.startUserTurn = async (seatIndex, objData, firstTurnStart) => {
         // let isShow = await this.checShowButton(tb.playerInfo, tb.turnSeatIndex);
         // logger.info("startUserTurn isShow :=>", isShow);
 
-        let chalvalue = tb.chalValue;
+        // let chalvalue = tb.chalValue;
 
-        if (isShow) {
-            chalvalue = chalvalue * 2;
-        }
+        // if (isShow) {
+        //     chalvalue = chalvalue * 2;
+        // }
 
         let response = {
             si: tb.currentPlayerTurnIndex,
@@ -198,8 +197,8 @@ module.exports.startUserTurn = async (seatIndex, objData, firstTurnStart) => {
 
             previousTurn: objData.turnSeatIndex,
             nextTurn: tb.turnSeatIndex,
-            chalValue: chalvalue,
-            isShow: isShow
+            // chalValue: chalvalue,
+            // isShow: isShow
         }
 
         commandAcions.sendEventInTable(tb._id.toString(), CONST.DICE_USER_TURN_START, response);

@@ -19,6 +19,7 @@ const PlayingTablesSchema = new Schema({
     history: [],
     betamount: [],
     entryFee: { type: Number, default: 0 },
+    currentDiceNumber: { type: Number, default: 0 },
     uuid: { type: String, default: "" },
     rendomNumber: { type: Number, default: 0 }
 }, { versionKey: false });

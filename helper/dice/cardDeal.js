@@ -20,20 +20,19 @@ module.exports.cardDealStart = async (tbid) => {
     let tb = await PlayingTables.findOne(wh, {}).lean();
     logger.info("collectBoot tb : ", tb);
 
-    let cardDetails = this.getCards(tb.playerInfo);
-    logger.info("collectBoot cardDetails : ", cardDetails);
+    // let cardDetails = this.getCards(tb.playerInfo);
+    // logger.info("collectBoot cardDetails : ", cardDetails);
     let dealerSeatIndex = createDealer(tb.activePlayer - 1);
 
     const update = {
         $set: {
-            hukum: cardDetails.hukum,
             dealerSeatIndex,
             currentPlayerTurnIndex: dealerSeatIndex,
-            gameState: CONST.CARD_DEALING,
+            gameState: CONST.SELECT_DICE,
         }
     }
-    const cardDealIndexs = await this.setUserCards(cardDetails, tb);
-    logger.info("initRoundState cardDealIndexs : ", cardDealIndexs);
+    // const cardDealIndexs = await this.setUserCards(cardDetails, tb);
+    // logger.info("initRoundState cardDealIndexs : ", cardDealIndexs);
 
     logger.info("initRoundState update : ", update);
 
@@ -41,11 +40,11 @@ module.exports.cardDealStart = async (tbid) => {
     logger.info("findTableAndJoin tabInfo : ", tabInfo);
 
     const eventResponse = {
-        hukum: tabInfo.hukum,
+        // hukum: tabInfo.hukum,
         di: tabInfo.dealerSeatIndex,
-        cardDealIndexs: cardDealIndexs
+        // cardDealIndexs: cardDealIndexs
     }
-    commandAcions.sendEventInTable(tabInfo._id.toString(), CONST.TEEN_PATTI_GAME_CARD_DISTRIBUTION, eventResponse);
+    commandAcions.sendEventInTable(tabInfo._id.toString(), CONST.SELECT_DICE_NUMBER, eventResponse);
 
     let tbId = tabInfo._id;
     let jobId = commandAcions.GetRandomString(10);

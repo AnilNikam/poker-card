@@ -795,6 +795,17 @@ myIo.init = function (server) {
             break;
           }
 
+          case CONST.GET_DICE_NUMBER: {
+
+            await DiceGamePlayActions.getNumber(payload.data, socket);
+            break;
+          }
+
+          case CONST.DICE_LEAVE_TABLE: {
+            DiceGamePlayActions.leaveTable(payload.data, socket);
+            break;
+          }
+
           default:
             sendEvent(socket, CONST.INVALID_EVENT, {
               msg: 'This Event Is Nothing',

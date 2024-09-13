@@ -1,7 +1,7 @@
 const mongoose = require("mongoose")
 const MongoID = mongoose.Types.ObjectId;
 const GameUser = mongoose.model("users");
-const PlayingTables = mongoose.model("playingTables");
+const PlayingTables = mongoose.model("dicePlayingTables");
 
 const CONST = require("../../constant");
 const logger = require("../../logger");
@@ -12,12 +12,13 @@ const gameFinishActions = require("./gameFinish");
 const checkWinnerActions = require("./checkWinner");
 const checkUserCardActions = require("./checkUserCard");
 const walletActions = require("../common-function/walletTrackTransaction");
+const { getRandomNumber } = require("../helperFunction");
 
-module.exports.chal = async (requestData, client) => {
+module.exports.getNumber = async (requestData, client) => {
     try {
         logger.info("chal requestData : ", requestData);
         if (typeof client.tbid == "undefined" || typeof client.uid == "undefined" || typeof client.seatIndex == "undefined") {
-            commandAcions.sendDirectEvent(client.sck, CONST.TEEN_PATTI_CHAL, requestData, false, "User session not set, please restart game!");
+            commandAcions.sendDirectEvent(client.sck, CONST.GET_DICE_NUMBER, requestData, false, "User session not set, please restart game!");
             return false;
         }
         if (typeof client.chal != "undefined" && client.chal) return false;
@@ -41,13 +42,13 @@ module.exports.chal = async (requestData, client) => {
         if (tabInfo.turnDone) {
             logger.info("chal : client.su ::", client.seatIndex);
             delete client.chal;
-            commandAcions.sendDirectEvent(client.sck, CONST.TEEN_PATTI_CHAL, requestData, false, "Turn is already taken!");
+            commandAcions.sendDirectEvent(client.sck, CONST.GET_DICE_NUMBER, requestData, false, "Turn is already taken!");
             return false;
         }
         if (tabInfo.turnSeatIndex != client.seatIndex) {
             logger.info("chal : client.su ::", client.seatIndex);
             delete client.chal;
-            commandAcions.sendDirectEvent(client.sck, CONST.TEEN_PATTI_CHAL, requestData, false, "It's not your turn!");
+            commandAcions.sendDirectEvent(client.sck, CONST.GET_DICE_NUMBER, requestData, false, "It's not your turn!");
             return false;
         }
 
@@ -69,44 +70,44 @@ module.exports.chal = async (requestData, client) => {
             $set: {}, $inc: {}
         }
 
-        let chalvalue = tabInfo.chalValue;
-        logger.info("1 Before chal chalvalue ::", chalvalue);
+        // let chalvalue = tabInfo.chalValue;
+        // logger.info("1 Before chal chalvalue ::", chalvalue);
+
+        let numberFetch = getRandomNumber(1, 10)
+        // if (typeof requestData.isIncrement != "undefined" && requestData.isIncrement) {
+        //     chalvalue = chalvalue * 2;
+        //     logger.info("2 Incriment chal chalvalue ::", chalvalue);
+        // }
+        // updateData.$set["chalValue"] = chalvalue;
 
 
-        if (typeof requestData.isIncrement != "undefined" && requestData.isIncrement) {
-            chalvalue = chalvalue * 2;
-            logger.info("2 Incriment chal chalvalue ::", chalvalue);
-        }
-        updateData.$set["chalValue"] = chalvalue;
+
+        // if (playerInfo.playerStatus === "blind" && playerInfo.isSee) {
+        //     chalvalue = chalvalue * 2;
+        //     updateData.$set["playerInfo.$.playerStatus"] = "chal"
+        //     // updateData.$set["playerInfo.$.isSee"] = true
+        //     logger.info("3 playerInfo.isSee SEEN PLAYER chalv value =>", playerInfo._id, ' + ', chalvalue);
+        // } else if (playerInfo.isSee) {
+        //     chalvalue = chalvalue * 2;
+        // }
+        // let totalWallet = Number(UserInfo.chips) //+ Number(UserInfo.winningChips)
+
+        // if (Number(chalvalue) > Number(totalWallet)) {
+        //     logger.info("chal client.su ::", client.seatIndex);
+        //     delete client.chal;
+        //     commandAcions.sendDirectEvent(client.sck, CONST.GET_DICE_NUMBER, requestData, false, "Please add wallet!!");
+        //     return false;
+        // }
 
 
+        // chalvalue = Number(Number(chalvalue).toFixed(2))
+        // logger.info("4 After chal chalvalue ::", chalvalue);
 
-        if (playerInfo.playerStatus === "blind" && playerInfo.isSee) {
-            chalvalue = chalvalue * 2;
-            updateData.$set["playerInfo.$.playerStatus"] = "chal"
-            // updateData.$set["playerInfo.$.isSee"] = true
-            logger.info("3 playerInfo.isSee SEEN PLAYER chalv value =>", playerInfo._id, ' + ', chalvalue);
-        } else if (playerInfo.isSee) {
-            chalvalue = chalvalue * 2;
-        }
-        let totalWallet = Number(UserInfo.chips) //+ Number(UserInfo.winningChips)
-
-        if (Number(chalvalue) > Number(totalWallet)) {
-            logger.info("chal client.su ::", client.seatIndex);
-            delete client.chal;
-            commandAcions.sendDirectEvent(client.sck, CONST.TEEN_PATTI_CHAL, requestData, false, "Please add wallet!!");
-            return false;
-        }
-
-
-        chalvalue = Number(Number(chalvalue).toFixed(2))
-        logger.info("4 After chal chalvalue ::", chalvalue);
-
-        // await walletActions.deductWallet(client.uid, -chalvalue, CONST.TRANSACTION_TYPE.DEBIT, "TeenPatti chal", tabInfo, client.id, client.seatIndex);
-        await walletActions.deductuserWalletGame(client.uid, -chalvalue, CONST.TRANSACTION_TYPE.DEBIT, "TeenPatti chal", "Teen Patti", client.tbid);
+        // await walletActions.deductuserWalletGame(client.uid, -chalvalue, CONST.TRANSACTION_TYPE.DEBIT, "TeenPatti chal", "Teen Patti", client.tbid);
 
         // updateData.$set["chalValue"] = chalvalue;
-        updateData.$inc["potValue"] = chalvalue;
+        updateData.$set["playerInfo.$.cuurentDiceNumber"] = numberFetch
+        updateData.$inc["cuurentDiceNumber"] = numberFetch;
         updateData.$set["turnDone"] = true;
 
         //clear the Schedule
@@ -120,19 +121,17 @@ module.exports.chal = async (requestData, client) => {
 
         const tb = await PlayingTables.findOneAndUpdate(upWh, updateData, { new: true });
         logger.info("chal tb : ", tb);
-        logger.info("\n final table chal value: ", tb.chalValue);
 
         let response = {
-
-            seatIndex: tb.turnSeatIndex,
-            chalValue: chalvalue,
-            potValue: tb.potValue
+            number: numberFetch,
         }
-        commandAcions.sendEventInTable(tb._id.toString(), CONST.TEEN_PATTI_CHAL, response);
+        commandAcions.sendEventInTable(tb._id.toString(), CONST.GET_DICE_NUMBER, response);
         delete client.chal;
 
-        if (Number(tb.potLimit) <= Number(tb.potValue)) {
-            await checkWinnerActions.autoShow(tb);
+        if (Number(tb.dice[0]) == Number(numberFetch)) {
+            // await checkWinnerActions.autoShow(tb);
+            //wiining Code
+            await gameFinishActions.winnerDeclareCall(winners, tb);
         } else {
             let activePlayerInRound = await roundStartActions.getPlayingUserInRound(tb.playerInfo);
             logger.info("chal activePlayerInRound :", activePlayerInRound, activePlayerInRound.length);
@@ -176,7 +175,7 @@ module.exports.show = async (requestData, client) => {
         if (tabInfo.turnDone) {
             logger.info("chal : client.su ::", client.seatIndex);
             delete client.chal;
-            commandAcions.sendDirectEvent(client.sck, CONST.TEEN_PATTI_CHAL, requestData, false, "Turn is already taken!");
+            commandAcions.sendDirectEvent(client.sck, CONST.GET_DICE_NUMBER, requestData, false, "Turn is already taken!");
             return false;
         }
         if (tabInfo.turnSeatIndex != client.seatIndex) {
