@@ -51,7 +51,8 @@ module.exports.cardDealStart = async (tbid) => {
     let delay = commandAcions.AddTime(5);
     const delayRes = await commandAcions.setDelay(jobId, new Date(delay));
 
-    await roundStartActions.roundStarted(tbId)
+    // await roundStartActions.roundStarted(tbId)
+    await roundStartActions.selectDiceRoundStarted(tbId)
 }
 
 module.exports.setUserCards = async (cardsInfo, tb) => {

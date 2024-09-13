@@ -791,7 +791,7 @@ myIo.init = function (server) {
 
           case CONST.SELECT_DICE_NUMBER: {
 
-            await DiceGamePlayActions.joinTable(payload.data, socket);
+            await DiceGamePlayActions.selectDiceNumber(payload.data, socket);
             break;
           }
 

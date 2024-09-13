@@ -147,8 +147,7 @@ module.exports.resetUserData = async (tbId, playerInfo) => {
                     $set: {
                         "playerInfo.$.status": "play",
                         "playerInfo.$.playerStatus": "blind",
-                        "playerInfo.$.chalValue": 0,
-                        "playerInfo.$.cards": [],
+                        "playerInfo.$.dice": [],
                         "playerInfo.$.turnMissCounter": 0,
                         "playerInfo.$.turnDone": false,
                         "playerInfo.$.turnCount": 0,

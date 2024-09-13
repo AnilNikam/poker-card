@@ -8,10 +8,68 @@ const logger = require("../../logger");
 const botLogic = require("./botLogic");
 const { lastUserWinnerDeclareCall } = require("./gameFinish");
 const { createDealer } = require("../../helper/helperFunction");
+const { forEach } = require("lodash");
 
 const PlayingTables = mongoose.model("dicePlayingTables");
 
 module.exports.roundStarted = async (tbid) => {
+    try {
+        logger.info("roundStarted call tbid : ", tbid);
+        const wh = {
+            _id: MongoID(tbid)
+        }
+        const project = {
+            gameState: 1,
+            playerInfo: 1,
+            activePlayer: 1,
+            currentPlayerTurnIndex: 1,
+
+        }
+        let tabInfo = await PlayingTables.findOne(wh, project).lean();
+        logger.info("roundStarted tabInfo : ", tabInfo);
+
+        if (tabInfo == null) {
+            logger.info("roundStarted table in 1:", tabInfo);
+            return false;
+        }
+
+        if (tabInfo.gameState != "SelectDiceNumber" || tabInfo.activePlayer < 2) {
+            logger.info("roundStarted table in 2:", tabInfo.gameState, tabInfo.activePlayer);
+            return false;
+        }
+
+        for (let i = 0; i < playerInfo.length; i++)
+            if (typeof playerInfo[i].seatIndex != "undefined") {
+
+                playerInfo[i].status = "play";
+                playerInfo[i].slectDice = false;
+                let uWh = { _id: MongoID(tbid.toString()), "playerInfo.seatIndex": Number(playerInfo[i].seatIndex) }
+                logger.info("update slectDice UserState uWh update ::", uWh, update)
+                let res = await PlayingTables.findOneAndUpdate(uWh, update, { new: true });
+                logger.info("slectDice res ::", res)
+            }
+
+        const update = {
+            $set: {
+                gameState: CONST.ROUND_STARTED//"RoundStated"
+            }
+        }
+        logger.info("roundStarted update : ", wh, update);
+
+        const tb = await PlayingTables.findOneAndUpdate(wh, update, { new: true });
+        logger.info("roundStarted tb : ", tb);
+
+        // await this.setFirstTurn(tb);
+        await this.nextUserTurnstart(tb);
+
+
+    } catch (error) {
+        logger.error('roundStart.js roundStarted error : ', error);
+    }
+
+}
+
+module.exports.selectDiceRoundStarted = async (tbid) => {
     try {
         logger.info("roundStarted call tbid : ", tbid);
         const wh = {
@@ -166,11 +224,20 @@ module.exports.startUserTurn = async (seatIndex, objData, firstTurnStart) => {
         logger.info("startUserTurn playerInGame ::", playerInGame);
         logger.info("startUserTurn playerInGame length::", playerInGame.length);
 
+
         if (playerInGame.length == 1) {
             await lastUserWinnerDeclareCall(tb);
 
             logger.info("startUserTurn single user in game so game goes on winner state..!");
             return false
+        }
+
+        for (let e of tb.playerInfo) {
+            if (e.slectDice === true) {
+                this.roundStarted(tb._id);
+            } else {
+                break; // Exit the loop
+            }
         }
         // let update = {
 
@@ -212,7 +279,6 @@ module.exports.startUserTurn = async (seatIndex, objData, firstTurnStart) => {
         let tbid = tb._id.toString();
         let time = 30;
         let turnChangeDelayTimer = commandAcions.AddTime(time);
-        logger.info("startUserTurn jobId time ::", jobId, time, new Date(turnChangeDelayTimer), new Date());
 
         const delayRes = await commandAcions.setDelay(jobId, new Date(turnChangeDelayTimer));
         logger.info("startUserTurn delayRes : ", delayRes);

@@ -147,6 +147,103 @@ module.exports.getNumber = async (requestData, client) => {
     }
 }
 
+module.exports.selectDiceNumber = async (requestData, client) => {
+    try {
+        logger.info("selectDiceNumber requestData : ", requestData);
+        if (typeof client.tbid == "undefined" || typeof client.uid == "undefined" || typeof client.seatIndex == "undefined") {
+            commandAcions.sendDirectEvent(client.sck, CONST.SELECT_DICE_NUMBER, requestData, false, "User session not set, please restart game!");
+            return false;
+        }
+        if (typeof client.chal != "undefined" && client.chal) return false;
+
+        client.chal = true;
+
+        const wh = {
+            _id: MongoID(client.tbid.toString())
+        }
+        const project = {
+
+        }
+        const tabInfo = await PlayingTables.findOne(wh, project).lean();
+        logger.info("selectDiceNumber tabInfo : ", tabInfo);
+
+        if (tabInfo == null) {
+            logger.info("selectDiceNumber user not turn ::", tabInfo);
+            delete client.chal;
+            return false
+        }
+        if (tabInfo.turnDone) {
+            logger.info("selectDiceNumber : client.su ::", client.seatIndex);
+            delete client.chal;
+            commandAcions.sendDirectEvent(client.sck, CONST.SELECT_DICE_NUMBER, requestData, false, "Turn is already taken!");
+            return false;
+        }
+        if (tabInfo.turnSeatIndex != client.seatIndex) {
+            logger.info("selectDiceNumber : client.su ::", client.seatIndex);
+            delete client.chal;
+            commandAcions.sendDirectEvent(client.sck, CONST.SELECT_DICE_NUMBER, requestData, false, "It's not your turn!");
+            return false;
+        }
+
+        let playerInfo = tabInfo.playerInfo[client.seatIndex];
+        logger.info("\n selectDiceNumber Bet PlayerInfo ::", playerInfo);
+        logger.info("\n playerInfo.isSee  ==>", playerInfo.isSee);
+        logger.info("\n playerInfo.playerStatus  ==>", playerInfo.playerStatus);
+
+
+        let gwh = {
+            _id: MongoID(client.uid)
+        }
+        let UserInfo = await GameUser.findOne(gwh, {}).lean();
+        logger.info("selectDiceNumber UserInfo : ", gwh, JSON.stringify(UserInfo));
+
+        let updateData = {
+            $set: {}, $inc: {}
+        }
+
+        // let chalvalue = tabInfo.chalValue;
+        // logger.info("1 Before chal chalvalue ::", chalvalue);
+
+        let slectedDiceNumber = requestData.slectedDiceNumber
+        playerInfo.dice.push(slectedDiceNumber)
+
+        updateData.$set["playerInfo.$.slectDice"] = true
+        updateData.$set["turnDone"] = true;
+        updateData.$set["playerInfo"] = playerInfo;
+
+
+        //clear the Schedule
+        // commandAcions.clearJob(tabInfo.jobId);
+
+        const upWh = {
+            _id: MongoID(client.tbid.toString()),
+            "playerInfo.seatIndex": Number(client.seatIndex)
+        }
+        logger.info("selectDiceNumber upWh updateData :: ", upWh, updateData);
+
+        const tb = await PlayingTables.findOneAndUpdate(upWh, updateData, { new: true });
+        logger.info("selectDiceNumber tb : ", tb);
+
+        let response = {
+            numberSaved: true,
+        }
+        commandAcions.sendEventInTable(tb._id.toString(), CONST.SELECT_DICE_NUMBER, response);
+        delete client.chal;
+
+
+        let activePlayerInRound = await roundStartActions.getPlayingUserInRound(tb.playerInfo);
+        logger.selectDiceNumber("chal activePlayerInRound :", activePlayerInRound, activePlayerInRound.length);
+        if (activePlayerInRound.length == 1) {
+            await gameFinishActions.lastUserWinnerDeclareCall(tb);
+        } else {
+            await roundStartActions.nextUserTurnstart(tb);
+        }
+        return true;
+    } catch (e) {
+        logger.info("Exception chal : ", e);
+    }
+}
+
 module.exports.show = async (requestData, client) => {
     try {
         logger.info("show requestData : ", requestData);
