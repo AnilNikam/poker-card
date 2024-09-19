@@ -96,12 +96,14 @@ module.exports.findTable = async (betInfo, client) => {
 module.exports.getBetTable = async (betInfo) => {
     logger.info("getBetTable betInfo : ", JSON.stringify(betInfo));
     let wh = {
-        boot: Number(betInfo.boot),
+        entryFee: Number(betInfo.entryFee),
         activePlayer: { $gte: 0, $lt: betInfo.maxSeat },
         maxSeat: parseInt(betInfo.maxSeat),
     }
     logger.info("getBetTable wh : ", JSON.stringify(wh));
+
     let tableInfo = await PlayingTables.find(wh, {}).sort({ activePlayer: 1 }).lean();
+    logger.info("tableInfo getBetTable wh :=> ", JSON.stringify(tableInfo));
 
     if (tableInfo.length > 0) {
         return tableInfo[0];
@@ -117,7 +119,7 @@ module.exports.createTable = async (betInfo) => {
         let insertobj = {
             gameId: "",
             maxSeat: betInfo.maxSeat,
-            gamePlayType: betInfo.gameType,
+            gamePlayType: "Dice",
             activePlayer: 0,
             betId: betInfo._id,
             entryFee: betInfo.entryFee,

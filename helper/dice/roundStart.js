@@ -9,7 +9,6 @@ const botLogic = require("./botLogic");
 const { lastUserWinnerDeclareCall } = require("./gameFinish");
 const { createDealer } = require("../../helper/helperFunction");
 const { forEach } = require("lodash");
-
 const PlayingTables = mongoose.model("dicePlayingTables");
 
 module.exports.roundStarted = async (tbid) => {
@@ -64,6 +63,7 @@ module.exports.roundStarted = async (tbid) => {
 
 
     } catch (error) {
+
         logger.error('roundStart.js roundStarted error : ', error);
     }
 

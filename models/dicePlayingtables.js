@@ -6,6 +6,7 @@ const collectionName = 'dicePlayingTables';
 const PlayingTablesSchema = new Schema({
     gameId: { type: String, default: "" },
     activePlayer: { type: Number, default: 0 },
+    maxSeat: { type: Number, default: 2 },
     playerInfo: [],
     gameState: { type: String, default: "" },
     turnStartTimer: { type: Date },
