@@ -204,8 +204,8 @@ module.exports.selectDiceNumber = async (requestData, client) => {
         // let chalvalue = tabInfo.chalValue;
         // logger.info("1 Before chal chalvalue ::", chalvalue);
 
-        let slectedDiceNumber = requestData.slectedDiceNumber
-        playerInfo.dice.push(slectedDiceNumber)
+        let selectedDiceNumber = requestData.selectedDiceNumber
+        playerInfo.dice.push(selectedDiceNumber)
 
         updateData.$set["playerInfo.$.slectDice"] = true
         updateData.$set["turnDone"] = true;
