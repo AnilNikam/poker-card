@@ -117,13 +117,13 @@ module.exports.deduct = async (tabInfo, playerInfo) => {
             if (playerInfo[i] != {} && typeof playerInfo[i].seatIndex != "undefined" && playerInfo[i].status == "play") {
                 seatIndexs.push(playerInfo[i].seatIndex);
 
-                // await walletActions.deductWallet(playerInfo[i]._id, -Number(tabInfo.boot), 1, "TeenPatti Bet", tabInfo, playerInfo[i].sck, playerInfo[i].seatIndex);
-                await walletActions.deductuserWalletGame(playerInfo[i]._id, -Number(tabInfo.boot), CONST.TRANSACTION_TYPE.BOOT_VALUE, "Teen Patti Boot Amount", "Teen Patti", tabInfo._id);
+                await walletActions.deductWallet(playerInfo[i]._id, -Number(tabInfo.boot), 1, "Dice Boot Amount", tabInfo, playerInfo[i].sck, playerInfo[i].seatIndex);
+                // await walletActions.deductWallet(playerInfo[i]._id, -Number(tabInfo.entryFee), CONST.TRANSACTION_TYPE.BOOT_VALUE, "Dice Boot Amount", "Teen Patti", tabInfo._id);
 
                 let update = {
                     $inc: {
-                        "potValue": Number(tabInfo.boot),
-                        "playerInfo.$.totalBet": Number(tabInfo.boot)
+                        "potValue": Number(tabInfo.entryFee),
+                        "playerInfo.$.totalBet": Number(tabInfo.entryFee)
                     }
                 }
                 let uWh = { _id: MongoID(tabInfo._id.toString()), "playerInfo.seatIndex": Number(playerInfo[i].seatIndex) }
