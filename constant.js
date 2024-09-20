@@ -219,7 +219,7 @@ const CONST = {
   DICE_USER_TURN_START: 'DUTS',
   GET_DICE_NUMBER: "GDN",
   DICE_LEAVE_TABLE: "DLT",
-
+  DICE_ROUND_START: 'DRS',
 
   // Timer
   userTurnTimer: 29,
