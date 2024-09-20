@@ -120,6 +120,7 @@ module.exports.getNumber = async (requestData, client) => {
 
         let response = {
             number: numberFetch,
+            playerId: client.uid
         };
         commandAcions.sendEventInTable(tb._id.toString(), CONST.GET_DICE_NUMBER, response);
         delete client.chal;
