@@ -14,8 +14,22 @@ const PlayingTables = mongoose.model('dicePlayingTables');
 module.exports.roundStarted = async (tbid) => {
     try {
         logger.info('roundStarted call tbid : ', tbid);
+
+        let dealerSeatIndex = createDealer(tb.activePlayer - 1);
+
+        const update1 = {
+            $set: {
+                currentPlayerTurnIndex: dealerSeatIndex,
+            },
+        };
+
+
+        const tbInfo = await PlayingTables.findOneAndUpdate(wh, update1, { new: true });
+        logger.info('roundStarted tabInfo : ', tbInfo);
+
+
         const wh = {
-            _id: MongoID(tbid),
+            _id: MongoID(tbInfo._id),
         };
         const project = {
             gameState: 1,
@@ -65,8 +79,8 @@ module.exports.roundStarted = async (tbid) => {
         const tb = await PlayingTables.findOneAndUpdate(wh, update, { new: true });
         logger.info('roundStarted tb : ', tb);
 
-        await this.setFirstTurn(tb);
-        // await this.nextUserTurnstart(tb);
+        // await this.setFirstTurn(tb);
+        await this.nextUserTurnstart(tb);
     } catch (error) {
         logger.error('roundStart.js roundStarted error : ', error);
     }
