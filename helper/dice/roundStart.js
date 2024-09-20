@@ -231,7 +231,7 @@ module.exports.startUserTurn = async (seatIndex, objData, firstTurnStart) => {
                 status = false
             }
         }
-        if (status && e.slectDice === true && tb.gameState !== 'RoundStated') {
+        if (status && tb.gameState !== 'RoundStated') {
             logger.info('heck cll -->');
             this.roundStarted(tb._id);
         }
