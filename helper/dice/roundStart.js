@@ -65,8 +65,8 @@ module.exports.roundStarted = async (tbid) => {
         const tb = await PlayingTables.findOneAndUpdate(wh, update, { new: true });
         logger.info('roundStarted tb : ', tb);
 
-        // await this.setFirstTurn(tb);
-        await this.nextUserTurnstart(tb);
+        await this.setFirstTurn(tb);
+        // await this.nextUserTurnstart(tb);
     } catch (error) {
         logger.error('roundStart.js roundStarted error : ', error);
     }

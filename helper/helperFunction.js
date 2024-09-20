@@ -63,8 +63,9 @@ const createDealer = (maximum) => {
 };
 
 const getRandomNumber = (min, max) => {
-  return Math.random() * (max - min) + min;
+  return Math.floor(Math.random() * (max - min + 1)) + min;
 };
+
 
 const shuffle = (deck) => {
   // switch the values of two random cards
