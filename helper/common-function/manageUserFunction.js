@@ -83,6 +83,7 @@ module.exports.getPlayingAndDropUserRound = async (p) => {
 };
 
 module.exports.filterBeforeSendSPEvent = async (userData) => {
+  logger.info("\n userData filterBeforeSendSPEvent =>", userData)
   let findCountPlayer = await PlayingTables.aggregate([
     {
       $project: {

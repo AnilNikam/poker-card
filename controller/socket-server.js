@@ -790,13 +790,11 @@ myIo.init = function (server) {
           }
 
           case CONST.SELECT_DICE_NUMBER: {
-
             await DiceGamePlayActions.selectDiceNumber(payload.data, socket);
             break;
           }
 
           case CONST.GET_DICE_NUMBER: {
-
             await DiceGamePlayActions.getNumber(payload.data, socket);
             break;
           }

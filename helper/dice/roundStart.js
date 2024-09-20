@@ -264,6 +264,7 @@ module.exports.startUserTurn = async (seatIndex, objData, firstTurnStart) => {
 
             previousTurn: objData.turnSeatIndex,
             nextTurn: tb.turnSeatIndex,
+            numberSaved: tb.playerInfo[tb.currentPlayerTurnIndex].numberSaved
             // chalValue: chalvalue,
             // isShow: isShow
         }

@@ -219,6 +219,7 @@ module.exports.selectDiceNumber = async (requestData, client) => {
 
         let response = {
             numberSaved: true,
+            playerId: client.uid,
             diceNumber: requestData.selectedDiceNumber
         };
         commandAcions.sendEventInTable(tb._id.toString(), CONST.SELECT_DICE_NUMBER, response);
