@@ -7,15 +7,11 @@ const PlayingTables = mongoose.model("dicePlayingTables");
 const gameTrackActions = require("./gameTrack");
 const commandAcions = require("../../helper/socketFunctions");
 
-
 const CONST = require("../../constant");
-const checkUserCardActions = require("./checkUserCard");
 const roundEndActions = require("./roundEnd");
 const roundStartActions = require("./roundStart");
 const walletActions = require("../common-function/walletTrackTransaction");
 const logger = require("../../logger");
-const { Logger } = require("mongodb");
-const { selectDiceNumber } = require(".");
 
 module.exports.lastUserWinnerDeclareCall = async (tb) => {
     if (tb.isLastUserFinish) return false;
@@ -92,10 +88,12 @@ module.exports.winnerDeclareCall = async (winner, tabInfo) => {
 
         let winnerIndexs = [];
         let winnerIds = [];
+
         for (let i = 0; i < winner.length; i++) {
             winnerIndexs.push(winner.seatIndex);
-            winnerIds.push(winner._id)
+            winnerIds.push(winner.playerId)
         }
+
         const playerInGame = await roundStartActions.getPlayingUserInRound(tbInfo.playerInfo);
         logger.info("getWinner playerInGame ::", playerInGame);
 
@@ -155,9 +153,7 @@ module.exports.winnerViewResponseFilter = async (playerInfos, winnerTrack, winne
             userInfo.push({
                 _id: playerInfo[i]._id,
                 seatIndex: playerInfo[i].seatIndex,
-                cards: playerInfo[i].cards,
                 playerStatus: playerInfo[i].playerStatus,
-                cardStatus: playerInfo[i].winningCardStatus
             })
         }
     }

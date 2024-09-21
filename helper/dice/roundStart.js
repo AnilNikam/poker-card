@@ -249,6 +249,7 @@ module.exports.startUserTurn = async (seatIndex, objData, firstTurnStart) => {
     if (status && tb.gameState !== 'RoundStated') {
       logger.info('heck cll -->');
       this.roundStarted(tb);
+      // return
     }
 
     let response = {
@@ -383,7 +384,7 @@ module.exports.handleTimeOut = async (turnIndex, tb) => {
 
     await gamePlayActions.cardPack(requestData, { tbid: tb._id, uid: playerInfo._id, seatIndex: playerInfo.seatIndex, sck: playerInfo.sck });
     return true;
-  } catch (error) {}
+  } catch (error) { }
 };
 
 module.exports.getPlayingUserInRound = async (p) => {

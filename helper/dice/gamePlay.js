@@ -103,7 +103,22 @@ module.exports.getNumber = async (requestData, client) => {
         if (Number(playerInfo.selectedDiceNumber) == Number(numberFetch)) {
             // await checkWinnerActions.autoShow(tb);
             //wiining Code
-            await gameFinishActions.winnerDeclareCall(playerInfo, tb);
+            let updateData1 = {
+                $set: {},
+                $inc: {},
+            };
+            const upWhr = {
+                _id: MongoID(client.tbid.toString()),
+                'playerInfo.seatIndex': Number(client.seatIndex),
+            };
+            logger.info('upWh updateData :: ', upWhr, updateData1);
+            updateData1.$set['playerInfo.$.playerStatus'] = "win";
+
+
+            const tbl = await PlayingTables.findOneAndUpdate(upWh, updateData1, { new: true });
+            logger.info('cupdate tb : ', tbl);
+
+            await gameFinishActions.winnerDeclareCall(playerInfo, tbl);
         } else {
             let activePlayerInRound = await roundStartActions.getPlayingUserInRound(tb.playerInfo);
             logger.info('chal activePlayerInRound :', activePlayerInRound, activePlayerInRound.length);

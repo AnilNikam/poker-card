@@ -16,7 +16,8 @@ const PlayingTablesSchema = new Schema({
     entryFee: { type: Number, default: 0 },
     dealerSeatIndex: { type: Number, default: -1 },
     turnSeatIndex: { type: Number, default: -1 },
-
+    tableAmount: { type: Number, default: 0 },
+    commission: { type: Number, default: 10 },
     playerInfo: [],
     gameState: { type: String, default: "" },
     turnStartTimer: { type: Date },
