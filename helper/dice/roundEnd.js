@@ -34,10 +34,9 @@ module.exports.roundFinish = async (tb) => {
                         'playerInfo.$.playerStatus': "",
                         'playerInfo.$.status': CONST.WAITING,
                         'playerInfo.$.finished': false,
-                        'playerInfo.$.isSee': false,
-                        'playerInfo.$.cards': [],
-                        'playerInfo.$.chalValue': 0,
-                        'playerInfo.$.totalBet': 0,
+                        'playerInfo.$.slectDice': false,
+                        'playerInfo.$.dice': [],
+                        'playerInfo.$.selectedDiceNumber': 0,
                     },
                 };
 
@@ -52,7 +51,7 @@ module.exports.roundFinish = async (tb) => {
                 logger.info('\n roundFinish restart userInfo ->', userInfo);
 
                 // let totalWallet = Number(userInfo.chips);
-                let requireGameChips = restartTable.boot;
+                let requireGameChips = restartTable.entryFee;
 
                 if ((userInfo.chips) > requireGameChips) {
                     logger.info('sufficient local chips');
@@ -136,7 +135,7 @@ module.exports.roundFinish = async (tb) => {
                 dealerSeatIndex: -1,
                 hukum: "",
                 chalValue: 0,
-                potValue: 0,
+                tableAmount: 0,
                 turnDone: false,
                 currentPlayerTurnIndex: -1,
                 jobId: "",

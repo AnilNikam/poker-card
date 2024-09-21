@@ -219,7 +219,7 @@ module.exports.selectDiceNumber = async (requestData, client) => {
         delete client.selectDice;
 
         let activePlayerInRound = await roundStartActions.getPlayingUserInRound(tb.playerInfo);
-        logger.info('chal activePlayerInRound :', activePlayerInRound, activePlayerInRound.length);
+        logger.info('selectDiceNumber activePlayerInRound :', activePlayerInRound, activePlayerInRound.length);
         if (activePlayerInRound.length == 1) {
             await gameFinishActions.lastUserWinnerDeclareCall(tb);
         } else {

@@ -331,8 +331,12 @@ module.exports.userTurnExpaire = async (tbid) => {
     const upRes = await PlayingTables.findOneAndUpdate(whPlayer, update, { new: true });
     logger.info('userTurnExpaire upRes : ', upRes);
 
-    const userDrop = await this.handleTimeOut(tabInfo.turnSeatIndex, tabInfo);
-    logger.info('userTurnExpaire userDrop : ', userDrop);
+    // const userDrop = await this.handleTimeOut(tabInfo.turnSeatIndex, tabInfo);
+    // logger.info('userTurnExpaire userDrop : ', userDrop);
+
+    return await this.nextUserTurnstart(upRes);
+
+    /*
     if (userDrop) {
       const wh1 = {
         _id: MongoID(tabInfo._id.toString()),
@@ -352,9 +356,8 @@ module.exports.userTurnExpaire = async (tbid) => {
       const playerInGame = await this.getPlayingUserInRound(taabInfo.playerInfo);
       logger.info('userTurnExpaire playerInGame ::', playerInGame);
 
-      /*
-                            After winner then can't call next turn start function
-                        */
+               // After winner then can't call next turn start function
+      
 
       if (playerInGame.length > 1 && taabInfo.gameState == 'RoundStarted') {
         return await this.nextUserTurnstart(taabInfo);
@@ -365,6 +368,7 @@ module.exports.userTurnExpaire = async (tbid) => {
     } else {
       return await this.nextUserTurnstart(tabInfo);
     }
+    */
   } catch (error) {
     logger.error('roundStart.js getUserTurnSeatIndex error : ', error);
   }

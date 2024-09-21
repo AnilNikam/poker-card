@@ -89,10 +89,13 @@ module.exports.winnerDeclareCall = async (winner, tabInfo) => {
         let winnerIndexs = [];
         let winnerIds = [];
 
-        for (let i = 0; i < winner.length; i++) {
-            winnerIndexs.push(winner.seatIndex);
-            winnerIds.push(winner.playerId)
-        }
+        // for (let i = 0; i < winner.length; i++) {
+        winnerIndexs.push(winner.seatIndex);
+        winnerIds.push(winner.playerId)
+        // }
+
+        logger.info("winnerIndexs->", winnerIndexs);
+        logger.info("winnerIds->", winnerIds);
 
         const playerInGame = await roundStartActions.getPlayingUserInRound(tbInfo.playerInfo);
         logger.info("getWinner playerInGame ::", playerInGame);
