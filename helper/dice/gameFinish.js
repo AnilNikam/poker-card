@@ -15,6 +15,7 @@ const roundStartActions = require("./roundStart");
 const walletActions = require("../common-function/walletTrackTransaction");
 const logger = require("../../logger");
 const { Logger } = require("mongodb");
+const { selectDiceNumber } = require(".");
 
 module.exports.lastUserWinnerDeclareCall = async (tb) => {
     if (tb.isLastUserFinish) return false;
@@ -92,25 +93,23 @@ module.exports.winnerDeclareCall = async (winner, tabInfo) => {
         let winnerIndexs = [];
         let winnerIds = [];
         for (let i = 0; i < winner.length; i++) {
-            winnerIndexs.push(winner[i].seatIndex);
-            winnerIds.push(winner[i]._id)
+            winnerIndexs.push(winner.seatIndex);
+            winnerIds.push(winner._id)
         }
         const playerInGame = await roundStartActions.getPlayingUserInRound(tbInfo.playerInfo);
         logger.info("getWinner playerInGame ::", playerInGame);
 
         for (let i = 0; i < playerInGame.length; i++) {
-            let winnerState = checkUserCardActions.getWinState(playerInGame[i].cards, tbInfo.hukum);
-            logger.info("winnerState FETCH::", winnerState);
+            // let winnerState = checkUserCardActions.getWinState(playerInGame[i].cards, tbInfo.hukum);
+            // logger.info("winnerState FETCH::", winnerState);
 
             tbInfo.gameTracks.push(
                 {
                     _id: playerInGame[i]._id,
                     username: playerInGame[i].username,
                     seatIndex: playerInGame[i].seatIndex,
-                    cards: playerInGame[i].cards,
-                    totalBet: playerInGame[i].totalBet,
+                    selectDiceNumber: playerInGame[i].selectDiceNumber,
                     playerStatus: (winnerIndexs.indexOf(playerInGame[i].seatIndex) != -1) ? "win" : "loss",
-                    winningCardStatus: winnerState.status
                 }
             )
         }
@@ -122,7 +121,7 @@ module.exports.winnerDeclareCall = async (winner, tabInfo) => {
 
         for (let i = 0; i < tbInfo.gameTracks.length; i++) {
             if (tbInfo.gameTracks[i].playerStatus == "win") {
-                await walletActions.addUserWalletGame(tbInfo.gameTracks[i]._id, Number(winnerTrack.winningAmount), CONST.TRANSACTION_TYPE.WIN, "TeenPatti Win", "Teen Patti", tbInfo._id);
+                await walletActions.addWallet(tbInfo.gameTracks[i]._id, Number(winnerTrack.winningAmount), CONST.WIN, "DiceGame Win", tbInfo);
             }
         }
 
@@ -132,7 +131,7 @@ module.exports.winnerDeclareCall = async (winner, tabInfo) => {
         winnerViewResponse.gameId = tbInfo.gameId;
         winnerViewResponse.winnerIds = tbInfo.winnerIds;
 
-        commandAcions.sendEventInTable(tbInfo._id.toString(), CONST.TEEN_PATTI_WINNER, winnerViewResponse);
+        commandAcions.sendEventInTable(tbInfo._id.toString(), CONST.DICE_WINNER, winnerViewResponse);
 
         let jobId = commandAcions.GetRandomString(10);
         let delay = commandAcions.AddTime(4);

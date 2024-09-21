@@ -220,6 +220,7 @@ const CONST = {
   GET_DICE_NUMBER: "GDN",
   DICE_LEAVE_TABLE: "DLT",
   DICE_ROUND_START: 'DRS',
+  DICE_WINNER: "DWIN",
 
   // Timer
   userTurnTimer: 29,
