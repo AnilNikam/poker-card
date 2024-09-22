@@ -55,7 +55,15 @@ module.exports.lastUserWinnerDeclareCall = async (tb) => {
     const tbInfo = await PlayingTables.findOneAndUpdate(dcUWh, up, { new: true });
     logger.info("lastUserWinnerDeclareCall tbInfo : ", tbInfo);
 
-    await this.winnerDeclareCall([winner], tabInfo);
+
+    let winnerPlayer = tbInfo.playerInfo.find(player => player.playerStatus === 'win');
+
+    if (winnerPlayer) {
+        // Store the winner's information in the winner variable
+        winner = winnerPlayer
+    }
+
+    await this.winnerDeclareCall(winner, tabInfo);
     return true;
 
 }
