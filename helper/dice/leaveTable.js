@@ -66,13 +66,13 @@ module.exports.leaveTable = async (requestData, client) => {
         if (client.seatIndex == tb.turnSeatIndex) {
             commandAcions.clearJob(tb.jobId)
         }
-        if (playerInfo.cards.length == 3) {
-            if (["chal", "blind"].indexOf(playerInfo.playerStatus) != -1) {
+        if (playerInfo.slectDice == true) {
+            if (["play"].indexOf(playerInfo.playerStatus) != -1) {
 
                 let userTrack = {
                     _id: playerInfo._id,
                     username: playerInfo.username,
-                    // cards: playerInfo.cards,
+                    playerDice: playerInfo.selectedDiceNumber,
                     seatIndex: playerInfo.seatIndex,
                     // totalBet: playerInfo.totalBet,
                     playerStatus: "leaveTable"
@@ -89,12 +89,15 @@ module.exports.leaveTable = async (requestData, client) => {
     let tbInfo = await PlayingTables.findOneAndUpdate(wh, updateData, {
         new: true,
     });
+    logger.info("checl leave update -->", tbInfo)
 
-    if (!tbInfo) return;
+    if (!tbInfo) {
+        return;
+    }
 
 
     let activePlayerInRound = await getPlayingUserInTable(tbInfo.playerInfo);
-    logger.info("leaveTable activePlayerInRound : ", activePlayerInRound);
+    logger.info("leaveTable activePlayerInRound : Check =>", activePlayerInRound);
 
 
     let response = {
@@ -131,7 +134,7 @@ module.exports.manageOnUserLeave = async (tb, client) => {
     const playerInGame = await roundStartActions.getPlayingUserInRound(tb.playerInfo);
     logger.info("manageOnUserLeave playerInGame : ", playerInGame);
 
-    const list = ['RoundStated', 'CollectBoot', 'CardDealing'];
+    const list = ['RoundStated', 'CollectBoot', 'CardDealing', 'SelectDiceNumber'];
 
     if (list.includes(tb.gameState) && tb.currentPlayerTurnIndex === client.seatIndex) {
         if (playerInGame.length == 0) {

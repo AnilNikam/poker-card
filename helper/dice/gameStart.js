@@ -93,7 +93,8 @@ module.exports.collectBoot = async (tbId) => {
         let response = {
             bet: tbInfo.boot,
             seatIndexs: seatIndexs,
-            gameId: gameId
+            gameId: gameId,
+            entryFee: tbInfo.entryFee
         }
         commandAcions.sendEventInTable(tbInfo._id.toString(), CONST.DICE_COLLECT_BOOT, response);
 

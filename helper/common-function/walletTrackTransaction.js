@@ -644,12 +644,11 @@ module.exports.deductWallet = async (id, deductChips, tType, t, tbInfo, client, 
     }
 
     const userInfo = await GameUser.findOne(wh, projection);
-    logger.info("dedudctWallet userInfo : ", userInfo);
+    logger.info("get dedudctWallet userInfo Details =>: ", userInfo);
 
     if (userInfo == null) {
       return false;
     }
-    logger.info("dedudctWallet userInfo :: ", userInfo);
 
     userInfo.chips = (typeof userInfo.chips == 'undefined' || isNaN(userInfo.chips)) ? 0 : Number(userInfo.chips);
     userInfo.winningChips = (typeof userInfo.winningChips == 'undefined' || isNaN(userInfo.winningChips)) ? 0 : Number(userInfo.winningChips);
@@ -664,6 +663,7 @@ module.exports.deductWallet = async (id, deductChips, tType, t, tbInfo, client, 
     let setInfo = {
       $inc: {}
     };
+
     let totalDeductChips = deductChips;
 
     if (userInfo.winningChips > 0 && deductChips < 0) {
@@ -696,7 +696,7 @@ module.exports.deductWallet = async (id, deductChips, tType, t, tbInfo, client, 
 
     logger.info("\ndedudctWallet setInfo :: --->", setInfo);
     let tranferAmount = totalDeductChips;
-    logger.info("dedudctWallet userInfo :: ==>", userInfo);
+    logger.info("final dedudctWallet userInfo :: ==>", userInfo);
 
     if (Object.keys(setInfo["$inc"]).length > 0) {
       for (let key in setInfo["$inc"]) {
@@ -709,7 +709,7 @@ module.exports.deductWallet = async (id, deductChips, tType, t, tbInfo, client, 
 
     logger.info("\ndedudctWallet wh :: ", wh, setInfo);
     let upReps = await GameUser.findOneAndUpdate(wh, setInfo, { new: true });
-    logger.info("\ndedudctWallet upReps :: ", upReps);
+    logger.info("\nafter deduct check dedudctWallet upReps :: ", upReps);
 
     upReps.chips = (typeof upReps.chips == 'undefined' || isNaN(upReps.chips)) ? 0 : Number(upReps.chips);
     upReps.winningChips = (typeof upReps.winningChips == 'undefined' || isNaN(upReps.winningChips)) ? 0 : Number(upReps.winningChips);

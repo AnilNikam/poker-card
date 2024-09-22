@@ -58,7 +58,7 @@ module.exports.roundStarted = async (tbl) => {
     let jobId = CONST.DICE_ROUND_START + ':' + tbId;
     let delay = commandAcions.AddTime(roundTime);
 
-    const delayRes = await commandAcions.setDelay(jobId, new Date(delay));
+    await commandAcions.setDelay(jobId, new Date(delay));
 
     // for (let i = 0; i < tabInfo.playerInfo.length; i++)
     //   if (typeof tabInfo.playerInfo[i].seatIndex != 'undefined') {
@@ -246,6 +246,7 @@ module.exports.startUserTurn = async (seatIndex, objData, firstTurnStart) => {
         status = false;
       }
     }
+
     if (status && tb.gameState !== 'RoundStated') {
       logger.info('heck cll -->');
       this.roundStarted(tb);

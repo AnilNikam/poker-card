@@ -28,12 +28,14 @@ module.exports.lastUserWinnerDeclareCall = async (tb) => {
     const tabInfo = await PlayingTables.findOneAndUpdate(upWh, updateData, { new: true });
     logger.info("lastUserWinnerDeclareCall tabInfo : ", tabInfo);
     let winner = {};
-    for (var i = 0; i < tabInfo.playerInfo.length; i++) {
+    for (let i = 0; i < tabInfo.playerInfo.length; i++) {
         if (typeof tabInfo.playerInfo[i].seatIndex != "undefined" && tabInfo.playerInfo[i].status == "play") {
             winner = tabInfo.playerInfo[i];
         }
     }
-    if (winner == {}) return false;
+    if (winner == {}) {
+        return false;
+    }
 
     logger.info("lastUserWinnerDeclareCall winner ::", winner);
 
@@ -45,7 +47,7 @@ module.exports.lastUserWinnerDeclareCall = async (tb) => {
     }
     let up = {
         $set: {
-            "playerInfo.$.playerStatus": "winner",
+            "playerInfo.$.playerStatus": "win",
         }
     }
     logger.info("lastUserWinnerDeclareCall dcUWh up ::", dcUWh, up);
