@@ -99,9 +99,9 @@ module.exports.collectBoot = async (tbId) => {
         commandAcions.sendEventInTable(tbInfo._id.toString(), CONST.DICE_COLLECT_BOOT, response);
 
         let tbid = tbInfo._id;
-        let jobId = commandAcions.GetRandomString(10);
-        let delay = commandAcions.AddTime(3);
-        const delayRes = await commandAcions.setDelay(jobId, new Date(delay));
+        // let jobId = commandAcions.GetRandomString(10);
+        // let delay = commandAcions.AddTime(3);
+        // const delayRes = await commandAcions.setDelay(jobId, new Date(delay));
 
         await cardDealActions.cardDealStart(tbid)
     } catch (error) {

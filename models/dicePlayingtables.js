@@ -26,6 +26,7 @@ const PlayingTablesSchema = new Schema({
     gameTimer: {},
     gameTracks: [],
     callFinalWinner: { type: Boolean, default: false },
+    roundStart: { type: Boolean, default: false },
     isLastUserFinish: { type: Boolean, default: false },
     isFinalWinner: { type: Boolean, default: false },
     history: [],

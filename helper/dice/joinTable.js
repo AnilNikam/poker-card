@@ -125,7 +125,8 @@ module.exports.createTable = async (betInfo) => {
             entryFee: betInfo.entryFee,
             playerInfo: this.makeObjects(Number(betInfo.maxSeat)),
             gameState: "",
-            currentDiceNumber: 0
+            currentDiceNumber: 0,
+            roundStart: false
         };
         logger.info("createTable insertobj : ", insertobj);
 

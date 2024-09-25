@@ -224,7 +224,7 @@ module.exports.startUserTurn = async (seatIndex, objData, firstTurnStart) => {
     };
     logger.info('startUserTurn wh update ::', wh, update);
 
-    const tb = await PlayingTables.findOneAndUpdate(wh, update, { new: true });
+    let tb = await PlayingTables.findOneAndUpdate(wh, update, { new: true });
     logger.info('startUserTurn tb : ', tb);
 
     const playerInGame = await this.getPlayingUserInRound(tb.playerInfo);
@@ -242,12 +242,24 @@ module.exports.startUserTurn = async (seatIndex, objData, firstTurnStart) => {
     for (let e of tb.playerInfo) {
       if (e.slectDice === true) {
         status = true;
+
+        let wher = {
+          _id: objData._id.toString(),
+        };
+        let update1 = {
+          $set: {
+            roundStart: true,
+          },
+        };
+        tb = await PlayingTables.findOneAndUpdate(wher, update1, { new: true });
+        logger.info('check roundStart ', tb);
+
       } else {
         status = false;
       }
     }
 
-    if (status && tb.gameState !== 'RoundStated') {
+    if (tb.roundStart && tb.gameState !== 'RoundStated') {
       logger.info('heck cll -->');
       this.roundStarted(tb);
       // return
