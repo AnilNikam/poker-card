@@ -1,5 +1,8 @@
 const mongoose = require('mongoose');
 const GameUser = mongoose.model('users');
+const MongoID = mongoose.Types.ObjectId;
+const PlayingTables = mongoose.model("dicePlayingTables");
+
 const commonHelper = require('../../helper/commonHelper');
 const commandAcions = require("../../helper/socketFunctions");
 const CONST = require("../../constant");
@@ -10,18 +13,58 @@ const cardLogic = require("./cardLogic");
 
 
 
-module.exports.JoinRobot = async (tableInfo, BetInfo) => {
+module.exports.JoinRobot = async (tableInfoo, BetInfo) => {
     try {
+        let realPlayer = []
 
-        let user_wh = {
-            Iscom: 1
+        let whereCond = { _id: MongoID(tableInfoo._id.toString()) };
+        let tableInfo = await PlayingTables.findOne(whereCond).lean();
+        logger.info("botfunction tabInfo =>", tableInfo);
+
+        tableInfo.playerInfo.forEach(e => {
+            logger.info("tableInfo.playerInfo ", e)
+            if (e.isBot == false) {
+                realPlayer.push(MongoID(e._id).toString())
+            }
+        })
+
+        if (realPlayer.length == 0) {
+            logger.info("Real USer Leght zero ", realPlayer.length);
+            return false
         }
 
-        let robotInfo = await GameUser.findOne(user_wh, {});
-        logger.info("JoinRobot ROBOT Info : ", robotInfo)
+        let user_wh = {
+            isBot: true,
+            isfree: true,
+        }
+
+        // Count the total number of documents that match the criteria
+        let totalCount = await GameUser.countDocuments(user_wh);
+
+        // Generate a random index within the range of totalCount
+        let randomIndex = Math.floor(Math.random() * totalCount);
+
+        // Aggregate pipeline to skip to the random index and limit to 1 document
+        let pipeline = [
+            { $match: user_wh },
+            { $skip: randomIndex },
+            { $limit: 1 }
+        ];
+
+        // Execute the aggregation pipeline
+        let robotInfo = await GameUser.aggregate(pipeline).exec();
+        logger.info("point JoinRobot ROBOT Info : ", robotInfo)
+
+        if (robotInfo == null || robotInfo.length == 0) {
+            logger.info("JoinRobot ROBOT Not Found  : ")
+            return false
+        }
+
+        let up = await GameUser.updateOne({ _id: MongoID(robotInfo[0]._id.toString()) }, { $set: { "isfree": false } });
+        logger.info("update robot isfree", up)
 
 
-        await joinTable.findEmptySeatAndUserSeat(tableInfo, BetInfo, { uid: robotInfo._id });
+        await joinTable.findEmptySeatAndUserSeat(tableInfo, BetInfo, { uid: robotInfo[0]._id.toString(), isBot: robotInfo[0].isBot });
 
     } catch (error) {
         logger.info("Robot Logic Join", error);

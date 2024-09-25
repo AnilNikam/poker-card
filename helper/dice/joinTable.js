@@ -173,7 +173,7 @@ module.exports.findEmptySeatAndUserSeat = async (table, betInfo, client) => {
         // let tbInfo = await PlayingTables.findOne(wh,{}).lean();
         // logger.info("findEmptySeatAndUserSeat tbInfo : ", tbInfo)
 
-        let totalWallet = Number(userInfo.chips) //+ Number(userInfo.winningChips)
+        let totalWallet = Number(userInfo.chips) + Number(userInfo.winningChips)
         let playerDetails = {
             seatIndex: seatIndex,
             _id: userInfo._id,
@@ -196,7 +196,7 @@ module.exports.findEmptySeatAndUserSeat = async (table, betInfo, client) => {
             winStatus: false,
             finished: false,
             isSee: false,
-            Iscom: userInfo.Iscom != undefined ? userInfo.Iscom : 0
+            isBot: userInfo.isBot != undefined ? userInfo.isBot : 0
         }
 
         logger.info("findEmptySeatAndUserSeat playerDetails : ", playerDetails);
@@ -258,8 +258,10 @@ module.exports.findEmptySeatAndUserSeat = async (table, betInfo, client) => {
             tableAmount: tableInfo.tableAmount,
         });
 
-        if (userInfo.Iscom == undefined || userInfo.Iscom == 0)
+        if (userInfo.isBot == undefined || userInfo.isBot == 0) {
+
             client.join(tableInfo._id.toString());
+        }
 
         sendDirectEvent(client.tbid.toString(), CONST.DICE_JOIN_TABLE, {
             ap: tableInfo.activePlayer,
@@ -275,13 +277,21 @@ module.exports.findEmptySeatAndUserSeat = async (table, betInfo, client) => {
 
             await gameStartActions.gameTimerStart(tableInfo);
         }
-        // else {
-
-        //     setTimeout(() => {
-        //         botLogic.JoinRobot(tableInfo, betInfo)
-        //     }, 2000)
-
-        // }
+        if (tableInfo.activePlayer == 1) {
+            setTimeout(() => {
+                if (tableInfo.maxSeat === 2 && tableInfo.activePlayer < 2) {
+                    setTimeout(() => {
+                        botLogic.JoinRobot(tableInfo, betInfo)
+                    }, 1000)
+                }
+            }, 7000)
+        } else if (userInfo.isBot == true) {
+            if (tableInfo.maxSeat === 2 && tableInfo.activePlayer < 2) {
+                setTimeout(() => {
+                    botLogic.JoinRobot(tableInfo, betInfo)
+                }, 1000)
+            }
+        }
     } catch (error) {
         console.info("findEmptySeatAndUserSeat", error);
     }
