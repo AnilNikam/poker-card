@@ -1,15 +1,17 @@
 const mongoose = require('mongoose');
 const MongoID = mongoose.Types.ObjectId;
+const PlayingTables = mongoose.model('dicePlayingTables');
+const Users = mongoose.model('users');
 
 const CONST = require('../../constant');
-const commandAcions = require('../../helper/socketFunctions');
-const gamePlayActions = require('./gamePlay');
 const logger = require('../../logger');
-const botLogic = require('./botLogic');
+const gamePlayActions = require('./gamePlay');
+const commandAcions = require('../../helper/socketFunctions');
+
+const { slectDice, getDiceNumber } = require('./botLogic');
 const { lastUserWinnerDeclareCall } = require('./gameFinish');
 const { createDealer } = require('../../helper/helperFunction');
-const { forEach } = require('lodash');
-const PlayingTables = mongoose.model('dicePlayingTables');
+
 
 module.exports.roundStarted = async (tbl) => {
   try {
@@ -279,10 +281,29 @@ module.exports.startUserTurn = async (seatIndex, objData, firstTurnStart) => {
 
     commandAcions.sendEventInTable(tb._id.toString(), CONST.DICE_USER_TURN_START, response);
 
-    // if (tb.playerInfo != undefined && tb.playerInfo[tb.turnSeatIndex] != undefined && tb.playerInfo[tb.turnSeatIndex].Iscom == 1) {
-    //     // Rboot Logic Start Playing
-    //     botLogic.PlayRobot(tb, tb.playerInfo[tb.turnSeatIndex], playerInGame)
+    // if (tb.playerInfo != undefined && tb.playerInfo[tb.turnSeatIndex] != undefined && tb.playerInfo[tb.turnSeatIndex].isBot) {
+    //   // Rboot Logic Start Playing
+    //   slectDice(tb, tb.playerInfo[tb.turnSeatIndex], playerInGame)
     // }
+
+    //Assign to bot
+    let plid = tb.playerInfo[tb.currentPlayerTurnIndex]._id
+    let plSeatIndex = tb.playerInfo[tb.currentPlayerTurnIndex].seatIndex
+
+    const datas = await Users.findOne({
+      _id: MongoID(plid),
+    }).lean();
+
+    logger.info("check pic data =>", datas)
+
+    if (datas && datas.isBot && tb.gameState === CONST.SELECT_DICE) {
+      await slectDice(tb, { plid, plSeatIndex })
+      // await easyPic(tb, plid, tb.gamePlayType, 'close')
+    } else if (datas && datas.isBot && tb.gameState === CONST.ROUND_STARTED) {
+      await getDiceNumber(tb, { plid, plSeatIndex })
+
+    }
+
 
     let tbid = tb._id.toString();
     let time = 30;

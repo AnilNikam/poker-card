@@ -71,24 +71,46 @@ module.exports.JoinRobot = async (tableInfoo, BetInfo) => {
     }
 }
 
-module.exports.PlayRobot = async (tableInfo, BetInfo, playerInGame) => {
+module.exports.slectDice = async (tableInfo, player) => {
     try {
+        // let response = {
+        //     "eventName": "SDN",
+        //     "data": {
+        //         "numberSaved": true,
+        //         "playerId": "660ea92e732101e270274463",
+        //         "diceNumber": 6
+        //     },
+        //     "flag": true,
+        //     "msg": ""
+        // }
+        // let test = { "eventName": "SDN", "data": { "numberSaved": true, "playerId": "660ea92e732101e270274463", "diceNumber": 6 }, "flag": true, "msg": "" }
+
 
         // Play Robot Logic 
-        logger.info("PlayRobot ", tableInfo)
-        logger.info("BetInfo ", BetInfo)
+        logger.info("\n PlayRobot ", player)
+        logger.info("\n tableInfo ", tableInfo)
 
-        if (BetInfo != undefined && BetInfo.playerId != undefined && tableInfo._id != undefined) {
+        if (tableInfo != undefined && tableInfo._id != undefined) {
+
+            let numberFetch = getRandomNumber(1, 10);
+
+            logger.info("find numberFetch =--==>", numberFetch)
+
+            gamePlay.selectDiceNumber({ playerId: player.plid, selectedDiceNumber: numberFetch }, { uid: player.plid, tbid: tableInfo._id, seatIndex: player.plSeatIndex, sck: "" })
+
+            return
+            // let selectedDiceNumber = requestData.selectedDiceNumber;
+            // playerInfo.dice.push(selectedDiceNumber);
 
 
-            logger.info(cardLogic.GetRandomInt(0, 1))
+            // const upWh = {
+            //     _id: MongoID(tableInfo._id.toString()),
+            //     'playerInfo.seatIndex': Number(player.seatIndex),
+            // };
+            // logger.info('selectDiceNumber upWh updateData :: ', upWh, updateData);
 
-            let robotCardValue = cardLogic.valueOfCard(BetInfo.cards)
-
-            logger.info("robotCardValue .info ", robotCardValue)
-
-            logger.info("BetInfo.playStatus ", BetInfo.playStatus)
-
+            // const tb = await PlayingTables.findOneAndUpdate(upWh, updateData, { new: true });
+            // logger.info('selectDiceNumber tb : ', tb);
 
             //robotCardValue 1 2 3 4 5 
 
@@ -172,3 +194,35 @@ module.exports.PlayRobot = async (tableInfo, BetInfo, playerInGame) => {
         logger.info("Play Robot ", error);
     }
 }
+
+module.exports.getDiceNumber = async (tableInfo, player) => {
+    try {
+        // let data = { "eventName": "GDN", "data": { "number": 1, "playerId": "660ea92e732101e270274463" }, "flag": true, "msg": "" }
+        // Play Robot Logic 
+        logger.info("\n getDiceNumber PlayRobot ", tableInfo)
+        logger.info("\n getDiceNumber BetInfo ", player)
+
+
+        if (tableInfo != undefined && tableInfo._id != undefined) {
+
+            // let numberFetch = getRandomNumber(1, 10);
+
+            // logger.info("find numberFetch =--==>", numberFetch)
+
+            gamePlay.getNumber({ playerId: player.plid, tableId: tableInfo._id }, { uid: player.plid, tbid: tableInfo._id, seatIndex: player.plSeatIndex, sck: "" })
+
+            return
+
+        } else {
+            logger.info("getDiceNumber else  Robot ", tableInfo, player);
+
+        }
+
+    } catch (error) {
+        logger.info("Play Robot ", error);
+    }
+}
+
+const getRandomNumber = (min, max) => {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+};

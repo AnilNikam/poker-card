@@ -16,7 +16,7 @@ const { getRandomNumber } = require('../helperFunction');
 
 module.exports.getNumber = async (requestData, client) => {
     try {
-        logger.info('chal requestData : ', requestData);
+        logger.info('getNumber requestData : ', requestData);
         if (typeof client.tbid == 'undefined' || typeof client.uid == 'undefined' || typeof client.seatIndex == 'undefined') {
             commandAcions.sendDirectEvent(client.sck, CONST.GET_DICE_NUMBER, requestData, false, 'User session not set, please restart game!');
             return false;
