@@ -339,7 +339,7 @@ module.exports.leaveallrobot = async (tbid) => {
                     totalRewardCoins: tabInfo.tableAmount,
                     ap: tabInfo.activePlayer,
                 };
-                sendEventInTable(tabInfo._id.toString(), CONST.DICE_LEAVE_TABLE, response);
+                commandAcions.sendEventInTable(tabInfo._id.toString(), CONST.DICE_LEAVE_TABLE, response);
 
             }
         }
