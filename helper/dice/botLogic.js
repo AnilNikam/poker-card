@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 const GameUser = mongoose.model('users');
 const MongoID = mongoose.Types.ObjectId;
 const PlayingTables = mongoose.model("dicePlayingTables");
+const schedule = require('node-schedule');
 
 const commonHelper = require('../../helper/commonHelper');
 const commandAcions = require("../../helper/socketFunctions");
@@ -202,17 +203,24 @@ module.exports.getDiceNumber = async (tableInfo, player) => {
         logger.info("\n getDiceNumber PlayRobot ", tableInfo)
         logger.info("\n getDiceNumber BetInfo ", player)
 
+        // Usage: Generate a random number between 1 and 100 after a random delay between 3 and 10 seconds
+        // await generateRandomNumberWithRandomDelay(3, 10, 1, 100);
+        // setTimeout(() => {
+        // const randomNumber = getRandomNumber(min, max);
+        // console.log(`Generated random number: ${randomNumber}`);
+        // Add any logic here to handle the generated number
+        // }, 8000);
+        const jobId = `BOTPIC+${tableInfo._id}`;
+        let startPicScheduleTime = new Date(Date.now() + 5000);
+        // let startPicScheduleTime = Date.now() + getRandomNumber(3000, 6500)
+        logger.info("try startPicScheduleTime ->", startPicScheduleTime)
 
         if (tableInfo != undefined && tableInfo._id != undefined) {
-
-            // let numberFetch = getRandomNumber(1, 10);
-
-            // logger.info("find numberFetch =--==>", numberFetch)
-
-            gamePlay.getNumber({ playerId: player.plid, tableId: tableInfo._id }, { uid: player.plid, tbid: tableInfo._id, seatIndex: player.plSeatIndex, sck: "" })
-
+            schedule.scheduleJob(jobId, startPicScheduleTime, async () => {
+                schedule.cancelJob(jobId);
+                gamePlay.getNumber({ playerId: player.plid, tableId: tableInfo._id }, { uid: player.plid, tbid: tableInfo._id, seatIndex: player.plSeatIndex, sck: "" })
+            })
             return
-
         } else {
             logger.info("getDiceNumber else  Robot ", tableInfo, player);
 
@@ -223,6 +231,21 @@ module.exports.getDiceNumber = async (tableInfo, player) => {
     }
 }
 
+// Function to generate a random number between a range (inclusive)
 const getRandomNumber = (min, max) => {
     return Math.floor(Math.random() * (max - min + 1)) + min;
+};
+
+
+
+// Generate a random number after a random delay between 3 to 10 seconds
+const generateRandomNumberWithRandomDelay = async (minDelay, maxDelay, min, max) => {
+    const randomDelay = getRandomNumber(minDelay, maxDelay) * 1000; // Convert seconds to milliseconds
+    console.log(`Generating a random number between ${min} and ${max} after a random delay of ${randomDelay / 1000} seconds...`);
+
+    setTimeout(() => {
+        const randomNumber = getRandomNumber(min, max);
+        console.log(`Generated random number: ${randomNumber}`);
+        // Add any logic here to handle the generated number
+    }, randomDelay);
 };

@@ -294,7 +294,8 @@ module.exports.startUserTurn = async (seatIndex, objData, firstTurnStart) => {
       _id: MongoID(plid),
     }).lean();
 
-    logger.info("check pic data =>", datas)
+    logger.info("\n check data =>", datas)
+    logger.info("\n tb.gameState =>", tb.gameState)
 
     if (datas && datas.isBot && tb.gameState === CONST.SELECT_DICE) {
       await slectDice(tb, { plid, plSeatIndex })
