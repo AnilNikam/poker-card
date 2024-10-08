@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
-const BetLists = require('../../models/betLists');
-const PoolBetLists = require('../../models/poolbetLists');
-const DealBetLists = require('../../models/dealbetLists');
+const BetLists = mongoose.model('rummybetLists');
+const PoolBetLists = mongoose.model('poolbetLists');
+const DealBetLists = mongoose.model('dealbetLists');
 
 const CONST = require('../../constant');
 const logger = require('../../logger');
@@ -22,7 +22,7 @@ module.exports.getPoolBet = async (requestData, socket) => {
       Type: requestData.type,
       List: betInfo,
     };
-    logger.info('Pool bet list response', response);
+    // logger.info('Pool bet list response', response);
 
     socket.uid = requestData.playerId;
     socket.sck = socket.id;
