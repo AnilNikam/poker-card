@@ -7,9 +7,9 @@ io = module.exports = require('socket.io')(server, { allowEIO3: true });
 const logger = (module.exports = require('../logger'));
 const CONST = require('../constant');
 const mainCtrl = require('./mainController');
-//const gamePlayActions = require('../helper/rummy');
-//const dealGamePlayActions = require('../helper/deal-rummy');
-//const poolGamePlayActions = require('../helper/pool-rummy');
+const pointgamePlayActions = require('../helper/rummy');
+const dealGamePlayActions = require('../helper/deal-rummy');
+const poolGamePlayActions = require('../helper/pool-rummy');
 
 const gamePlayActions = require('../helper/poker');
 const signupActions = require('../helper/signups');
@@ -234,9 +234,33 @@ myIo.init = function (server) {
           }
 
           case CONST.PING: {
-
             let res = await activePlayerCounter(socket)
             sendEvent(socket, CONST.PONG, res);
+            break;
+          }
+
+          case CONST.RUMMY_JOIN_SIGN_UP: {
+            try {
+              socket.uid = payload.data.playerId;
+              socket.sck = socket.id;
+
+              switch (payload.data.gamePlayType) {
+                case CONST.GAME_TYPE.POINT_RUMMY:
+                  await pointgamePlayActions.joinTable(payload.data, socket);
+                  break;
+
+                case CONST.GAME_TYPE.POOL_RUMMY:
+                  await poolGamePlayActions.joinTable(payload.data, socket);
+                  break;
+
+                case CONST.GAME_TYPE.DEAL_RUMMY:
+                  await dealGamePlayActions.joinTable(payload.data, socket);
+                  break;
+              }
+            } catch (error) {
+              logger.error('socketServer.js JOIN_SIGN_UP error => ', error);
+              sendEvent(socket, CONST.ERROR, error);
+            }
             break;
           }
 
@@ -245,7 +269,7 @@ myIo.init = function (server) {
               switch (payload.data.gamePlayType) {
                 // POINT RUMMY
                 case CONST.GAME_TYPE.POINT_RUMMY:
-                  await gamePlayActions.pickCard(payload.data, socket);
+                  await pointgamePlayActions.pickCard(payload.data, socket);
                   break;
 
                 // POOL_RUMMY
@@ -269,7 +293,7 @@ myIo.init = function (server) {
             try {
               switch (payload.data.gamePlayType) {
                 case CONST.GAME_TYPE.POINT_RUMMY:
-                  await gamePlayActions.disCard(payload.data, socket);
+                  await pointgamePlayActions.disCard(payload.data, socket);
                   break;
 
                 case CONST.GAME_TYPE.DEAL_RUMMY:
@@ -292,7 +316,7 @@ myIo.init = function (server) {
             try {
               switch (payload.data.gamePlayType) {
                 case CONST.GAME_TYPE.POINT_RUMMY:
-                  await gamePlayActions.cardGroup(payload.data, socket);
+                  await pointgamePlayActions.cardGroup(payload.data, socket);
                   break;
 
                 case CONST.GAME_TYPE.POOL_RUMMY:
@@ -315,7 +339,7 @@ myIo.init = function (server) {
             try {
               switch (payload.data.gamePlayType) {
                 case CONST.GAME_TYPE.POINT_RUMMY:
-                  await gamePlayActions.declare(payload.data, socket);
+                  await pointgamePlayActions.declare(payload.data, socket);
                   break;
 
                 case CONST.GAME_TYPE.POOL_RUMMY:
@@ -338,7 +362,7 @@ myIo.init = function (server) {
             try {
               switch (payload.data.gamePlayType) {
                 case CONST.GAME_TYPE.POINT_RUMMY:
-                  await gamePlayActions.playerDrop(payload.data, socket);
+                  await pointgamePlayActions.playerDrop(payload.data, socket);
                   break;
 
                 case CONST.GAME_TYPE.POOL_RUMMY:
@@ -362,7 +386,7 @@ myIo.init = function (server) {
             try {
               switch (payload.data.gamePlayType) {
                 case CONST.GAME_TYPE.POINT_RUMMY:
-                  await gamePlayActions.playerFinishDeclare(payload.data, socket);
+                  await pointgamePlayActions.playerFinishDeclare(payload.data, socket);
 
                   break;
                 case CONST.GAME_TYPE.POOL_RUMMY:
@@ -384,7 +408,7 @@ myIo.init = function (server) {
             try {
               switch (payload.data.gamePlayType) {
                 case CONST.GAME_TYPE.POINT_RUMMY:
-                  await gamePlayActions.playerFinish(payload.data, socket);
+                  await pointgamePlayActions.playerFinish(payload.data, socket);
                   break;
 
                 case CONST.GAME_TYPE.POOL_RUMMY:
@@ -406,7 +430,7 @@ myIo.init = function (server) {
             try {
               switch (payload.data.gamePlayType) {
                 case CONST.GAME_TYPE.POINT_RUMMY:
-                  await gamePlayActions.leaveTable(payload.data, socket);
+                  await pointgamePlayActions.leaveTable(payload.data, socket);
                   break;
 
                 case CONST.GAME_TYPE.POOL_RUMMY:

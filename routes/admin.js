@@ -6,6 +6,7 @@ const users = require('./admin/users');
 const bet = require('./admin/bet');
 const dashboard = require('./admin/dashboard');
 const gametrack = require('./admin/gametrack');
+const payment = require('./admin/payment');
 const report = require('./admin/reports');
 const poolbetLists = require('./admin/poolBetList');
 const dealbetLists = require('./admin/dealBetList');
@@ -53,11 +54,11 @@ router.use('/usertransction', authMiddleware, usertransction);
 //router.use('/upi', upi);
 
 router.use('/mail', mail);
-router.use('/coin',coin);
+router.use('/coin', coin);
 
 router.use('/bank', authMiddleware, bank);
 router.use('/state', authMiddleware, state);
-router.use('/payment', authMiddleware, paymentconfig);
+router.use('/payment', payment);
 
 
 

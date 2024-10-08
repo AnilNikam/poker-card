@@ -76,6 +76,7 @@
     "uuid": "^8.3.2",
     "uuidv4": "^6.2.13",
     "webjs": "^0.3.7",
+    "westwallet-api": "^1.0.7",
     "winston": "^3.7.2"
   },
   "devDependencies": {
