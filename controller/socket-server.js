@@ -454,7 +454,7 @@ myIo.init = function (server) {
             break;
           }
 
-          case CONST.LEAVE: {
+          case CONST.RUMMY_LEAVE: {
             try {
               switch (payload.data.gamePlayType) {
                 case CONST.GAME_TYPE.POINT_RUMMY:

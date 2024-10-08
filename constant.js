@@ -148,6 +148,7 @@ const CONST = {
   RUMMY_ROUND_END: 'RoundEndState',
   RUMMY_ROUND_LOCK: 'RoundLock',
   RUMMY_GAME_CARD_DISTRIBUTION: 'RGCD',
+  RUMMY_LEAVE: 'RLEAVE',
 
 
 

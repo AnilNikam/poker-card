@@ -19,7 +19,7 @@ module.exports.leaveTable = async (requestInfo, client) => {
     logger.info('\n Pool leaveTable requestData : ', requestData);
     requestData = requestData !== null ? requestData : {};
 
-    if (!ifSocketDefine(requestData, client, CONST.LEAVE_TABLE)) {
+    if (!ifSocketDefine(requestData, client, CONST.RUMMY_LEAVE)) {
       return false;
     }
 
@@ -101,7 +101,7 @@ module.exports.leaveTable = async (requestInfo, client) => {
     //Remove table id fro socket
     delete client.tbid;
 
-    if (tb.activePlayer === 2 && tb.gameState === CONST.ROUND_START_TIMER) {
+    if (tb.activePlayer === 2 && tb.gameState === CONST.RUMMY_ROUND_START_TIMER) {
       let jobId = CONST.GAME_TIME_START + ':' + tb._id.toString();
       clearJob(jobId);
       updateData['$set']['gameState'] = '';
@@ -163,8 +163,8 @@ module.exports.leaveTable = async (requestInfo, client) => {
     };
     logger.info('Respons when user leave', response);
     logger.info('Leave Client Socket Id =>', client.sck);
-    sendDirectEvent(client.sck.toString(), CONST.LEAVE, response);
-    sendEventInTable(tbInfo._id.toString(), CONST.LEAVE, response);
+    sendDirectEvent(client.sck.toString(), CONST.RUMMY_LEAVE, response);
+    sendEventInTable(tbInfo._id.toString(), CONST.RUMMY_LEAVE, response);
 
     let userDetails = await Users.findOne({
       _id: MongoID(playerInfo._id.toString()),
@@ -348,7 +348,7 @@ module.exports.playerSwitch = async (requestInfo, client) => {
     logger.info('\n playerSwitch requestData Table Id: ', client.tbid);
 
     requestData = requestData !== null ? requestData : {};
-    if (!ifSocketDefine(requestData, client, CONST.LEAVE_TABLE)) {
+    if (!ifSocketDefine(requestData, client, CONST.RUMMY_LEAVE)) {
       return false;
     }
 

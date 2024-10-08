@@ -19,7 +19,7 @@ module.exports.leaveTable = async (requestInfo, client) => {
 
     requestData = requestData !== null ? requestData : {};
 
-    if (!ifSocketDefine(requestData, client, CONST.LEAVE_TABLE)) {
+    if (!ifSocketDefine(requestData, client, CONST.RUMMY_LEAVE)) {
       return false;
     }
 
@@ -98,7 +98,7 @@ module.exports.leaveTable = async (requestInfo, client) => {
     //Remove table id fro socket
     delete client.tbid;
 
-    if (tableDetails.activePlayer === 2 && tableDetails.gameState === CONST.ROUND_START_TIMER) {
+    if (tableDetails.activePlayer === 2 && tableDetails.gameState === CONST.RUMMY_ROUND_START_TIMER) {
       let jobId = CONST.GAME_TIME_START + ':' + tableDetails._id.toString();
       clearJob(jobId);
       updateData['$set']['gameState'] = '';
@@ -163,8 +163,8 @@ module.exports.leaveTable = async (requestInfo, client) => {
       ap: activePlayerInRound.length,
     };
 
-    sendDirectEvent(client.sck.toString(), CONST.LEAVE, response);
-    sendEventInTable(tbInfo._id.toString(), CONST.LEAVE, response);
+    sendDirectEvent(client.sck.toString(), CONST.RUMMY_LEAVE, response);
+    sendEventInTable(tbInfo._id.toString(), CONST.RUMMY_LEAVE, response);
 
     let userDetails = await Users.findOne({
       _id: MongoID(playerInfo._id.toString()),
@@ -356,7 +356,7 @@ module.exports.leaveallrobot = async (tbid) => {
           totalRewardCoins: tabInfo.tableAmount,
           ap: tabInfo.activePlayer,
         };
-        sendEventInTable(tabInfo._id.toString(), CONST.LEAVE, response);
+        sendEventInTable(tabInfo._id.toString(), CONST.RUMMY_LEAVE, response);
 
       }
     }
