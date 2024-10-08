@@ -72,7 +72,7 @@ module.exports.getDealList = async (requestData, socket) => {
       deal: requestData.type,
     };
 
-    let listInfo = await DealBetLists.find(wh, {}).lean();
+    let listInfo = await DealBetLists.find().lean();
 
     //let listInfo = await DealBetLists.aggregate([
     //  { $sort: { deal: 1 } },
