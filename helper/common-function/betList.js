@@ -59,7 +59,7 @@ module.exports.getBetList = async (requestData, socket) => {
 
     socket.uid = requestData.playerId;
     socket.sck = socket.id;
-    sendEvent(socket, CONST.GET_BET_LIST, response);
+    sendEvent(socket, CONST.RUMMY_GET_BET_LIST, response);
   } catch (error) {
     logger.error('betList.js getBetList error=> ', error, requestData);
   }
