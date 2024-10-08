@@ -9,14 +9,14 @@ const { sendEvent } = require('../socketFunctions');
 
 module.exports.getPoolBet = async (requestData, socket) => {
   try {
-    logger.info('requestData', requestData);
+    logger.info('getPoolBet requestData =>', requestData);
     let wh = {
-      gameType: requestData.gameType,
+      gamePlayType: "poolrummy",
       type: requestData.type,
     };
 
-    let betInfo = await PoolBetLists.find(wh, {}).lean();
-    logger.info('Pool bet list', betInfo);
+    let betInfo = await PoolBetLists.find().lean();
+    logger.info('Pool bet list =>', betInfo);
 
     let response = {
       Type: requestData.type,
