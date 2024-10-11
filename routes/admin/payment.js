@@ -11,8 +11,8 @@ const logger = require('../../logger');
 const westwallet = require('westwallet-api');
 const westwalletErrors = require('westwallet-api/lib/errors');
 
-const publicKey = "yourPublicKey";
-const privateKey = "yourPrivateKey";
+const publicKey = "-140uLhYYo61sGvxT0gy-Gk2_TItzlyPFUXPkyXZ";
+const privateKey = "e1LXIMf7NDU-Yh8WXI5jDRT4Q9SwpJuaoeaXuEfKop78x0sJ1FNZ1A";
 
 let client = new westwallet.WestWalletAPI(publicKey, privateKey);
 
