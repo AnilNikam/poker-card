@@ -14,11 +14,14 @@ const { checkWinCard } = require('../botFunction');
 
 module.exports.cardDealStart = async (tbid) => {
   try {
+    logger.info("card Deal start ==> check", tbid)
     let wh = { _id: tbid };
     let table = await PlayingTables.findOne(wh, {}).lean();
+
+
     this.getCards(table.playerInfo, table, table.maxSeat, async (cardDetails) => {
 
-      logger.info("cardDetails", cardDetails)
+      logger.info("cardDetails =>", cardDetails)
 
       table.openDeck.push(cardDetails.openCard);
       let dealerSeatIndex = createDealer(table.activePlayer - 1);
@@ -40,6 +43,8 @@ module.exports.cardDealStart = async (tbid) => {
       const tableInfo = await PlayingTables.findOneAndUpdate(wh, update, {
         new: true,
       });
+
+      logger.info("check table info ==>", tableInfo)
 
       const eventResponse = {
         si: cardDealIndexs,
@@ -110,7 +115,8 @@ module.exports.setUserCards = async (cardsInfo, tableInfo) => {
 
 module.exports.getCards = async (playerInfo, table, maxSeat, callback) => {
   try {
-    let deckCards = maxSeat == 6 ? Object.assign([], CONST.deckOne) : Object.assign([], CONST.singaldeckOne)
+    logger.info("gets Cards ==>")
+    let deckCards = /*maxSeat == 6 ? Object.assign([], CONST.singalRummydeck) :*/ Object.assign([], CONST.Rummydeck)
     deckCards = shuffle(deckCards);
 
     let ran = parseInt(fortuna.random() * deckCards.length);
@@ -126,10 +132,6 @@ module.exports.getCards = async (playerInfo, table, maxSeat, callback) => {
       wildCard = deckCards[wildCardIndex];
     }
     deckCards.splice(wildCardIndex, 1);
-
-    // Array fillter si all robot asi 
-    // rendom si 
-
 
     checkWinCard(deckCards, wildCard, async (ress) => {
       logger.info("BOT RES ::::::::::::::::::", ress)
@@ -178,7 +180,7 @@ module.exports.getCards = async (playerInfo, table, maxSeat, callback) => {
       }
 
       let shuffleDeack = shuffle(deckCards);
-      logger.info("returnr ", {
+      logger.info("returnr --->", {
         openCard,
         cards,
         wildCard,

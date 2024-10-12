@@ -1,7 +1,7 @@
 const logger = require('../../logger');
 const CONST = require('../../constant');
 const mongoose = require('mongoose');
-const PlayingTables = require('../../models/playingTables');
+const PlayingTables = mongoose.model('rummyPlayingTables');
 
 
 module.exports.getPlayingUserInRound = async (p) => {

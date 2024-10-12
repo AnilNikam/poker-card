@@ -55,6 +55,7 @@ module.exports.collectBoot = async (tbId) => {
 
     let resetPlayerInfo = await this.resetUserData(tb._id, tb.playerInfo);
     let playerInfo = await this.checkUserInRound(resetPlayerInfo, tb);
+    logger.info("collectBoot playerInfo ==>", playerInfo);
 
     if (playerInfo.length < 2) {
       return false;
@@ -72,10 +73,11 @@ module.exports.collectBoot = async (tbId) => {
     };
 
     let tableInfo = await PlayingTables.findOneAndUpdate(wh, update, { new: true });
+    logger.info("collectBoot tableInfo check -->", tableInfo)
 
     //remove await bcz more time dealy 
-    let playerUgcInfo = this.deduct(tableInfo, playerInfo);
-    // logger.info('Player Deduct Coins', playerUgcInfo);
+    let playerUgcInfo = await this.deduct(tableInfo, playerInfo);
+    logger.info('collectBoot Player Deduct Coins', playerUgcInfo);
 
     await cardDealActions.cardDealStart(tableInfo._id);
   } catch (error) {
@@ -207,69 +209,75 @@ module.exports.deduct = async (tbInfo, playerInfo) => {
         let mainwalletdeduct = false;
         let winwalletdeduct = false;
 
-
-        if (totalbonus >= bonuscutchips && totalWallet >= mainchipscut) {
-          bonuswalletdeduct = true
-          mainwalletdeduct = true
-        } else if (totalWallet >= mainchipscut) {
-          mainwalletdeduct = true
-        }
-        // else if (totalbonus >= bonuscutchips && totalWinWallet >= mainchipscut) {
-        //   winwalletdeduct = true
-        //   bonuswalletdeduct = true
-        // } else if (totalWinWallet >= mainchipscut) {
-        //   winwalletdeduct = true
-        // } 
-
-        else if (totalbonus >= bonuscutchips) {
-          bonuswalletdeduct = true
+        if (totalWallet >= playerGameChips) {
+          await walletActions.addWalletPayin(pId, - Number(playerGameChips), 'Debit', 'Point Playing Entry Deduct Deposit', 'Game');
         }
 
-        if (mainwalletdeduct === false && winwalletdeduct === false && bonuswalletdeduct === true) {
 
-          let reminingAmount = mainchipscut - totalWallet
-
-          if (reminingAmount <= totalWinWallet) {
-
-            await walletActions.addWalletWinningPayin(pId, - Number(reminingAmount), 'Debit', 'Point Playing Entry Deduct Deposit', 'Game');
-            await walletActions.addWalletPayin(pId, - Number(totalWallet), 'Debit', 'Point Playing Entry Deduct Deposit', 'Game');
-          }
-          await walletActions.addWalletBonusDeposit(pId, - Number(bonuscutchips), 'Debit', 'Point Playing Entry Deduct bonus', 'Game');
-
-          bonuswalletdeduct = false;
-          mainwalletdeduct = false;
-          winwalletdeduct = false;
-
-        } else if (mainwalletdeduct === false && winwalletdeduct === false) {
-          let reminingAmount = mainchipscut - totalWallet
-          logger.info('reminingAmount -->', reminingAmount)
-
-          if (reminingAmount <= totalWinWallet) {
-            await walletActions.addWalletWinningPayin(pId, - Number(reminingAmount), 'Debit', 'Point Playing Entry Deduct Deposit', 'Game');
-            await walletActions.addWalletPayin(pId, - Number(totalWallet), 'Debit', 'Point Playing Entry Deduct Deposit', 'Game');
-          }
-          mainwalletdeduct = false;
-          winwalletdeduct = false;
-        }
-
-        logger.info("point bonuswalletdeduct ", bonuswalletdeduct)
-        logger.info("point mainwalletdeduct ", mainwalletdeduct)
-
-        if (bonuswalletdeduct && mainwalletdeduct) {
-          await walletActions.addWalletPayin(pId, - Number(mainchipscut), 'Debit', 'Point Playing Entry Deduct Deposit', 'Game');
-          await walletActions.addWalletBonusDeposit(pId, - Number(bonuscutchips), 'Debit', 'Point Playing Entry Deduct bonus', 'Game');
-
-        } else if (mainwalletdeduct) {
-          await walletActions.addWalletPayin(pId, - Number(gameDepositChips), 'Debit', 'Point Playing Entry Deduct Deposit', 'Game');
-        } else if (bonuswalletdeduct && winwalletdeduct) {
-
-          await walletActions.addWalletWinningPayin(pId, - Number(mainchipscut), 'Debit', 'Point Playing Entry Deduct Deposit', 'Game');
-          await walletActions.addWalletBonusDeposit(pId, - Number(bonuscutchips), 'Debit', 'Point Playing Entry Deduct bonus', 'Game');
-
-
-        } else if (winwalletdeduct) {
-          await walletActions.addWalletWinningPayin(pId, - Number(gameDepositChips), 'Debit', 'Point Playing Entry Deduct Deposit', 'Game');
-        }
+        /*
+                if (totalbonus >= bonuscutchips && totalWallet >= mainchipscut) {
+                  bonuswalletdeduct = true
+                  mainwalletdeduct = true
+                } else if (totalWallet >= mainchipscut) {
+                  mainwalletdeduct = true
+                }
+                // else if (totalbonus >= bonuscutchips && totalWinWallet >= mainchipscut) {
+                //   winwalletdeduct = true
+                //   bonuswalletdeduct = true
+                // } else if (totalWinWallet >= mainchipscut) {
+                //   winwalletdeduct = true
+                // } 
+        
+                else if (totalbonus >= bonuscutchips) {
+                  bonuswalletdeduct = true
+                }
+        
+                if (mainwalletdeduct === false && winwalletdeduct === false && bonuswalletdeduct === true) {
+        
+                  let reminingAmount = mainchipscut - totalWallet
+        
+                  if (reminingAmount <= totalWinWallet) {
+        
+                    await walletActions.addWalletWinningPayin(pId, - Number(reminingAmount), 'Debit', 'Point Playing Entry Deduct Deposit', 'Game');
+                    await walletActions.addWalletPayin(pId, - Number(totalWallet), 'Debit', 'Point Playing Entry Deduct Deposit', 'Game');
+                  }
+                  await walletActions.addWalletBonusDeposit(pId, - Number(bonuscutchips), 'Debit', 'Point Playing Entry Deduct bonus', 'Game');
+        
+                  bonuswalletdeduct = false;
+                  mainwalletdeduct = false;
+                  winwalletdeduct = false;
+        
+                } else if (mainwalletdeduct === false && winwalletdeduct === false) {
+                  let reminingAmount = mainchipscut - totalWallet
+                  logger.info('reminingAmount -->', reminingAmount)
+        
+                  if (reminingAmount <= totalWinWallet) {
+                    await walletActions.addWalletWinningPayin(pId, - Number(reminingAmount), 'Debit', 'Point Playing Entry Deduct Deposit', 'Game');
+                    await walletActions.addWalletPayin(pId, - Number(totalWallet), 'Debit', 'Point Playing Entry Deduct Deposit', 'Game');
+                  }
+                  mainwalletdeduct = false;
+                  winwalletdeduct = false;
+                }
+        
+                logger.info("point bonuswalletdeduct ", bonuswalletdeduct)
+                logger.info("point mainwalletdeduct ", mainwalletdeduct)
+        
+                if (bonuswalletdeduct && mainwalletdeduct) {
+                  await walletActions.addWalletPayin(pId, - Number(mainchipscut), 'Debit', 'Point Playing Entry Deduct Deposit', 'Game');
+                  await walletActions.addWalletBonusDeposit(pId, - Number(bonuscutchips), 'Debit', 'Point Playing Entry Deduct bonus', 'Game');
+        
+                } else if (mainwalletdeduct) {
+                  await walletActions.addWalletPayin(pId, - Number(gameDepositChips), 'Debit', 'Point Playing Entry Deduct Deposit', 'Game');
+                } else if (bonuswalletdeduct && winwalletdeduct) {
+        
+                  await walletActions.addWalletWinningPayin(pId, - Number(mainchipscut), 'Debit', 'Point Playing Entry Deduct Deposit', 'Game');
+                  await walletActions.addWalletBonusDeposit(pId, - Number(bonuscutchips), 'Debit', 'Point Playing Entry Deduct bonus', 'Game');
+        
+        
+                } else if (winwalletdeduct) {
+                  await walletActions.addWalletWinningPayin(pId, - Number(gameDepositChips), 'Debit', 'Point Playing Entry Deduct Deposit', 'Game');
+                }
+                */
 
         const upWh = {
           _id: MongoID(tabInfo._id),
@@ -288,7 +296,7 @@ module.exports.deduct = async (tbInfo, playerInfo) => {
         logger.info('User have sufficient chips  ', playerInfo[i]);
       }
     }
-    return playerUgcInfo;
+    return true;
   } catch (error) {
     logger.error('\nngameStart.js deduct error :-> ', error);
   }
