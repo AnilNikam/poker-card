@@ -184,7 +184,7 @@ module.exports.winnerViewResponseFilter = (playerDetails) => {
       if (typeof playerInfo[i].playerId !== 'undefined') {
         userInfo.push({
           playerId: playerInfo[i].playerId,
-          playerName: playerInfo[i].username,
+          playerName: playerInfo[i].playerName,
           result: playerInfo[i].result,
           cards: playerInfo[i].cards,
           gCards: playerInfo[i].gCards,
