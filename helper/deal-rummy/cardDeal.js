@@ -60,7 +60,7 @@ module.exports.cardDealStart = async (tbid) => {
           eventResponse.card = player.cards;
           logger.info("cardDealStart tableInfo.playerInfo -> send Time ", new Date())
 
-          commandAcions.sendDirectEvent(player.sck.toString(), CONST.GAME_CARD_DISTRIBUTION, eventResponse);
+          commandAcions.sendDirectEvent(player.sck.toString(), CONST.RUMMY_GAME_CARD_DISTRIBUTION, eventResponse);
         }
       });
       logger.info("cardDealStart tableInfo.playerInfo after  ->", new Date())
