@@ -299,7 +299,7 @@ module.exports.findEmptySeatAndUserSeat = async (table, betInfo, socket) => {
     sendEvent(socket, CONST.RUMMY_JOIN_SIGN_UP, {});
 
     //GTI event
-    sendEvent(socket, CONST.GAME_TABLE_INFO, {
+    sendEvent(socket, CONST.RUMMY_GAME_TABLE_INFO, {
       ssi: tableInfo.playerInfo[seatIndex].seatIndex,
       gst: diff,
       pi: tableInfo.playerInfo,
