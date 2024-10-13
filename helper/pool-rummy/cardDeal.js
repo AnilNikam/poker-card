@@ -120,7 +120,7 @@ module.exports.setUserCards = async (cardsInfo, tableInfo) => {
 
 module.exports.getCards = async (playerInfo, table, maxSeat, callback) => {
   try {
-    let deckCards = maxSeat == 6 ? Object.assign([], CONST.deckOne) : Object.assign([], CONST.singaldeckOne)
+    let deckCards = Object.assign([], CONST.Rummydeck)//maxSeat == 6 ? Object.assign([], CONST.deckOne) : Object.assign([], CONST.singaldeckOne)
     deckCards = shuffle(deckCards);
 
     let ran = parseInt(fortuna.random() * deckCards.length);
