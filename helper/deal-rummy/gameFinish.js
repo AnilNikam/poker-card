@@ -9,7 +9,7 @@ const { omit } = require('lodash');
 
 const CONST = require('../../constant');
 const logger = require('../../logger');
-const gameTrackActions = require('../common-function/gameTrack');
+const gameTrackActions = require('../common-function/rummyGameTrack');
 const commandAcions = require('../socketFunctions');
 const roundEndActions = require('./roundEnd');
 const commonHelper = require('../commonHelper');
