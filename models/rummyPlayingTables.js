@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const collectionName = 'rummyPlayingTables';
-const BetLists = mongoose.model('rummybetLists');
+const BetLists = require('./rummybetLists');
 
 const RummyPlayingTablesSchema = new Schema(
     {
