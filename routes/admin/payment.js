@@ -35,17 +35,18 @@ router.post('/address/generate', async (req, res) => {
             return res.status(400).json({ message: "Missing required fields" });
         }
 
-        client.generateAddress(currency, ipn_url, label)
-            .then((data) => {
-                res.json({ success: true, data });
-            })
-            .catch((error) => {
-                if (error instanceof westwalletErrors.CurrencyNotFoundError) {
-                    res.status(400).json({ message: "Currency not found" });
-                } else {
-                    res.status(500).json({ message: "Server error", error });
-                }
-            });
+        client.generateAddress("BTC", "https://yourwebsite.com/ipn_url", "your_address_label").then((data) => {
+            logger.info("check genrate address =>", data)
+            res.json({ success: true, data });
+        }).catch((error) => {
+            if (error instanceof westwalletErrors.CurrencyNotFoundError) {
+                logger.info("No such currency");
+                res.status(400).json({ message: "Currency not found" });
+            } else {
+                res.status(500).json({ message: "Server error", error });
+            }
+        });
+
 
     } catch (error) {
         res.status(500).json({ message: "Internal server error" });
@@ -69,23 +70,24 @@ router.post('/create-withdrawal', async (req, res) => {
         logger.info("create-withdrawal req.body =>", req.body)
         const { currency, amount, address } = req.body;
 
-        if (!currency || !amount || !address) {
-            return res.status(400).json({ message: "Missing required fields" });
-        }
+        // if (!currency || !amount || !address) {
+        //     return res.status(400).json({ message: "Missing required fields" });
+        // }
+        currency = 'BTC',
+            amount = '0.1',
 
-        client.createWithdrawal(currency, amount, address)
-            .then((data) => {
-                res.json({ success: true, data });
-            })
-            .catch((error) => {
-                if (error instanceof westwalletErrors.InsufficientFundsError) {
-                    res.status(400).json({ message: "Insufficient funds" });
-                } else if (error instanceof westwalletErrors.BadAddressError) {
-                    res.status(400).json({ message: "Invalid address" });
-                } else {
-                    res.status(500).json({ message: "Server error", error });
-                }
-            });
+
+            client.createWithdrawal(currency, amount, address)
+                .then((data) => {
+                    res.json({ success: true, data });
+                })
+                .catch((error) => {
+                    if (error instanceof westwalletErrors.BadAddressError) {
+                        res.status(400).json({ message: "Invalid address" });
+                    } else {
+                        res.status(500).json({ message: "Server error", error });
+                    }
+                });
 
     } catch (error) {
         res.status(500).json({ message: "Internal server error" });
@@ -162,6 +164,31 @@ router.post('/pay-out', async (req, res) => {
     }
 });
 
+
+router.get('/payment_secret_token', (req, res) => {
+    try {
+        logger.info("req-->", req.query)
+
+        const txId = req.query.txid; // Extract the transaction ID from query params
+
+        if (!txId) {
+            return res.status(400).json({ error: 'Transaction ID (tx_id) is required' });
+        }
+
+        // Example: Call to your database or payment processing function to validate the tx_id
+        // This is a placeholder, replace it with actual business logic.
+        const paymentToken = txId;
+
+        // Respond with the secret token or any other related information
+        res.json({
+            tx_id: txId,
+            payment_token: paymentToken,
+            status: 'Success'
+        });
+    } catch (error) {
+        logger.info("check error ==>", error)
+    }
+});
 
 
 module.exports = router;

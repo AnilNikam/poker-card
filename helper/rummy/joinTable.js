@@ -330,31 +330,31 @@ module.exports.findEmptySeatAndUserSeat = async (table, betInfo, socket) => {
       gameStartActions.gameTimerStart(tableInfo);
     }
 
-    /*
-        if (tableInfo.activePlayer == 1) {
+
+    if (tableInfo.activePlayer == 1) {
+      setTimeout(() => {
+        if (tableInfo.maxSeat === 2 && tableInfo.activePlayer < 2) {
           setTimeout(() => {
-            if (tableInfo.maxSeat === 2 && tableInfo.activePlayer < 2) {
-              setTimeout(() => {
-                botLogic.findRoom(tableInfo, betInfo)
-              }, 1000)
-            } else if (tableInfo.maxSeat === 6 && tableInfo.activePlayer < 6) {
-              setTimeout(() => {
-                botLogic.findRoom(tableInfo, betInfo)
-              }, 1000)
-            }
-          }, 7000)
-        } else if (userInfo.isBot == true) {
-          if (tableInfo.maxSeat === 2 && tableInfo.activePlayer < 2) {
-            setTimeout(() => {
-              botLogic.findRoom(tableInfo, betInfo)
-            }, 1000)
-          } else if (tableInfo.maxSeat === 6 && tableInfo.activePlayer < 6) {
-            setTimeout(() => {
-              botLogic.findRoom(tableInfo, betInfo)
-            }, 1000)
-          }
+            botLogic.findRoom(tableInfo, betInfo)
+          }, 1000)
+        } else if (tableInfo.maxSeat === 6 && tableInfo.activePlayer < 6) {
+          setTimeout(() => {
+            botLogic.findRoom(tableInfo, betInfo)
+          }, 1000)
         }
-    */
+      }, 7000)
+    } else if (userInfo.isBot == true) {
+      if (tableInfo.maxSeat === 2 && tableInfo.activePlayer < 2) {
+        setTimeout(() => {
+          botLogic.findRoom(tableInfo, betInfo)
+        }, 1000)
+      } else if (tableInfo.maxSeat === 6 && tableInfo.activePlayer < 6) {
+        setTimeout(() => {
+          botLogic.findRoom(tableInfo, betInfo)
+        }, 1000)
+      }
+    }
+
 
   } catch (error) {
     logger.error('joinTable.js findEmptySeatAndUserSeat error=> ', error, table);
