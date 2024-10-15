@@ -75,19 +75,20 @@ router.post('/create-withdrawal', async (req, res) => {
         // }
         currency = 'BTC',
             amount = '0.1',
+            address = '0x8751462e52FdEb5BC170e90fe47eA1CF3050D536'
 
 
-            client.createWithdrawal(currency, amount, address)
-                .then((data) => {
-                    res.json({ success: true, data });
-                })
-                .catch((error) => {
-                    if (error instanceof westwalletErrors.BadAddressError) {
-                        res.status(400).json({ message: "Invalid address" });
-                    } else {
-                        res.status(500).json({ message: "Server error", error });
-                    }
-                });
+        client.createWithdrawal(currency, amount, address)
+            .then((data) => {
+                res.json({ success: true, data });
+            })
+            .catch((error) => {
+                if (error instanceof westwalletErrors.BadAddressError) {
+                    res.status(400).json({ message: "Invalid address" });
+                } else {
+                    res.status(500).json({ message: "Server error", error });
+                }
+            });
 
     } catch (error) {
         res.status(500).json({ message: "Internal server error" });
