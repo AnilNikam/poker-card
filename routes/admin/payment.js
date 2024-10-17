@@ -17,6 +17,54 @@ const privateKey = "e1LXIMf7NDU-Yh8WXI5jDRT4Q9SwpJuaoeaXuEfKop78x0sJ1FNZ1A";
 let client = new westwallet.WestWalletAPI(publicKey, privateKey);
 
 /**
+ * @api {post} /payment/currencies_data
+ * @apiName currencies_data
+ * @apiGroup Wallet
+ * @apiHeader {String} x-access-token User's unique access token
+ * @apiParam {String} currency The cryptocurrency code (e.g., BTC, ETH).
+ * @apiParam {String} ipn_url Instant Payment Notification URL.
+ * @apiParam {String} label An optional label for the address.
+ * @apiSuccess (Success 200) {Object} addressInfo The generated address information.
+ * @apiError (Error 4xx) {String} message Validation or error message.
+ */
+router.get('/currencies_data', async (req, res) => {
+    try {
+        logger.info("Retrieving available currencies data");
+        let res = {
+            name: "ERC20",
+            address_regex: "^0x[a-fA-F0-9]{40}$",
+            require_dest_tag: true,
+            tickers: ["ERC20"],
+            min_receive: 10,
+            min_withdraw: 20,
+            max_withdraw_per_transaction: 5000,
+            max_withdraw_transactions_per_day: 10,
+            active: true,
+            send_active: true,
+            receive_active: true
+        }
+
+        client.currenciesData(res).then((data) => {
+            logger.info("check genrate address =>", data)
+            res.json({ success: true, data });
+        }).catch((error) => {
+            if (error instanceof westwalletErrors.CurrencyNotFoundError) {
+                logger.info("No such currency");
+                res.status(400).json({ message: "Currency not found" });
+            } else {
+                res.status(500).json({ message: "Server error", error });
+            }
+        });
+
+        // Respond with the list of currencies
+        res.json({ success: true, data: currenciesData });
+    } catch (error) {
+        logger.error("Error retrieving currencies data:", error);
+        res.status(500).json({ success: false, message: "Internal Server Error" });
+    }
+});
+
+/**
  * @api {post} /payment/generate Generate Address
  * @apiName GenerateAddress
  * @apiGroup Wallet
@@ -35,7 +83,7 @@ router.post('/address/generate', async (req, res) => {
             return res.status(400).json({ message: "Missing required fields" });
         }
 
-        client.generateAddress("BTC", "https://yourwebsite.com/ipn_url", "your_address_label").then((data) => {
+        client.generateAddress("ERC20", "https://yourwebsite.com/ipn_url", "your_address_label").then((data) => {
             logger.info("check genrate address =>", data)
             res.json({ success: true, data });
         }).catch((error) => {
@@ -68,11 +116,14 @@ router.post('/address/generate', async (req, res) => {
 router.post('/create-withdrawal', async (req, res) => {
     try {
         logger.info("create-withdrawal req.body =>", req.body)
+
+        //check conection is connect or not valid
+
         const { currency, amount, address } = req.body;
 
-        // if (!currency || !amount || !address) {
-        //     return res.status(400).json({ message: "Missing required fields" });
-        // }
+        if (!currency || !amount || !address) {
+            return res.status(400).json({ message: "Missing required fields" });
+        }
         currency = 'BTC',
             amount = '0.1',
             address = '0x8751462e52FdEb5BC170e90fe47eA1CF3050D536'
